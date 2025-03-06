@@ -43,8 +43,10 @@ const LoginScreen = () => {
       <TouchableOpacity style={styles.loginButton}>
         <Text style={styles.loginText}>התחברות</Text>
       </TouchableOpacity>
+      <TouchableOpacity onPress={() => router.push("/ForgotPassword")}>
+        <Text style={[styles.signupLink, isDarkMode ? styles.darkText : styles.lightText]}>שכחת סיסמה?</Text>
+      </TouchableOpacity>
 
-      <Text style={[styles.forgotPassword, isDarkMode ? styles.darkText : styles.lightText]}>Forgot password?</Text>
 
       {/* ✅ הוספת כפתור "הרשמה" מתחת ל-Forgot Password */}
       <TouchableOpacity onPress={() => router.push("/SignupScreen")}>
