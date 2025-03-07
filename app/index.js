@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorSch
 import { useRouter } from "expo-router";
 
 const validUsers = [
-  { username: "steve", password: "12345", role: "מורה" },
+  { username: "Steve", password: "12345", role: "מורה" },
   { username: "loki", password: "12345", role: "מורה" },
 ];
 
@@ -20,7 +20,7 @@ const LoginScreen = () => {
     const user = validUsers.find((u) => u.username === username && u.password === password && role === "מורה");
 
     if (user) {
-      router.push("/dashboard"); // ✅ מעבר למסך Dashboard אם ההתחברות תקינה
+      router.push("/Classes"); // ✅ מעבר לעמוד Homework לאחר התחברות מוצלחת
     } else {
       setErrorMessage("שם משתמש או סיסמא לא תקינים!");
     }

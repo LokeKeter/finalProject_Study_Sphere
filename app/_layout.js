@@ -6,7 +6,8 @@ export default function Layout() {
       <Stack.Screen name="index" />
       <Stack.Screen name="SignupScreen" />
       <Stack.Screen name="ForgotPassword" />
-      <Stack.Screen name="Dashboard" />
+      <Stack.Screen name="Homework" />
+      <Stack.Screen name="Classes" />
     </Stack>
   );
 }
