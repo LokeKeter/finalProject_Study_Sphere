@@ -5,7 +5,8 @@ export default function Layout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="SignupScreen" />
-      <Stack.Screen name="ForgotPassword" /> {/* 👈 הוספת המסך */}
+      <Stack.Screen name="ForgotPassword" />
+      <Stack.Screen name="Dashboard" />
     </Stack>
   );
 }

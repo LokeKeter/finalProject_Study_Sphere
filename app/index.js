@@ -1,104 +1,153 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme, Dimensions } from "react-native";
 import { useRouter } from "expo-router";
 
+const validUsers = [
+  { username: "steve", password: "12345", role: "מורה" },
+  { username: "loki", password: "12345", role: "מורה" },
+];
+
 const LoginScreen = () => {
-  const [role, setRole] = useState("הורה"); // 👈 תיקון ברירת מחדל
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("הורה"); // ברירת מחדל
+  const [errorMessage, setErrorMessage] = useState("");
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
 
+  const handleLogin = () => {
+    const user = validUsers.find((u) => u.username === username && u.password === password && role === "מורה");
+
+    if (user) {
+      router.push("/dashboard"); // ✅ מעבר למסך Dashboard אם ההתחברות תקינה
+    } else {
+      setErrorMessage("שם משתמש או סיסמא לא תקינים!");
+    }
+  };
+
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
-      {/* ✅ תיקון גודל הלוגו והוספת `resizeMode` */}
-      <Image source={require("../assets/logo-studyS.png")} style={styles.logo} resizeMode="contain" />
+      {/* ✅ שינוי הלוגו לפי מצב כהה/בהיר */}
+      <Image
+        source={isDarkMode ? require("../assets/logo-studyS.png") : require("../assets/logo-studyS2.png")}
+        style={styles.logo}
+        resizeMode="contain"
+      />
 
-      <Text style={[styles.title, isDarkMode ? styles.darkText : styles.lightText]}>Welcome Back !!</Text>
+      {/* ✅ שינוי צבע הטקסט לפי מצב כהה/בהיר */}
+      <Text style={[styles.title, { color: isDarkMode ? "#fff" : "#000" }]}>Welcome Back !!</Text>
 
-      <TextInput placeholder="Username" style={[styles.input, isDarkMode && styles.inputDark]} placeholderTextColor={isDarkMode ? "#ccc" : "#666"} />
-      <TextInput placeholder="Password" secureTextEntry style={[styles.input, isDarkMode && styles.inputDark]} placeholderTextColor={isDarkMode ? "#ccc" : "#666"} />
+      {/* ✅ שדות קלט */}
+      <TextInput
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+        style={[
+          styles.input,
+          {
+            backgroundColor: isDarkMode ? "#333" : "#fff",
+            color: isDarkMode ? "#fff" : "#000",
+            borderColor: isDarkMode ? "#fff" : "#000",
+          },
+        ]}
+        placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+      />
 
-      {/* ✅ תיקון סדר הכפתורים כך שמסומן נכון */}
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        style={[
+          styles.input,
+          {
+            backgroundColor: isDarkMode ? "#333" : "#fff",
+            color: isDarkMode ? "#fff" : "#000",
+            borderColor: isDarkMode ? "#fff" : "#000",
+          },
+        ]}
+        placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+      />
+
+      {/* ✅ בחירת תפקיד */}
       <View style={styles.roleContainer}>
-  <TouchableOpacity
-    onPress={() => setRole("הורה")}
-    style={[styles.roleButton, role === "הורה" ? styles.roleButtonSelected : styles.roleButtonUnselected]} 
-  >
-    <Text style={[styles.roleText, role === "הורה" ? styles.roleTextSelected : styles.roleTextUnselected]}>
-      הורה
-    </Text>
-  </TouchableOpacity>
-  <TouchableOpacity
-    onPress={() => setRole("מורה")}
-    style={[styles.roleButton, role === "מורה" ? styles.roleButtonSelected : styles.roleButtonUnselected]} 
-  >
-    <Text style={[styles.roleText, role === "מורה" ? styles.roleTextSelected : styles.roleTextUnselected]}>
-      מורה
-    </Text>
-  </TouchableOpacity>
-</View>
+        {["הורה", "מורה"].map((roleOption) => (
+          <TouchableOpacity
+            key={roleOption}
+            onPress={() => setRole(roleOption)}
+            style={[
+              styles.roleButton,
+              role === roleOption
+                ? { backgroundColor: isDarkMode ? "#fff" : "black", borderColor: isDarkMode ? "#fff" : "black" }
+                : styles.roleButtonUnselected,
+            ]}
+          >
+            <Text style={{ color: role === roleOption ? (isDarkMode ? "#000" : "#fff") : (isDarkMode ? "#fff" : "#000") }}>
+              {roleOption}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
+      {/* ✅ הצגת שגיאה אם שם משתמש/סיסמא לא נכונים */}
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
-
-      <TouchableOpacity style={styles.loginButton}>
+      {/* ✅ כפתור התחברות */}
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginText}>התחברות</Text>
       </TouchableOpacity>
+
       <TouchableOpacity onPress={() => router.push("/ForgotPassword")}>
-        <Text style={[styles.signupLink, isDarkMode ? styles.darkText : styles.lightText]}>שכחת סיסמה?</Text>
+        <Text style={[styles.signupLink, { color: isDarkMode ? "#fff" : "#000" }]}>שכחת סיסמה?</Text>
       </TouchableOpacity>
+      <View style={{ height: 15 }} />
 
-
-      {/* ✅ הוספת כפתור "הרשמה" מתחת ל-Forgot Password */}
       <TouchableOpacity onPress={() => router.push("/SignupScreen")}>
-        <Text style={[styles.signupLink, isDarkMode ? styles.darkText : styles.lightText]}>הרשמה</Text>
+        <Text style={[styles.signupLink, { color: isDarkMode ? "#fff" : "#000" }]}>הרשמה</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-// 🎨 **סגנונות מעודכנים**
+// 🎨 **סגנונות**
 const styles = StyleSheet.create({
   container: { flex: 1, alignItems: "center", justifyContent: "center", paddingHorizontal: 20 },
   lightContainer: { backgroundColor: "#fff" },
   darkContainer: { backgroundColor: "#000" },
-  logo: { width: 150, height: 150, marginBottom: 20 }, // ✅ תיקון גודל הלוגו
+  logo: { width: 150, height: 150, marginBottom: 20 },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 10 },
-  darkText: { color: "#fff" },
-  lightText: { color: "#000" },
-  input: { width: "100%", height: 50, borderWidth: 1, borderColor: "#ccc", borderRadius: 10, paddingHorizontal: 15, marginBottom: 10, backgroundColor: "#f9f9f9" },
-  inputDark: { backgroundColor: "#333", borderColor: "#555" },
-  roleContainer: { 
-    flexDirection: "row", 
-    justifyContent: "center", 
-    marginBottom: 15 
+  errorText: { color: "red", fontSize: 14, marginBottom: 10 }, // ✅ עיצוב שגיאה
+
+  input: {
+    width: "85%", // ✅ גודל מותאם לנייד
+    maxWidth: 400,
+    height: 50,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 10,
   },
-  roleButton: { 
-    paddingVertical: 10, 
-    paddingHorizontal: 20, 
-    marginHorizontal: 5, 
-    borderRadius: 10, 
-    borderWidth: 1, // מוסיף קו שחור מסביב לכפתור
-    borderColor: "black"
+
+  roleContainer: { flexDirection: "row", justifyContent: "center", marginBottom: 15 },
+  roleButton: { paddingVertical: 10, paddingHorizontal: 20, marginHorizontal: 5, borderRadius: 10, borderWidth: 1 },
+  roleButtonUnselected: { backgroundColor: "transparent", borderColor: "black" },
+
+  loginButton: {
+    backgroundColor: "black",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    alignItems: "center",
+    borderRadius: 8,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: "white",
+    minWidth: 120, // ✅ כמו כפתור "הרשמה"
   },
-  roleButtonSelected: { 
-    backgroundColor: "#fff", // 👈 הכפתור שנבחר יהיה לבן
-  },
-  roleButtonUnselected: { 
-    backgroundColor: "black", // 👈 הכפתור שלא נבחר יהיה שחור
-  },
-  roleText: {
-    fontSize: 16,
-  },
-  roleTextSelected: { 
-    color: "black", // 👈 טקסט שחור לכפתור שנבחר (כי הרקע לבן)
-  },
-  roleTextUnselected: { 
-    color: "#fff", // 👈 טקסט לבן לכפתור שלא נבחר (כי הרקע שחור)
-  },  
-  loginButton: { backgroundColor: "black", paddingVertical: 15, width: "100%", alignItems: "center", borderRadius: 10, marginBottom: 10 },
-  loginText: { color: "#fff", fontSize: 16 },
-  forgotPassword: { fontSize: 14, marginBottom: 5 }, // ✅ קצת פחות רווח
-  signupLink: { fontSize: 14, textDecorationLine: "underline" }, // ✅ עיצוב הרשמה כקישור
+  loginText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+
+  forgotPassword: { fontSize: 14, marginBottom: 5 },
+  signupLink: { fontSize: 14, textDecorationLine: "underline" },
 });
 
 export default LoginScreen;
