@@ -6,10 +6,7 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // Ensure you're using the correct package
-
-
-
+import { Picker } from "@react-native-picker/picker";
 
 const classesData = [
   { id: "1", name: "כיתה א'", subjects: ["מתמטיקה", "אנגלית", "עברית"], hasHomework: false },
@@ -18,26 +15,18 @@ const classesData = [
 ];
 
 const ClassesScreen = () => {
+  const router = useRouter(); // ✅ Initialize router
   const [selectedClass, setSelectedClass] = useState(null);
-
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [homeworkStatus, setHomeworkStatus] = useState(null);
 
   // שינוי הכיתה שנבחרה
   const handleClassChange = (classId) => {
-    if (!classId) {
-      // אם בוחרים "בחר כיתה..." - מאפסים הכל
-      setSelectedClass(null);
-      setSelectedSubject(null);
-      setHomeworkStatus(null);
-      return;
-    }
-  
     const classObj = classesData.find((c) => c.id === classId);
   
     if (classObj) {
       setSelectedClass(classObj);
-      setSelectedSubject(null); // איפוס המקצוע
+      setSelectedSubject(null);
       setHomeworkStatus(classObj.hasHomework);
     }
   };
@@ -81,16 +70,15 @@ const ClassesScreen = () => {
       {/* 🔹 Dropdown לבחירת כיתה */}
       <Text style={styles.label}>בחר כיתה:</Text>
       <Picker
-  selectedValue={selectedClass?.id || null}
-  onValueChange={(itemValue) => handleClassChange(itemValue)}
-  style={styles.picker}
->
-  <Picker.Item label="בחר כיתה..." value={null} />
-  {(classesData ?? []).map((classItem) => (  // ✅ Ensure classesData is always an array
-    <Picker.Item key={classItem.id} label={classItem.name} value={classItem.id} />
-  ))}
-</Picker>
-
+        selectedValue={selectedClass?.id || null}
+        onValueChange={(itemValue) => handleClassChange(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="בחר כיתה..." value={null} />
+        {classesData.map((classItem) => (
+          <Picker.Item key={classItem.id} label={classItem.name} value={classItem.id} />
+        ))}
+      </Picker>
 
       {/* 🔹 Dropdown לבחירת מקצוע (מופיע רק אם נבחרה כיתה) */}
       {selectedClass && (
@@ -139,16 +127,16 @@ const ClassesScreen = () => {
 // 🎨 **סגנונות**
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4", alignItems: "center" },
-  title: { fontSize: 22, fontWeight: "bold", margin: 55 },
+  title: { fontSize: 22, fontWeight: "bold", marginBottom: 15 },
 
-  label: { fontSize: 16, margin: 10, marginBottom: 5 },
+  label: { fontSize: 16, marginTop: 10, marginBottom: 5 },
   picker: {
     width: 250,
     height: 50,
     backgroundColor: "#fff",
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: "black",
+    borderColor: "#ccc",
   },
 
   statusText: {
@@ -184,19 +172,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
-  button: {
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "black", // ✅ Make sure this is black
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white", // ✅ White text for contrast
-    
-  },
 });
 
 export default ClassesScreen;
