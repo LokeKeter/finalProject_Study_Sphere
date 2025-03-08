@@ -117,7 +117,7 @@ const HomeworkScreen = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4" },
 
-  tabsContainer: { flexDirection: "row", justifyContent: "center", marginBottom: 10 },
+  tabsContainer: { flexDirection: "row", justifyContent: "center", margin: 55 },
   tab: { padding: 10, marginHorizontal: 5, backgroundColor: "#ddd", borderRadius: 5 },
   activeTab: { backgroundColor: "black" },
   tabText: { fontSize: 16 },
