@@ -167,5 +167,5 @@ const styles = StyleSheet.create({
   },
   menuItem: { paddingVertical: 12, paddingHorizontal: 15, fontSize: 16, borderBottomWidth: 1, borderBottomColor: "#ddd" },
 });
-
+//asfaghasdg
 export default ContactsScreen;
