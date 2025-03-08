@@ -5,11 +5,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Modal,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker"; // Ensure you're using the correct package
-
-
-
+import { Picker } from "@react-native-picker/picker"; 
+import { useRouter } from "expo-router"; // ✅ Import router
 
 const classesData = [
   { id: "1", name: "כיתה א'", subjects: ["מתמטיקה", "אנגלית", "עברית"], hasHomework: false },
@@ -18,25 +17,32 @@ const classesData = [
 ];
 
 const ClassesScreen = () => {
+  const router = useRouter(); // ✅ Initialize router
   const [selectedClass, setSelectedClass] = useState(null);
-
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [homeworkStatus, setHomeworkStatus] = useState(null);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
-  // שינוי הכיתה שנבחרה
+  // ⏳ Update current time every second
+  useState(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleClassChange = (classId) => {
     const classObj = classesData.find((c) => c.id === classId);
     setSelectedClass(classObj);
-    setSelectedSubject(null); // איפוס המקצוע
+    setSelectedSubject(null);
     setHomeworkStatus(classObj.hasHomework);
   };
 
-  // שינוי המקצוע שנבחר
   const handleSubjectChange = (subject) => {
     setSelectedSubject(subject);
   };
 
-  // ביצוע פעולה (שליחת/מחיקת שיעורי בית או שליחת הודעה)
   const handleAction = (action) => {
     if (!selectedClass || !selectedSubject) {
       Alert.alert("שגיאה", "אנא בחר כיתה ומקצוע לפני ביצוע פעולה.");
@@ -65,23 +71,64 @@ const ClassesScreen = () => {
 
   return (
     <View style={styles.container}>
+
+      {/* 🔹 TOP BAR */}
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+          <Text style={styles.menuIcon}>☰</Text>
+        </TouchableOpacity>
+        <Text style={styles.username}>👤 מורה</Text>
+        <Text style={styles.dateTime}>{currentTime}</Text>
+      </View>
+
+      {/* 🔹 SIDEBAR MENU */}
+      <Modal visible={sidebarVisible} animationType="slide" transparent>
+        <View style={styles.sidebar}>
+          <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+            <Text style={styles.closeButton}>✖ סגור</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+            <Text style={styles.sidebarText}>📊 כללי</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+            <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
+            <Text style={styles.sidebarText}>🏫 כיתות</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/contacts"); setSidebarVisible(false); }}>
+            <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/archive"); setSidebarVisible(false); }}>
+            <Text style={styles.sidebarText}>📁 ארכיון</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+            <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
       <Text style={styles.title}>ניהול שיעורי בית</Text>
 
       {/* 🔹 Dropdown לבחירת כיתה */}
       <Text style={styles.label}>בחר כיתה:</Text>
       <Picker
-  selectedValue={selectedClass?.id || null}
-  onValueChange={(itemValue) => handleClassChange(itemValue)}
-  style={styles.picker}
->
-  <Picker.Item label="בחר כיתה..." value={null} />
-  {(classesData ?? []).map((classItem) => (  // ✅ Ensure classesData is always an array
-    <Picker.Item key={classItem.id} label={classItem.name} value={classItem.id} />
-  ))}
-</Picker>
+        selectedValue={selectedClass?.id || ""}
+        onValueChange={(itemValue) => handleClassChange(itemValue)}
+        style={styles.picker}
+      >
+        <Picker.Item label="בחר כיתה..." value="" />
+        {classesData.map((classItem) => (
+          <Picker.Item key={classItem.id} label={classItem.name} value={classItem.id} />
+        ))}
+      </Picker>
 
-
-      {/* 🔹 Dropdown לבחירת מקצוע (מופיע רק אם נבחרה כיתה) */}
       {selectedClass && (
         <>
           <Text style={styles.label}>בחר מקצוע:</Text>
@@ -90,7 +137,7 @@ const ClassesScreen = () => {
             onValueChange={(itemValue) => handleSubjectChange(itemValue)}
             style={styles.picker}
           >
-            <Picker.Item label="בחר מקצוע..." value={null} />
+            <Picker.Item label="בחר מקצוע..." value="" />
             {selectedClass.subjects.map((subject, index) => (
               <Picker.Item key={index} label={subject} value={subject} />
             ))}
@@ -98,16 +145,6 @@ const ClassesScreen = () => {
         </>
       )}
 
-      {/* 🔹 סטטוס שיעורי בית (מופיע רק אם נבחרו כיתה ומקצוע) */}
-      {selectedSubject && (
-        <Text style={styles.statusText}>
-          {homeworkStatus
-            ? "✅ כבר נשלחו שיעורי בית למקצוע זה"
-            : "❌ לא נשלחו שיעורי בית למקצוע זה"}
-        </Text>
-      )}
-
-      {/* 🔹 כפתורי פעולות (מופיעים רק אם נבחרו כיתה ומקצוע) */}
       {selectedSubject && (
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.actionButton} onPress={() => handleAction("assign")}>
@@ -125,67 +162,28 @@ const ClassesScreen = () => {
   );
 };
 
-// 🎨 **סגנונות**
+// 🎨 **Styles**
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4", alignItems: "center" },
-  title: { fontSize: 22, fontWeight: "bold", margin: 55 },
-
-  label: { fontSize: 16, margin: 10, marginBottom: 5 },
-  picker: {
-    width: 250,
-    height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "black",
-  },
-
-  statusText: {
-    fontSize: 16,
-    marginTop: 15,
-    fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
-  },
-
-  buttonContainer: { marginTop: 20, width: "100%", alignItems: "center" },
-  actionButton: {
+   // 🔹 TOP BAR
+   topBar: {
+    height: 115,
     backgroundColor: "black",
-    padding: 12,
-    borderRadius: 8,
-    width: 250,
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingTop: 55,
   },
-  deleteButton: {
-    backgroundColor: "#d32f2f",
-    padding: 12,
-    borderRadius: 8,
-    width: 250,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  messageButton: {
-    backgroundColor: "#1976d2",
-    padding: 12,
-    borderRadius: 8,
-    width: 250,
-    alignItems: "center",
-  },
-  actionButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
-  button: {
-    padding: 15,
-    borderRadius: 8,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "black", // ✅ Make sure this is black
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white", // ✅ White text for contrast
-    
-  },
+  menuButton: { padding: 10 },
+  menuIcon: { color: "white", fontSize: 26 },
+  username: { color: "white", fontSize: 18, fontWeight: "bold" },
+  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
+
+  // 🔹 SIDEBAR
+  sidebar: { position: "absolute", left: -45, width: 225, height: "100%", backgroundColor: "black", padding: 60 },
+  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
+  sidebarItem: { paddingVertical: 15 },
+  sidebarText: { color: "white", fontSize: 18 },
 });
 
 export default ClassesScreen;
