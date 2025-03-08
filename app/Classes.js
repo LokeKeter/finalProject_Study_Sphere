@@ -21,10 +21,21 @@ const ClassesScreen = () => {
 
   // שינוי הכיתה שנבחרה
   const handleClassChange = (classId) => {
+    if (!classId) {
+      // אם בוחרים "בחר כיתה..." - מאפסים הכל
+      setSelectedClass(null);
+      setSelectedSubject(null);
+      setHomeworkStatus(null);
+      return;
+    }
+  
     const classObj = classesData.find((c) => c.id === classId);
-    setSelectedClass(classObj);
-    setSelectedSubject(null); // איפוס המקצוע
-    setHomeworkStatus(classObj.hasHomework);
+  
+    if (classObj) {
+      setSelectedClass(classObj);
+      setSelectedSubject(null); // איפוס המקצוע
+      setHomeworkStatus(classObj.hasHomework);
+    }
   };
 
   // שינוי המקצוע שנבחר
