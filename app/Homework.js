@@ -100,6 +100,10 @@ const HomeworkScreen = () => {
                 <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
                   <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
+                      <Text style={styles.sidebarText}>🏫 כיתות</Text>
+                </TouchableOpacity>
     
                 <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
                   <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
