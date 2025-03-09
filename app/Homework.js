@@ -1,31 +1,33 @@
 import React, { useState, useEffect } from "react";
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  ScrollView, 
-  StyleSheet, 
-  Alert, 
-  Modal 
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Modal,
+  Switch,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { useRouter } from "expo-router"; // ✅ Import router
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 
-const classes = [
-  { id: "1", name: "כיתה א'", subjects: ["מתמטיקה", "אנגלית", "עברית"] },
-  { id: "2", name: "כיתה ב'", subjects: ["מתמטיקה", "מדעים", "היסטוריה"] },
-  { id: "3", name: "כיתה ג'", subjects: ["אנגלית", "מדעים", "גיאוגרפיה"] },
+const classesData = ["כיתה א'", "כיתה ב'", "כיתה ג'"];
+const subjectsData = ["מתמטיקה", "אנגלית", "עברית"];
+
+const studentsData = [
+  { id: "1", parentName: "יוסי כהן", studentName: "דנה כהן", classId: "כיתה א'", subject: "מתמטיקה", homework: false, attendance: false },
+  { id: "2", parentName: "רונית לוי", studentName: "איתי לוי", classId: "כיתה ב'", subject: "אנגלית", homework: true, attendance: true },
+  { id: "3", parentName: "משה ישראלי", studentName: "נועה ישראלי", classId: "כיתה א'", subject: "עברית", homework: false, attendance: true },
+  { id: "4", parentName: "שרה דויד", studentName: "עומר דויד", classId: "כיתה ג'", subject: "מתמטיקה", homework: true, attendance: false },
 ];
 
 const HomeworkScreen = () => {
   const router = useRouter();
-
-  const [selectedClass, setSelectedClass] = useState(classes[0]);
+  const [students, setStudents] = useState(studentsData);
+  const [selectedClassIndex, setSelectedClassIndex] = useState(0);
+  const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(0);
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
-  // ⏳ ✅ Update time every second
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
@@ -33,86 +35,163 @@ const HomeworkScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // 🔹 שינוי הכיתה
+  const handleChangeClass = (direction) => {
+    let newIndex = selectedClassIndex + direction;
+    if (newIndex >= 0 && newIndex < classesData.length) {
+      setSelectedClassIndex(newIndex);
+    }
+  };
+
+  // 🔹 שינוי המקצוע
+  const handleChangeSubject = (direction) => {
+    let newIndex = selectedSubjectIndex + direction;
+    if (newIndex >= 0 && newIndex < subjectsData.length) {
+      setSelectedSubjectIndex(newIndex);
+    }
+  };
+
+  // 🔹 סינון נתונים לפי כיתה ומקצוע
+  const filteredStudents = students.filter(
+    (student) =>
+      student.classId === classesData[selectedClassIndex] &&
+      student.subject === subjectsData[selectedSubjectIndex]
+  );
+  
+
+  // 🔹 עדכון ה-Checkbox
+  const toggleCheckbox = (id, field) => {
+    setStudents((prevStudents) =>
+      prevStudents.map((student) =>
+        student.id === id ? { ...student, [field]: !student[field] } : student
+      )
+    );
+  };
+  
+  
+
   return (
     <View style={styles.container}>
-
-      {/* 🔹 TOP BAR */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.username}>👤 מורה</Text>
-        <Text style={styles.dateTime}>{currentTime}</Text>
-      </View>
-
- {/* 🔹 SIDEBAR MENU */}
- <Modal visible={sidebarVisible} animationType="slide" transparent>
-   <View style={styles.sidebar}>
-     <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-       <Text style={styles.closeButton}>✖ סגור</Text>
-     </TouchableOpacity>
- 
-     <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
-       <Text style={styles.sidebarText}>📊 כללי</Text>
-     </TouchableOpacity>
- 
-     <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
-       <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-     </TouchableOpacity>
- 
-     <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-       <Text style={styles.sidebarText}>🏫 כיתות</Text>
-     </TouchableOpacity>
- 
-     <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
-       <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-     </TouchableOpacity>
- 
-     <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
-       <Text style={styles.sidebarText}>📁 ארכיון</Text>
-     </TouchableOpacity>
- 
-     <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-       <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-     </TouchableOpacity>
-   </View>
- </Modal>
-      
-
-      {/* 🔹 כיתות - טאבים */}
-      <View style={styles.tabsContainer}>
-        {classes.map((classItem) => (
-          <TouchableOpacity
-            key={classItem.id}
-            style={[styles.tab, selectedClass.id === classItem.id && styles.activeTab]}
-            onPress={() => setSelectedClass(classItem)}
-          >
-            <Text style={[styles.tabText, selectedClass.id === classItem.id && styles.activeTabText]}>
-              {classItem.name}
-            </Text>
+          
+          {/* 🔹 TOP BAR */}
+          <View style={styles.topBar}>
+            <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+              <Text style={styles.menuIcon}>☰</Text>
+            </TouchableOpacity>
+            <Text style={styles.dateTime}>{currentTime}</Text>
+          </View>
+    
+          {/* 🔹 SIDEBAR MENU */}
+          <Modal visible={sidebarVisible} animationType="slide" transparent>
+            <View style={styles.modalBackground}>
+              <View style={styles.sidebar}>
+                <View style={styles.sidebarHeader}>
+                  <Text style={styles.sidebarUser}>👤 מורה</Text>
+                  <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+                    <Text style={styles.closeButton}>✖</Text>
+                  </TouchableOpacity>
+                </View>
+    
+    
+                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+                  <Text style={styles.sidebarText}>📊 כללי</Text>
+                </TouchableOpacity>
+    
+                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+                  <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+                </TouchableOpacity>
+    
+                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
+                  <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+                </TouchableOpacity>
+    
+                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
+                  <Text style={styles.sidebarText}>📁 ארכיון</Text>
+                </TouchableOpacity>
+    
+                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+                  <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
+          
+      {/* 🔹 כותרת עם חצים לכיתות */}
+      <View style={styles.headerContainer}>
+        {selectedClassIndex > 0 && (
+          <TouchableOpacity onPress={() => handleChangeClass(-1)}>
+            <Text style={styles.arrow}>⬅️</Text>
           </TouchableOpacity>
-        ))}
+        )}
+        <Text style={styles.headerText}>{classesData[selectedClassIndex]}</Text>
+        {selectedClassIndex < classesData.length - 1 && (
+          <TouchableOpacity onPress={() => handleChangeClass(1)}>
+            <Text style={styles.arrow}>➡️</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
+      {/* 🔹 כותרת עם חצים למקצועות */}
+      <View style={styles.headerContainer}>
+        {selectedSubjectIndex > 0 && (
+          <TouchableOpacity onPress={() => handleChangeSubject(-1)}>
+            <Text style={styles.arrow}>⬅️</Text>
+          </TouchableOpacity>
+        )}
+        <Text style={styles.headerText}>{subjectsData[selectedSubjectIndex]}</Text>
+        {selectedSubjectIndex < subjectsData.length - 1 && (
+          <TouchableOpacity onPress={() => handleChangeSubject(1)}>
+            <Text style={styles.arrow}>➡️</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* 🔹 טבלה */}
+      <ScrollView>
+      <View style={styles.table}>
+  <View style={styles.tableHeader}>
+    <Text style={styles.headerCell}>שם הורה</Text>
+    <Text style={styles.headerCell}>שם תלמיד</Text>
+    <Text style={styles.headerCell}>שיעורי בית</Text>
+    <Text style={styles.headerCell}>נוכחות</Text>
+  </View>
+
+  {filteredStudents.map((student) => (
+    <View key={student.id} style={styles.tableRow}>
+          <Text style={styles.cell}>{student.parentName}</Text>
+          <Text style={styles.cell}>{student.studentName}</Text>
+          
+          <View style={styles.switchContainer}>
+            <Switch
+              value={student.homework}
+              onValueChange={() => toggleCheckbox(student.id, "homework")}
+            />
+          </View>
+
+          <View style={styles.switchContainer}>
+            <Switch
+              value={student.attendance}
+              onValueChange={() => toggleCheckbox(student.id, "attendance")}
+            />
+          </View>
+        </View>
+      ))}
+    </View>
+
+
+      </ScrollView>
     </View>
   );
 };
 
-// 🎨 **Updated Styles**
+// 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    paddingTop: 85,  // ✅ Push content below the top bar
-    backgroundColor: "#F4F4F4", 
-    alignItems: "center" 
-  },
-
-  // 🔹 TOP BAR
+  container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
   topBar: {
     position: "absolute",
     top: 0,
     left: 0,
-    right: 0,  // ✅ Ensures full width
+    right: 0,
     height: 85,
     backgroundColor: "black",
     flexDirection: "row",
@@ -122,27 +201,56 @@ const styles = StyleSheet.create({
     paddingTop: 30,
   },
 
+  sidebarHeader: {
+    flexDirection: "row", 
+    justifyContent: "space-between", // מרווח בין שם המשתמש לכפתור הסגירה
+    alignItems: "center",
+    width: "100%",
+    paddingBottom: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: "#fff", 
+    paddingHorizontal: 10, // מרווח פנימי מהצדדים
+  },
   menuButton: { padding: 10 },
   menuIcon: { color: "white", fontSize: 26 },
   username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
-  // 🔹 SIDEBAR
-  sidebar: { position: "absolute", left: -45, width: 225, height: "100%", backgroundColor: "black", padding: 60 },
-  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
+  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 30 },
+  sidebarUser: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  
+  closeButton: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
-  // 🔹 Tabs Styling
-  tabsContainer: { 
-    flexDirection: "row", 
-    justifyContent: "center", 
-    marginTop: 20 // ✅ Increased to avoid overlapping with top bar
+
+  
+  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
+  headerText: { fontSize: 18, fontWeight: "bold" },
+  arrow: { fontSize: 22, paddingHorizontal: 10 },
+  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
+  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
+  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
+
+  tableRow: {
+    flexDirection: "row", // ✅ סידור שורות לרוחב
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingVertical: 10,
+    alignItems: "center",
   },
-  tab: { padding: 10, marginHorizontal: 5, backgroundColor: "#ddd", borderRadius: 5 },
-  activeTab: { backgroundColor: "black" },
-  tabText: { fontSize: 16 },
-  activeTabText: { color: "white" },
+  cell: { flex: 1, textAlign: "center" },
+
+  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
 });
 
 export default HomeworkScreen;
