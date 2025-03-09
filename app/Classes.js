@@ -1,7 +1,15 @@
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Modal,
+} from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useRouter } from "expo-router"; // ✅ You forgot this!
+import { useNavigation } from "@react-navigation/native"; // ✅ Use React Navigation
+import { useRouter } from "expo-router";
 
 
 const classesData = [
@@ -11,15 +19,29 @@ const classesData = [
 ];
 
 const ClassesScreen = () => {
-  const router = useRouter(); // ✅ Initialize router
+  const router = useRouter();
+
+  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
   const [homeworkStatus, setHomeworkStatus] = useState(null);
+  const [currentTime, setCurrentTime] = useState("");
+
+
+
+  // ⏳ ✅ Update `currentTime` every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      setCurrentTime(now.toLocaleTimeString("he-IL", { hour12: false })); // ✅ Hebrew time format
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // שינוי הכיתה שנבחרה
   const handleClassChange = (classId) => {
     const classObj = classesData.find((c) => c.id === classId);
-  
     if (classObj) {
       setSelectedClass(classObj);
       setSelectedSubject(null);
@@ -61,6 +83,49 @@ const ClassesScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* 🔹 TOP BAR */}
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+          <Text style={styles.menuIcon}>☰</Text>
+        </TouchableOpacity>
+        <Text style={styles.username}>👤 מורה</Text>
+        <Text style={styles.dateTime}>{currentTime}</Text> {/* ✅ Now it works */}
+      </View>
+
+{/* 🔹 SIDEBAR MENU */}
+<Modal visible={sidebarVisible} animationType="slide" transparent>
+  <View style={styles.sidebar}>
+    <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+      <Text style={styles.closeButton}>✖ סגור</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>📊 כללי</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>🏫 כיתות</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>📁 ארכיון</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+    </TouchableOpacity>
+  </View>
+</Modal>
+
+      {/* 🔹 MAIN CONTENT */}
       <Text style={styles.title}>ניהול שיעורי בית</Text>
 
       {/* 🔹 Dropdown לבחירת כיתה */}
@@ -76,7 +141,7 @@ const ClassesScreen = () => {
         ))}
       </Picker>
 
-      {/* 🔹 Dropdown לבחירת מקצוע (מופיע רק אם נבחרה כיתה) */}
+      {/* 🔹 Dropdown לבחירת מקצוע */}
       {selectedClass && (
         <>
           <Text style={styles.label}>בחר מקצוע:</Text>
@@ -93,16 +158,7 @@ const ClassesScreen = () => {
         </>
       )}
 
-      {/* 🔹 סטטוס שיעורי בית (מופיע רק אם נבחרו כיתה ומקצוע) */}
-      {selectedSubject && (
-        <Text style={styles.statusText}>
-          {homeworkStatus
-            ? "✅ כבר נשלחו שיעורי בית למקצוע זה"
-            : "❌ לא נשלחו שיעורי בית למקצוע זה"}
-        </Text>
-      )}
-
-      {/* 🔹 כפתורי פעולות (מופיעים רק אם נבחרו כיתה ומקצוע) */}
+      {/* 🔹 כפתורי פעולות */}
       {selectedSubject && (
         <View style={styles.buttonContainer}>
           <TouchableOpacity style={styles.actionButton} onPress={() => handleAction("assign")}>
@@ -120,54 +176,31 @@ const ClassesScreen = () => {
   );
 };
 
-// 🎨 **סגנונות**
+// 🎨 **STYLES**
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4", alignItems: "center" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 15 },
-
-  label: { fontSize: 16, marginTop: 10, marginBottom: 5 },
-  picker: {
-    width: 250,
-    height: 50,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: "#ccc",
-  },
-
-  statusText: {
-    fontSize: 16,
-    marginTop: 15,
-    fontWeight: "bold",
-    color: "#333",
-    textAlign: "center",
-  },
-
-  buttonContainer: { marginTop: 20, width: "100%", alignItems: "center" },
-  actionButton: {
+  container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4", paddingTop: 85 },
+  topBar: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 85,
     backgroundColor: "black",
-    padding: 12,
-    borderRadius: 8,
-    width: 250,
+    flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingTop: 30,
   },
-  deleteButton: {
-    backgroundColor: "#d32f2f",
-    padding: 12,
-    borderRadius: 8,
-    width: 250,
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  messageButton: {
-    backgroundColor: "#1976d2",
-    padding: 12,
-    borderRadius: 8,
-    width: 250,
-    alignItems: "center",
-  },
-  actionButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  menuButton: { padding: 10 },
+  menuIcon: { color: "white", fontSize: 26 },
+  username: { color: "white", fontSize: 18, fontWeight: "bold" },
+  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
+    // 🔹 SIDEBAR
+    sidebar: { position: "absolute", left: -45, width: 225, height: "100%", backgroundColor: "black", padding: 60 },
+    closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
+    sidebarItem: { paddingVertical: 15 },
+    sidebarText: { color: "white", fontSize: 18 },
 });
 
 export default ClassesScreen;

@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
+
 
 
 
@@ -28,6 +30,17 @@ const initialTasks = [
 
 export default function Dashboard() {
     const router = useRouter();  // ✅ Move inside function
+    const navigation = useNavigation();  // ✅ Correct way to initialize navigation
+    const [completedTasks, setCompletedTasks] = useState({}); // ✅ Track completed tasks
+
+    // ✅ Toggle task completion
+    const toggleTaskCompletion = (taskId) => {
+      setCompletedTasks((prev) => ({
+        ...prev,
+        [taskId]: !prev[taskId], // Toggle true/false
+      }));
+    };
+    
   const [tasks, setTasks] = useState(initialTasks);
   const [newTask, setNewTask] = useState("");
   const [sidebarVisible, setSidebarVisible] = useState(false);
@@ -148,13 +161,18 @@ export default function Dashboard() {
         <View style={[styles.section, styles.tasksSection]}>
           <Text style={styles.sectionTitle}>📝 משימות למורה</Text>
           {tasks.map((task) => (
-            <View key={task.id} style={styles.task}>
-              <Text>{task.title}</Text>
-              <TouchableOpacity onPress={() => removeTask(task.id)}>
-                <Text style={styles.deleteIcon}>❌</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+  <TouchableOpacity 
+    key={task.id} 
+    style={[styles.task, completedTasks[task.id] && styles.completedTask]} 
+    onPress={() => toggleTaskCompletion(task.id)} // ✅ Mark as completed
+  >
+    <Text style={styles.taskText}>{task.title}</Text>
+    <TouchableOpacity onPress={() => removeTask(task.id)}>
+      <Text style={styles.deleteIcon}>❌</Text>
+    </TouchableOpacity>
+  </TouchableOpacity>
+))}
+
           <TextInput
             value={newTask}
             onChangeText={setNewTask}
@@ -208,4 +226,11 @@ const styles = StyleSheet.create({
   // 🔹 TASKS
   tasksSection: { marginTop: 20 },
   task: { flexDirection: "row", justifyContent: "space-between", padding: 10, marginVertical: 5, backgroundColor: "#f8d7da" },
+  completedTask: { 
+    backgroundColor: "#b2f2bb", // ✅ Green when completed
+  },
+  taskText: { flex: 1 }, // Ensure text takes space
+  
+
+
 });

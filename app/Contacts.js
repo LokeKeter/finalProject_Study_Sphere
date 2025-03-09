@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // ✅ Added useEffect
 import {
   View,
   Text,
@@ -6,8 +6,11 @@ import {
   ScrollView,
   StyleSheet,
   TextInput,
+  Modal, 
 } from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { useRouter } from "expo-router"; 
+import { useNavigation } from "@react-navigation/native";
 
 const classesData = [
   { id: "1", name: "כיתה א'" },
@@ -23,29 +26,69 @@ const parentsData = [
 ];
 
 const ContactsScreen = () => {
+  const router = useRouter(); 
   const [selectedClass, setSelectedClass] = useState(classesData[0].id);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeParentId, setActiveParentId] = useState(null);
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString()); // ✅ Added current time
 
-  // סינון לפי כיתה + חיפוש
-  const filteredParents = parentsData.filter(
-    (p) =>
-      p.classId === selectedClass &&
-      (p.parentName.includes(searchQuery) || p.studentName.includes(searchQuery))
-  );
-
-  // ביצוע פעולה
-  const handleAction = (parentId, action) => {
-    console.log(`פעולה ${action} עבור ${parentId}`);
-    setActiveParentId(null);
-  };
+  // ⏳ ✅ Update time every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    
     <View style={styles.container}>
+      
+      {/* 🔹 TOP BAR */}
+      <View style={styles.topBar}>
+        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+          <Text style={styles.menuIcon}>☰</Text>
+        </TouchableOpacity>
+        <Text style={styles.username}>👤 מורה</Text>
+        <Text style={styles.dateTime}>{currentTime}</Text>
+      </View>
+
+{/* 🔹 SIDEBAR MENU */}
+<Modal visible={sidebarVisible} animationType="slide" transparent>
+  <View style={styles.sidebar}>
+    <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+      <Text style={styles.closeButton}>✖ סגור</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>📊 כללי</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>🏫 כיתות</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>📁 ארכיון</Text>
+    </TouchableOpacity>
+
+    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+      <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+    </TouchableOpacity>
+  </View>
+</Modal>
+
       <Text style={styles.title}>אנשי קשר</Text>
 
-      {/* 🔹 Dropdown לבחירת כיתה */}
+      {/* 🔹 Class Picker */}
       <Picker
         selectedValue={selectedClass}
         onValueChange={(itemValue) => setSelectedClass(itemValue)}
@@ -56,7 +99,7 @@ const ContactsScreen = () => {
         ))}
       </Picker>
 
-      {/* 🔹 שורת חיפוש */}
+      {/* 🔹 Search Input */}
       <TextInput
         style={styles.searchInput}
         placeholder="🔍 חפש לפי שם הורה או תלמיד"
@@ -64,23 +107,20 @@ const ContactsScreen = () => {
         onChangeText={setSearchQuery}
       />
 
-      {/* 🔹 טבלה */}
+      {/* 🔹 Table */}
       <ScrollView>
         <View style={styles.table}>
-          {/* 🔹 כותרות הטבלה */}
           <View style={styles.tableHeader}>
             <Text style={styles.headerCell}>שם ההורה</Text>
             <Text style={styles.headerCell}>שם התלמיד</Text>
-            <Text style={styles.headerCell}>פעולה</Text> {/* כותרת בלתי נראית */}
+            <Text style={styles.headerCell}>פעולה</Text>
           </View>
 
-          {/* 🔹 שורות הנתונים */}
-          {filteredParents.map((parent) => (
+          {parentsData.map((parent) => (
             <View key={parent.id} style={styles.tableRow}>
               <Text style={styles.cell}>{parent.parentName}</Text>
               <Text style={styles.cell}>{parent.studentName}</Text>
 
-              {/* 🔹 כפתור פעולות */}
               <View style={styles.cell}>
                 <TouchableOpacity
                   style={styles.actionButton}
@@ -89,7 +129,6 @@ const ContactsScreen = () => {
                   <Text style={styles.actionButtonText}>⋮</Text>
                 </TouchableOpacity>
 
-                {/* 🔹 תפריט אפשרויות */}
                 {activeParentId === parent.id && (
                   <View style={styles.dropdownMenu}>
                     <TouchableOpacity onPress={() => handleAction(parent.id, "message")}>
@@ -114,58 +153,34 @@ const ContactsScreen = () => {
     </View>
   );
 };
-//fzf
-// 🎨 **סגנונות**
+
+// 🎨 **Updated Styles**
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4" },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 15, textAlign: "center" },
+  container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
 
-  picker: { height: 50, backgroundColor: "#fff", borderRadius: 5, marginBottom: 10 },
-
-  searchInput: {
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    backgroundColor: "#fff",
-    marginBottom: 15,
-  },
-
-  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10 },
-  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
-  hiddenHeader: { flex: 1, textAlign: "center", opacity: 0 },
-
-  tableRow: {
-    flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  cell: { flex: 1, textAlign: "center" },
-
-  actionButton: {
-    backgroundColor: "#000",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    alignSelf: "center",
-  },
-  actionButtonText: { color: "white", fontSize: 18, fontWeight: "bold" },
-
-  dropdownMenu: {
+  topBar: {
     position: "absolute",
-    top: 30,
-    left: -20,
-    backgroundColor: "#fff",
-    borderRadius: 5,
-    elevation: 10,
-    width: 180,
-    zIndex: 999,
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 85,
+    backgroundColor: "black",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingTop: 30,
   },
-  menuItem: { paddingVertical: 12, paddingHorizontal: 15, fontSize: 16, borderBottomWidth: 1, borderBottomColor: "#ddd" },
+    // 🔹 SIDEBAR
+    sidebar: { position: "absolute", left: -45, width: 225, height: "100%", backgroundColor: "black", padding: 60 },
+    closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
+    sidebarItem: { paddingVertical: 15 },
+    sidebarText: { color: "white", fontSize: 18 },
+
+  menuButton: { padding: 10 },
+  menuIcon: { color: "white", fontSize: 26 },
+  username: { color: "white", fontSize: 18, fontWeight: "bold" },
+  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 });
-//asfa
+
 export default ContactsScreen;
