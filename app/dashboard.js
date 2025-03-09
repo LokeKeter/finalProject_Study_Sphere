@@ -76,54 +76,53 @@ export default function Dashboard() {
 
   return (
     <View style={styles.container}>
-    {/* 🔹 TOP BAR */}
-    <View style={styles.topBar}>
-      <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-        <Text style={styles.menuIcon}>☰</Text>
-      </TouchableOpacity>
-  
-      {/* 🔹 Make "מורה" Navigate to Profile Page */}
-      <TouchableOpacity onPress={() => router.push("/UserProfile")}>
-        <Text style={styles.username}>👤 פרופיל משתמש </Text>
-      </TouchableOpacity>
-  
-      <Text style={styles.dateTime}>{currentTime}</Text>
-    </View>
-  
-
-     
-{/* 🔹 SIDEBAR MENU */}
-<Modal visible={sidebarVisible} animationType="slide" transparent>
-  <View style={styles.sidebar}>
-    <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-      <Text style={styles.closeButton}>✖ סגור</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>📊 כללי</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>🏫 כיתות</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>📁 ארכיון</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-    </TouchableOpacity>
-  </View>
-</Modal>
+          
+          {/* 🔹 TOP BAR */}
+                    <View style={styles.topBar}>
+                      <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+                        <Text style={styles.menuIcon}>☰</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.dateTime}>{currentTime}</Text>
+                    </View>
+              
+                    {/* 🔹 SIDEBAR MENU */}
+                    <Modal visible={sidebarVisible} animationType="slide" transparent>
+                      <View style={styles.modalBackground}>
+                        <View style={styles.sidebar}>
+                          <View style={styles.sidebarHeader}>
+                            <Text style={styles.sidebarUser}>👤 מורה</Text>
+                            <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+                              <Text style={styles.closeButton}>✖</Text>
+                            </TouchableOpacity>
+                          </View>
+              
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>📊 כללי</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+                          </TouchableOpacity>
+    
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
+                                <Text style={styles.sidebarText}>🏫 כיתות</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>📁 ארכיון</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </Modal>
 
 
       <ScrollView contentContainerStyle={styles.content}>
@@ -197,29 +196,68 @@ export default function Dashboard() {
 
 // 🎨 **STYLES**
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#f0f0f0" },
   content: { padding: 20 },
 
-  // 🔹 TOP BAR
+  container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
   topBar: {
-    height: 115,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 85,
     backgroundColor: "black",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: 15,
-    paddingTop: 55,
+    paddingTop: 30,
+  },
+
+  sidebarHeader: {
+    flexDirection: "row", 
+    justifyContent: "space-between", // מרווח בין שם המשתמש לכפתור הסגירה
+    alignItems: "center",
+    width: "100%",
+    paddingBottom: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: "#fff", 
+    paddingHorizontal: 10, // מרווח פנימי מהצדדים
   },
   menuButton: { padding: 10 },
   menuIcon: { color: "white", fontSize: 26 },
   username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
-  // 🔹 SIDEBAR
-  sidebar: { position: "absolute", left: -45, width: 225, height: "100%", backgroundColor: "black", padding: 60 },
-  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
+  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 30 },
+  sidebarUser: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  
+  closeButton: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
+
+  /* 🔹 עיצוב ה-SIDEBAR */
+  sidebar: { 
+    position: "absolute", 
+    left: 0, 
+    width: 250, 
+    height: "100%", 
+    backgroundColor: "black", 
+    padding: 30, 
+    zIndex: 20 // ✅ ה-SIDEBAR תמיד מעל התוכן
+  },
+
+  sidebarItem: { paddingVertical: 15 },
+  sidebarText: { color: "white", fontSize: 18 },
+  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
 
   // 🔹 INFO CARDS (3 PER ROW)
   statsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
