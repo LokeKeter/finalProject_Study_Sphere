@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
 import { useAuth } from "./_layout";  // ✅ Import authentication hook
-
+import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import storage
 // 🔐 **Valid Users**
 const validUsers = [
   { username: "Steve", password: "12345", role: "מורה" },
@@ -19,17 +19,21 @@ export default function LoginScreen() {
   const router = useRouter();
   const { setIsLoggedIn } = useAuth();  // ✅ Authentication Context
 
-  // 🔑 **Handle Login**
-  const handleLogin = () => {
-    const user = validUsers.find((u) => u.username === username && u.password === password && u.role === role);
+  
 
+  // 🔑 **Handle Login**
+  const handleLogin = async () => {
+    const user = validUsers.find((u) => u.username === username && u.password === password && u.role === role);
+  
     if (user) {
+      await AsyncStorage.setItem("user", JSON.stringify({ fullName: user.fullName, role: user.role })); // ✅ Save user info
       setIsLoggedIn(true);  // ✅ Mark as logged in
       router.push("/dashboard");  // ✅ Navigate to Dashboard
     } else {
       setErrorMessage("❌ שם משתמש או סיסמא לא תקינים!");
     }
   };
+  
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>

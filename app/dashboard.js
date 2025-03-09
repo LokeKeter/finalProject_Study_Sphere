@@ -76,16 +76,22 @@ export default function Dashboard() {
 
   return (
     <View style={styles.container}>
-      {/* 🔹 TOP BAR */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.username}>👤 מורה</Text>
-        <Text style={styles.dateTime}>{currentTime}</Text>
-      </View>
+    {/* 🔹 TOP BAR */}
+    <View style={styles.topBar}>
+      <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+        <Text style={styles.menuIcon}>☰</Text>
+      </TouchableOpacity>
+  
+      {/* 🔹 Make "מורה" Navigate to Profile Page */}
+      <TouchableOpacity onPress={() => router.push("/UserProfile")}>
+        <Text style={styles.username}>👤 פרופיל משתמש </Text>
+      </TouchableOpacity>
+  
+      <Text style={styles.dateTime}>{currentTime}</Text>
+    </View>
+  
 
-      {/* 🔹 SIDEBAR MENU */}
+     
 {/* 🔹 SIDEBAR MENU */}
 <Modal visible={sidebarVisible} animationType="slide" transparent>
   <View style={styles.sidebar}>
