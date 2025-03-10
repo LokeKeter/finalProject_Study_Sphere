@@ -194,17 +194,15 @@ export default function Dashboard() {
   );
 }
 
-// 🎨 **STYLES**
+// 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
-  content: { padding: 20 },
-
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
   topBar: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 85,
+    height: 80,
     backgroundColor: "black",
     flexDirection: "row",
     alignItems: "center",
@@ -221,19 +219,20 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderBottomWidth: 1, 
     borderBottomColor: "#fff", 
-    paddingHorizontal: 10, // מרווח פנימי מהצדדים
+    paddingHorizontal: 5, // מרווח פנימי מהצדדים
   },
-  menuButton: { padding: 10 },
+  menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
   username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
-  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 30 },
+  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
   sidebarUser: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    marginTop: 15, 
   },
   
   closeButton: {
@@ -244,20 +243,39 @@ const styles = StyleSheet.create({
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
-  /* 🔹 עיצוב ה-SIDEBAR */
-  sidebar: { 
-    position: "absolute", 
-    left: 0, 
-    width: 250, 
-    height: "100%", 
-    backgroundColor: "black", 
-    padding: 30, 
-    zIndex: 20 // ✅ ה-SIDEBAR תמיד מעל התוכן
-  },
 
-  sidebarItem: { paddingVertical: 15 },
-  sidebarText: { color: "white", fontSize: 18 },
-  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
+  
+  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
+  headerText: { fontSize: 18, fontWeight: "bold" },
+  arrow: { fontSize: 22, paddingHorizontal: 10 },
+  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
+  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
+  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
+
+  tableRow: {
+    flexDirection: "row", // ✅ סידור שורות לרוחב
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  cell: { flex: 1, textAlign: "center" },
+
+  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
+
+  updateButton: {
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  updateButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
 
   // 🔹 INFO CARDS (3 PER ROW)
   statsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },

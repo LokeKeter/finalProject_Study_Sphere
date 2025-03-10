@@ -231,31 +231,86 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       textAlign: "center" // ✅ Keep button text centered
     },
+  container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
+  topBar: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    backgroundColor: "black",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingTop: 30,
+  },
+
+  sidebarHeader: {
+    flexDirection: "row", 
+    justifyContent: "space-between", // מרווח בין שם המשתמש לכפתור הסגירה
+    alignItems: "center",
+    width: "100%",
+    paddingBottom: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: "#fff", 
+    paddingHorizontal: 5, // מרווח פנימי מהצדדים
+  },
+  menuButton: { padding: 4 },
+  menuIcon: { color: "white", fontSize: 26 },
+  username: { color: "white", fontSize: 18, fontWeight: "bold" },
+  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
+
+  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
+  sidebarUser: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 15, 
+  },
   
-    // 🔹 TOP BAR
-    topBar: {
-      height: 115,
-      backgroundColor: "black",
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
-      paddingHorizontal: 15,
-      paddingTop: 55,
-    },
-    menuButton: { padding: 10 },
-    menuIcon: { color: "white", fontSize: 26 },
-    username: { color: "white", fontSize: 18, fontWeight: "bold" },
-    dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
+  closeButton: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  sidebarItem: { paddingVertical: 15 },
+  sidebarText: { color: "white", fontSize: 18 },
+
+
   
-    // 🔹 SIDEBAR
-    sidebar: { 
-      position: "absolute", 
-      left: -45, 
-      width: 225, 
-      height: "100%", 
-      backgroundColor: "black", 
-      padding: 60 
-    },
+  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
+  headerText: { fontSize: 18, fontWeight: "bold" },
+  arrow: { fontSize: 22, paddingHorizontal: 10 },
+  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
+  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
+  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
+
+  tableRow: {
+    flexDirection: "row", // ✅ סידור שורות לרוחב
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  cell: { flex: 1, textAlign: "center" },
+
+  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
+
+  updateButton: {
+    backgroundColor: "black",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  updateButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
     closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
     sidebarItem: { paddingVertical: 15 },
     sidebarText: { color: "white", fontSize: 18 },
