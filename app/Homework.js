@@ -68,6 +68,10 @@ const HomeworkScreen = () => {
     );
   };
   
+  const handleUpdate = () => {
+    console.log("🔥 נתונים עודכנו!");
+    // כאן בעתיד אפשר לשלוח לשרת או לבצע עדכון מסוים
+  };
   
 
   return (
@@ -86,7 +90,10 @@ const HomeworkScreen = () => {
             <View style={styles.modalBackground}>
               <View style={styles.sidebar}>
                 <View style={styles.sidebarHeader}>
-                  <Text style={styles.sidebarUser}>👤 מורה</Text>
+                  <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
+                    <Text style={styles.sidebarUser}>👤 מורה</Text>
+                  </TouchableOpacity>
+
                   <TouchableOpacity onPress={() => setSidebarVisible(false)}>
                     <Text style={styles.closeButton}>✖</Text>
                   </TouchableOpacity>
@@ -152,38 +159,44 @@ const HomeworkScreen = () => {
 
       {/* 🔹 טבלה */}
       <ScrollView>
-      <View style={styles.table}>
-  <View style={styles.tableHeader}>
-    <Text style={styles.headerCell}>שם הורה</Text>
-    <Text style={styles.headerCell}>שם תלמיד</Text>
-    <Text style={styles.headerCell}>שיעורי בית</Text>
-    <Text style={styles.headerCell}>נוכחות</Text>
-  </View>
-
-  {filteredStudents.map((student) => (
-    <View key={student.id} style={styles.tableRow}>
-          <Text style={styles.cell}>{student.parentName}</Text>
-          <Text style={styles.cell}>{student.studentName}</Text>
-          
-          <View style={styles.switchContainer}>
-            <Switch
-              value={student.homework}
-              onValueChange={() => toggleCheckbox(student.id, "homework")}
-            />
-          </View>
-
-          <View style={styles.switchContainer}>
-            <Switch
-              value={student.attendance}
-              onValueChange={() => toggleCheckbox(student.id, "attendance")}
-            />
-          </View>
+        <View style={styles.table}>
+        <View style={styles.tableHeader}>
+          <Text style={styles.headerCell}>שם הורה</Text>
+          <Text style={styles.headerCell}>שם תלמיד</Text>
+          <Text style={styles.headerCell}>שיעורי בית</Text>
+          <Text style={styles.headerCell}>נוכחות</Text>
         </View>
-      ))}
-    </View>
 
+        {filteredStudents.map((student) => (
+              <View key={student.id} style={styles.tableRow}>
+                <Text style={styles.cell}>{student.parentName}</Text>
+                <Text style={styles.cell}>{student.studentName}</Text>
+                
+                <View style={styles.switchContainer}>
+                  <Switch
+                    value={student.homework}
+                    onValueChange={() => toggleCheckbox(student.id, "homework")}
+                  />
+                </View>
+
+                <View style={styles.switchContainer}>
+                  <Switch
+                    value={student.attendance}
+                    onValueChange={() => toggleCheckbox(student.id, "attendance")}
+                  />
+                </View>
+              </View>
+              
+            ))}
+          </View>
+        {/* 🔹 כפתור "עדכון" */}
+      <TouchableOpacity style={styles.updateButton} onPress={handleUpdate}>
+          <Text style={styles.updateButtonText}>🔄 עדכון</Text>
+        </TouchableOpacity>
 
       </ScrollView>
+      
+
     </View>
   );
 };
@@ -196,7 +209,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 85,
+    height: 70,
     backgroundColor: "black",
     flexDirection: "row",
     alignItems: "center",
@@ -213,9 +226,9 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderBottomWidth: 1, 
     borderBottomColor: "#fff", 
-    paddingHorizontal: 10, // מרווח פנימי מהצדדים
+    paddingHorizontal: 5, // מרווח פנימי מהצדדים
   },
-  menuButton: { padding: 10 },
+  menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
   username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
@@ -226,6 +239,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    marginTop: 15, 
   },
   
   closeButton: {
@@ -255,6 +269,21 @@ const styles = StyleSheet.create({
   cell: { flex: 1, textAlign: "center" },
 
   switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
+
+  updateButton: {
+    backgroundColor: "#007AFF",
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginHorizontal: 20,
+    marginTop: 20,
+  },
+  updateButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  
 });
 
 export default HomeworkScreen;
