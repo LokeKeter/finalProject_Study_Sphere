@@ -6,179 +6,222 @@ import {
   StyleSheet,
   Alert,
   Modal,
+  TextInput,
+  FlatList,
 } from "react-native";
-import { Picker } from "@react-native-picker/picker";
-import { useNavigation } from "@react-navigation/native"; // ✅ Use React Navigation
 import { useRouter } from "expo-router";
 
-
 const classesData = [
-  { id: "1", name: "כיתה א'", subjects: ["מתמטיקה", "אנגלית", "עברית"], hasHomework: false },
-  { id: "2", name: "כיתה ב'", subjects: ["מתמטיקה", "מדעים", "היסטוריה"], hasHomework: false },
-  { id: "3", name: "כיתה ג'", subjects: ["אנגלית", "מדעים", "גיאוגרפיה"], hasHomework: false },
+  { id: "1", name: "כיתה א'", subjects: ["מתמטיקה", "אנגלית", "עברית"] },
+  { id: "2", name: "כיתה ב'", subjects: ["מתמטיקה", "מדעים", "היסטוריה"] },
+  { id: "3", name: "כיתה ג'", subjects: ["אנגלית", "מדעים", "גיאוגרפיה"] },
 ];
 
 const ClassesScreen = () => {
   const router = useRouter();
-
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
-  const [selectedSubject, setSelectedSubject] = useState(null);
-  const [homeworkStatus, setHomeworkStatus] = useState(null);
+  const [homeworkList, setHomeworkList] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [newHomework, setNewHomework] = useState("");
   const [currentTime, setCurrentTime] = useState("");
 
+  // ✅ Added missing states for message input and modal visibility
+  const [messageText, setMessageText] = useState(""); 
+  const [messageModalVisible, setMessageModalVisible] = useState(false); 
 
-
-  // ⏳ ✅ Update `currentTime` every second
+  // 🔹 Update current time every second
   useEffect(() => {
     const interval = setInterval(() => {
-      const now = new Date();
-      setCurrentTime(now.toLocaleTimeString("he-IL", { hour12: false })); // ✅ Hebrew time format
+      setCurrentTime(new Date().toLocaleTimeString("he-IL", { hour12: false }));
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  // שינוי הכיתה שנבחרה
-  const handleClassChange = (classId) => {
-    const classObj = classesData.find((c) => c.id === classId);
-    if (classObj) {
-      setSelectedClass(classObj);
-      setSelectedSubject(null);
-      setHomeworkStatus(classObj.hasHomework);
-    }
+  // 🔹 Select a class and load homework
+  const handleClassSelect = (classObj) => {
+    setSelectedClass(classObj);
+    setHomeworkList([]);
   };
 
-  // שינוי המקצוע שנבחר
-  const handleSubjectChange = (subject) => {
-    setSelectedSubject(subject);
+  // 🔹 Add new homework
+  const addHomework = () => {
+    if (!newHomework.trim()) return;
+    setHomeworkList([...homeworkList, { id: Date.now().toString(), text: newHomework, completed: false }]);
+    setNewHomework("");
   };
 
-  // ביצוע פעולה (שליחת/מחיקת שיעורי בית או שליחת הודעה)
-  const handleAction = (action) => {
-    if (!selectedClass || !selectedSubject) {
-      Alert.alert("שגיאה", "אנא בחר כיתה ומקצוע לפני ביצוע פעולה.");
+  // 🔹 Toggle homework completion
+  const toggleHomeworkCompletion = (id) => {
+    setHomeworkList((prev) =>
+      prev.map((hw) => (hw.id === id ? { ...hw, completed: !hw.completed } : hw))
+    );
+  };
+
+  // 🔹 Delete homework with confirmation
+  const deleteHomework = (id) => {
+    Alert.alert("אישור מחיקה", "האם אתה בטוח שברצונך למחוק את שיעורי הבית?", [
+      { text: "ביטול", style: "cancel" },
+      {
+        text: "מחק",
+        onPress: () => {
+          setHomeworkList((prev) => prev.filter((hw) => hw.id !== id));
+        },
+      },
+    ]);
+  };
+
+  // ✅ Function to send message
+  const sendMessage = () => {
+    if (!messageText.trim()) {
+      Alert.alert("שגיאה", "לא ניתן לשלוח הודעה ריקה.");
       return;
     }
 
-    let message = "";
-    switch (action) {
-      case "assign":
-        setHomeworkStatus(true);
-        message = `✅ שיעורי בית נשלחו למקצוע ${selectedSubject} בכיתה ${selectedClass.name}!`;
-        break;
-      case "delete":
-        setHomeworkStatus(false);
-        message = `🗑️ שיעורי הבית נמחקו עבור מקצוע ${selectedSubject} בכיתה ${selectedClass.name}!`;
-        break;
-      case "message":
-        message = `📢 הודעה נשלחה לכיתה ${selectedClass.name} עבור מקצוע ${selectedSubject}!`;
-        break;
-      default:
-        break;
-    }
-
-    Alert.alert("הצלחה", message);
+    Alert.alert("📢 הודעה נשלחה!", `הודעה נשלחה לכיתה ${selectedClass?.name}: \n\n"${messageText}"`);
+    setMessageText(""); // ✅ Clear input after sending
+    setMessageModalVisible(false); // ✅ Close modal after sending
   };
 
   return (
     <View style={styles.container}>
-      {/* 🔹 TOP BAR */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.username}>👤 מורה</Text>
-        <Text style={styles.dateTime}>{currentTime}</Text> {/* ✅ Now it works */}
-      </View>
+         {/* 🔹 TOP BAR */}
+                    <View style={styles.topBar}>
+                      <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+                        <Text style={styles.menuIcon}>☰</Text>
+                      </TouchableOpacity>
+                      <Text style={styles.dateTime}>{currentTime}</Text>
+                    </View>
+              
+                    {/* 🔹 SIDEBAR MENU */}
+                    <Modal visible={sidebarVisible} animationType="slide" transparent>
+                      <View style={styles.modalBackground}>
+                        <View style={styles.sidebar}>
+                          <View style={styles.sidebarHeader}>
+                            <Text style={styles.sidebarUser}>👤 מורה</Text>
+                            <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+                              <Text style={styles.closeButton}>✖</Text>
+                            </TouchableOpacity>
+                          </View>
+              
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>📊 כללי</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+                          </TouchableOpacity>
+    
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
+                                <Text style={styles.sidebarText}>🏫 כיתות</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>📁 ארכיון</Text>
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+                          </TouchableOpacity>
+                        </View>
+                      </View>
+                    </Modal>
 
-{/* 🔹 SIDEBAR MENU */}
-<Modal visible={sidebarVisible} animationType="slide" transparent>
-  <View style={styles.sidebar}>
-    <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-      <Text style={styles.closeButton}>✖ סגור</Text>
-    </TouchableOpacity>
+      {/* 🔹 SEARCH & CLASS SELECTION */}
+      <Text style={styles.title}>בחר כיתה</Text>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="🔍 חפש כיתה..."
+        value={searchQuery}
+        onChangeText={setSearchQuery}
+      />
 
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>📊 כללי</Text>
-    </TouchableOpacity>
+      {/* 🔹 CLASS INFOCARDS */}
+      <FlatList
+        data={classesData}
+        keyExtractor={(item) => item.id}
+        numColumns={2}
+        renderItem={({ item }) => (
+          <TouchableOpacity style={styles.classCard} onPress={() => handleClassSelect(item)}>
+            <Text style={styles.className}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
+      />
 
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>🏫 כיתות</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>📁 ארכיון</Text>
-    </TouchableOpacity>
-
-    <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-      <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-    </TouchableOpacity>
-  </View>
-</Modal>
-
-      {/* 🔹 MAIN CONTENT */}
-      <Text style={styles.title}>ניהול שיעורי בית</Text>
-
-      {/* 🔹 Dropdown לבחירת כיתה */}
-      <Text style={styles.label}>בחר כיתה:</Text>
-      <Picker
-        selectedValue={selectedClass?.id || null}
-        onValueChange={(itemValue) => handleClassChange(itemValue)}
-        style={styles.picker}
-      >
-        <Picker.Item label="בחר כיתה..." value={null} />
-        {classesData.map((classItem) => (
-          <Picker.Item key={classItem.id} label={classItem.name} value={classItem.id} />
-        ))}
-      </Picker>
-
-      {/* 🔹 Dropdown לבחירת מקצוע */}
+      {/* 🔹 HOMEWORK SECTION */}
       {selectedClass && (
         <>
-          <Text style={styles.label}>בחר מקצוע:</Text>
-          <Picker
-            selectedValue={selectedSubject}
-            onValueChange={(itemValue) => handleSubjectChange(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="בחר מקצוע..." value={null} />
-            {selectedClass.subjects.map((subject, index) => (
-              <Picker.Item key={index} label={subject} value={subject} />
-            ))}
-          </Picker>
-        </>
-      )}
+          <Text style={styles.title}>שיעורי בית ל{selectedClass.name}</Text>
+          <TextInput
+            style={styles.homeworkInput}
+            placeholder="📚 הוסף שיעורי בית..."
+            value={newHomework}
+            onChangeText={setNewHomework}
+          />
+          <TouchableOpacity style={styles.addButton} onPress={addHomework}>
+            <Text style={styles.addButtonText}>➕ הוסף</Text>
+          </TouchableOpacity>
 
-      {/* 🔹 כפתורי פעולות */}
-      {selectedSubject && (
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.actionButton} onPress={() => handleAction("assign")}>
-            <Text style={styles.actionButtonText}>📚 שליחת שיעורי בית</Text>
+          {/* 🔹 HOMEWORK LIST */}
+          <FlatList
+            data={homeworkList}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={[styles.homeworkItem, item.completed && styles.completedHomework]}
+                onPress={() => toggleHomeworkCompletion(item.id)}
+              >
+                <Text style={styles.homeworkText}>{item.text}</Text>
+                <TouchableOpacity onPress={() => deleteHomework(item.id)}>
+                  <Text style={styles.deleteIcon}>🗑️</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            )}
+          />
+
+          {/* ✅ BUTTON FOR OPENING MESSAGE MODAL */}
+          <TouchableOpacity style={styles.messageButton} onPress={() => setMessageModalVisible(true)}>
+            <Text style={styles.messageButtonText}>📢 שליחת הודעה</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.deleteButton} onPress={() => handleAction("delete")}>
-            <Text style={styles.actionButtonText}>🗑️ מחיקת שיעורי בית</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.messageButton} onPress={() => handleAction("message")}>
-            <Text style={styles.actionButtonText}>📢 שליחת הודעה לכיתה</Text>
-          </TouchableOpacity>
-        </View>
+
+          {/* ✅ MODAL FOR SENDING MESSAGE */}
+          <Modal visible={messageModalVisible} animationType="slide" transparent>
+            <View style={styles.modalContainer}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>📩 שליחת הודעה לכיתה {selectedClass?.name}</Text>
+                <TextInput
+                  style={styles.messageInput}
+                  placeholder="💬 הקלד הודעה לכיתה..."
+                  value={messageText}
+                  onChangeText={setMessageText}
+                  multiline
+                />
+                <View style={styles.modalButtons}>
+                  <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+                    <Text style={styles.sendButtonText}>📨 שלח</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.cancelButton} onPress={() => setMessageModalVisible(false)}>
+                    <Text style={styles.cancelButtonText}>❌ בטל</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        </>
       )}
     </View>
   );
 };
-
 // 🎨 **STYLES**
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4", paddingTop: 85 },
+  content: { padding: 20 },
+
+  container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
   topBar: {
     position: "absolute",
     top: 0,
@@ -192,15 +235,144 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 30,
   },
+
+  sidebarHeader: {
+    flexDirection: "row", 
+    justifyContent: "space-between", // מרווח בין שם המשתמש לכפתור הסגירה
+    alignItems: "center",
+    width: "100%",
+    paddingBottom: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: "#fff", 
+    paddingHorizontal: 10, // מרווח פנימי מהצדדים
+  },
   menuButton: { padding: 10 },
   menuIcon: { color: "white", fontSize: 26 },
   username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
-    // 🔹 SIDEBAR
-    sidebar: { position: "absolute", left: -45, width: 225, height: "100%", backgroundColor: "black", padding: 60 },
-    closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
-    sidebarItem: { paddingVertical: 15 },
-    sidebarText: { color: "white", fontSize: 18 },
+
+  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 30 },
+  sidebarUser: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  
+  closeButton: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  sidebarItem: { paddingVertical: 15 },
+  sidebarText: { color: "white", fontSize: 18 },
+
+  /* 🔹 עיצוב ה-SIDEBAR */
+  sidebar: { 
+    position: "absolute", 
+    left: 0, 
+    width: 250, 
+    height: "100%", 
+    backgroundColor: "black", 
+    padding: 30, 
+    zIndex: 20 // ✅ ה-SIDEBAR תמיד מעל התוכן
+  },
+
+  sidebarItem: { paddingVertical: 15 },
+  sidebarText: { color: "white", fontSize: 18 },
+  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
+
+  // 🔹 CLASSES
+  title: { fontSize: 22, fontWeight: "bold", marginVertical: 10 },
+  searchInput: { padding: 10, borderWidth: 1, borderRadius: 5, marginBottom: 10 },
+  classCard: { flex: 1, margin: 5, padding: 20, backgroundColor: "lightblue", alignItems: "center", borderRadius: 10 },
+  className: { fontSize: 18, fontWeight: "bold" },
+
+  // 🔹 HOMEWORK
+  homeworkInput: { padding: 10, borderWidth: 1, borderRadius: 5, marginBottom: 10 },
+  addButton: { backgroundColor: "black", padding: 10, borderRadius: 5 },
+  addButtonText: { color: "white", textAlign: "center" },
+  homeworkItem: { flexDirection: "row", justifyContent: "space-between", padding: 10, backgroundColor: "white", marginVertical: 5 },
+  completedHomework: { backgroundColor: "lightgreen" },
+  deleteIcon: { color: "red" },
+
+
+    // ✅ NEW STYLE FOR "SEND MESSAGE" BUTTON
+  messageButton: {
+    backgroundColor: "black",
+    padding: 15,
+    borderRadius: 5,
+    marginTop: 15,
+  },
+  messageButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  // ✅ MODAL STYLES
+modalContainer: { 
+  flex: 1, 
+  justifyContent: "center", 
+  alignItems: "center", 
+  backgroundColor: "rgba(0,0,0,0.5)" 
+},
+modalContent: { 
+  width: "80%", 
+  backgroundColor: "#FFF", 
+  padding: 20, 
+  borderRadius: 10 
+},
+modalTitle: { 
+  fontSize: 18, 
+  fontWeight: "bold", 
+  marginBottom: 10, 
+  textAlign: "center" 
+},
+messageInput: { 
+  height: 100, 
+  borderWidth: 1, 
+  borderColor: "#ddd", 
+  padding: 10, 
+  borderRadius: 5, 
+  marginBottom: 10, 
+  textAlignVertical: "top" 
+},
+modalButtons: { 
+  flexDirection: "row", 
+  justifyContent: "space-between" 
+},
+
+// ✅ BUTTONS
+sendButton: { 
+  backgroundColor: "green", 
+  padding: 10, 
+  borderRadius: 5, 
+  flex: 1, 
+  marginRight: 5 
+},
+sendButtonText: { 
+  color: "white", 
+  textAlign: "center", 
+  fontWeight: "bold" 
+},
+cancelButton: { 
+  backgroundColor: "red", 
+  padding: 10, 
+  borderRadius: 5, 
+  flex: 1, 
+  marginLeft: 5 
+},
+cancelButtonText: { 
+  color: "white", 
+  textAlign: "center", 
+  fontWeight: "bold" 
+},
+
+
+
 });
+
+
 
 export default ClassesScreen;
