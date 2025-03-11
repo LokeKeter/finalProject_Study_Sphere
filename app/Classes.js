@@ -98,7 +98,10 @@ const ClassesScreen = () => {
                       <View style={styles.modalBackground}>
                         <View style={styles.sidebar}>
                           <View style={styles.sidebarHeader}>
-                            <Text style={styles.sidebarUser}>👤 מורה</Text>
+                            <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
+                              <Text style={styles.sidebarUser}>👤 מורה</Text>
+                            </TouchableOpacity>
+                            
                             <TouchableOpacity onPress={() => setSidebarVisible(false)}>
                               <Text style={styles.closeButton}>✖</Text>
                             </TouchableOpacity>

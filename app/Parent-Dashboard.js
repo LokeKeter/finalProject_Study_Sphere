@@ -23,10 +23,6 @@ const stats = [
   { id: "5", title: "פגישות", value: "2", icon: "📅" },
 ];
 
-const initialTasks = [
-  { id: "1", title: "בדיקת שיעורי בית" },
-  { id: "2", title: "הכנת מערך שיעור למתמטיקה" },
-];
 
 export default function Dashboard() {
     const router = useRouter();  // ✅ Move inside function
@@ -41,7 +37,6 @@ export default function Dashboard() {
       }));
     };
     
-  const [tasks, setTasks] = useState(initialTasks);
   const [newTask, setNewTask] = useState("");
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
@@ -64,15 +59,6 @@ export default function Dashboard() {
     });
   }
 
-  const addTask = () => {
-    if (!newTask.trim()) return;
-    setTasks([...tasks, { id: String(tasks.length + 1), title: newTask }]);
-    setNewTask("");
-  };
-
-  const removeTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-  };
 
   return (
     <View style={styles.container}>
@@ -90,10 +76,7 @@ export default function Dashboard() {
                       <View style={styles.modalBackground}>
                         <View style={styles.sidebar}>
                           <View style={styles.sidebarHeader}>
-                            <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                              <Text style={styles.sidebarUser}>👤 מורה</Text>
-                            </TouchableOpacity>
-
+                            <Text style={styles.sidebarUser}>👤 הורה</Text>
                             <TouchableOpacity onPress={() => setSidebarVisible(false)}>
                               <Text style={styles.closeButton}>✖</Text>
                             </TouchableOpacity>
@@ -107,10 +90,6 @@ export default function Dashboard() {
                           <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
                           </TouchableOpacity>
-    
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-                                <Text style={styles.sidebarText}>🏫 כיתות</Text>
-                          </TouchableOpacity>
               
                           <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
@@ -118,10 +97,6 @@ export default function Dashboard() {
               
                           <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>📁 ארכיון</Text>
-                          </TouchableOpacity>
-
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Dashboard"); setSidebarVisible(false); }}>
-                            <Text style={styles.sidebarText}>📁 hore</Text>
                           </TouchableOpacity>
               
                           <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
@@ -162,54 +137,28 @@ export default function Dashboard() {
             accessor="population"
             backgroundColor="transparent"
           />
-          {/* Labels Under Pie Chart */}
-          <View style={styles.pieChartLabels}>
-            <Text style={{ color: "#0A2540", fontWeight: "bold" }}>🔵 נוכחים</Text>
-            <Text style={{ color: "#B0B0B0", fontWeight: "bold" }}>⚪ נעדרים</Text>
-          </View>
+          
         </View>
-
-        {/* ✅ TEACHER TASKS UNDER PIE CHART */}
-        <View style={[styles.section, styles.tasksSection]}>
-          <Text style={styles.sectionTitle}>📝 משימות למורה</Text>
-          {tasks.map((task) => (
-  <TouchableOpacity 
-    key={task.id} 
-    style={[styles.task, completedTasks[task.id] && styles.completedTask]} 
-    onPress={() => toggleTaskCompletion(task.id)} // ✅ Mark as completed
-  >
-    <Text style={styles.taskText}>{task.title}</Text>
-    <TouchableOpacity onPress={() => removeTask(task.id)}>
-      <Text style={styles.deleteIcon}>❌</Text>
-    </TouchableOpacity>
-  </TouchableOpacity>
-))}
-
-          <TextInput
-            value={newTask}
-            onChangeText={setNewTask}
-            placeholder="הוסף משימה..."
-            style={styles.input}
-            placeholderTextColor="black"
-          />
-          <TouchableOpacity onPress={addTask} style={styles.addButton}>
-            <Text style={{ color: "black" }}>➕ הוסף</Text>
-          </TouchableOpacity>
-        </View>
+           {/* 🔥 הוספת משפט מוטיבציה מתחת לגרף */}
+            <Text style={styles.motivationText}>
+                "למידה היא המפתח להצלחה! המשיכו כך! 🚀"
+            </Text>
       </ScrollView>
     </View>
   );
 }
 
-// 🎨 **עיצוב הדף**
+// 🎨 **STYLES**
 const styles = StyleSheet.create({
+  content: { padding: 20 },
+
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
   topBar: {
     position: "absolute",
     top: 0,
     left: 0,
     right: 0,
-    height: 80,
+    height: 85,
     backgroundColor: "black",
     flexDirection: "row",
     alignItems: "center",
@@ -226,20 +175,19 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderBottomWidth: 1, 
     borderBottomColor: "#fff", 
-    paddingHorizontal: 5, // מרווח פנימי מהצדדים
+    paddingHorizontal: 10, // מרווח פנימי מהצדדים
   },
-  menuButton: { padding: 4 },
+  menuButton: { padding: 10 },
   menuIcon: { color: "white", fontSize: 26 },
   username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
-  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
+  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 30 },
   sidebarUser: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 15, 
   },
   
   closeButton: {
@@ -250,39 +198,20 @@ const styles = StyleSheet.create({
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
-
-  
-  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
-  headerText: { fontSize: 18, fontWeight: "bold" },
-  arrow: { fontSize: 22, paddingHorizontal: 10 },
-  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
-  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
-
-  tableRow: {
-    flexDirection: "row", // ✅ סידור שורות לרוחב
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    paddingVertical: 10,
-    alignItems: "center",
+  /* 🔹 עיצוב ה-SIDEBAR */
+  sidebar: { 
+    position: "absolute", 
+    left: 0, 
+    width: 250, 
+    height: "100%", 
+    backgroundColor: "black", 
+    padding: 30, 
+    zIndex: 20 // ✅ ה-SIDEBAR תמיד מעל התוכן
   },
-  cell: { flex: 1, textAlign: "center" },
 
-  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
-
-  updateButton: {
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  updateButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
+  sidebarItem: { paddingVertical: 15 },
+  sidebarText: { color: "white", fontSize: 18 },
+  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
 
   // 🔹 INFO CARDS (3 PER ROW)
   statsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
@@ -292,14 +221,14 @@ const styles = StyleSheet.create({
   section: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginTop: 20 },
   pieChartLabels: { flexDirection: "row", justifyContent: "space-around", marginTop: 10 },
 
-  // 🔹 TASKS
-  tasksSection: { marginTop: 20 },
-  task: { flexDirection: "row", justifyContent: "space-between", padding: 10, marginVertical: 5, backgroundColor: "#f8d7da" },
-  completedTask: { 
-    backgroundColor: "#b2f2bb", // ✅ Green when completed
+  //motivation text
+  motivationText: {
+    marginTop: 15, 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    color: "#2C3E50", 
+    textAlign: "center",
+    fontStyle: "italic",
   },
-  taskText: { flex: 1 }, // Ensure text takes space
   
-
-
 });
