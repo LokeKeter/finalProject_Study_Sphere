@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,8 +6,11 @@ import {
   StyleSheet,
   TextInput,
   Modal,
+  Switch,  // ✅ Add this line
 } from "react-native";
+import * as DocumentPicker from "expo-document-picker";
 import { useRouter } from "expo-router";
+import React, { useState, useEffect } from "react";  // ✅ Add `useState`
 
 const classesData = ["כיתה א'", "כיתה ב'", "כיתה ג'"];
 
@@ -46,7 +48,55 @@ const ContactsScreen = () => {
     (parent) =>
       parent.classId === classesData[selectedClassIndex] &&
       (parent.parentName.includes(searchQuery) || parent.studentName.includes(searchQuery))
+
+      
   );
+  const [isSignatureModalVisible, setSignatureModalVisible] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [parentName, setParentName] = useState("");
+  const [fileDescription, setFileDescription] = useState("");
+  const [uploadDate, setUploadDate] = useState(new Date().toLocaleDateString());
+
+  const [isMeetingModalVisible, setMeetingModalVisible] = useState(false);
+
+  const [meetingType, setMeetingType] = useState("פרונטלי"); // Default to פרונטלי
+  const [isLetterModalVisible, setLetterModalVisible] = useState(false);
+  const [letterSubject, setLetterSubject] = useState("");
+  const [letterContent, setLetterContent] = useState("");
+
+
+  const pickFile = async () => {
+    try {
+      let result = await DocumentPicker.getDocumentAsync({
+        type: ["application/pdf", "application/msword", "image/jpeg"],
+      });
+  
+      if (result.type === "cancel") return; // If user cancels, do nothing
+  
+      if (result.size > 10 * 1024 * 1024) { // 10MB limit
+        Alert.alert("❌ קובץ גדול מדי", "הקובץ חייב להיות קטן מ-10MB.");
+        return;
+      }
+  
+      setSelectedFile(result);
+    } catch (err) {
+      console.error("File picking error: ", err);
+    }
+  };
+  
+
+const sendFile = () => {
+  if (!selectedFile || !parentName.trim() || !fileDescription.trim()) {
+    Alert.alert("❌ שגיאה", "נא למלא את כל השדות ולהעלות קובץ.");
+    return;
+  }
+
+  Alert.alert("✅ הצלחה", `הקובץ ${selectedFile.name} נשלח בהצלחה אל ${parentName}!`);
+  setSignatureModalVisible(false);
+};
+
+  
+  
 
   return (
     <View style={styles.container}>
@@ -139,26 +189,199 @@ const ContactsScreen = () => {
               <Text style={styles.cell}>{parent.studentName}</Text>
 
               {/* 🔹 פעולות */}
-              <View style={styles.actionsContainer}>
-                <TouchableOpacity style={styles.actionButton}>
-                  <Text style={styles.actionText}>✉️</Text>
+              <View style={{ flexDirection: "row", gap: 0, padding: 0, margin: 0 }}>
+              <TouchableOpacity onPress={() => setSignatureModalVisible(true)}>
+                <Text style={styles.actionText}>📝</Text> {/* Upload Icon */}
+              </TouchableOpacity>
+
+               <TouchableOpacity onPress={() => setLetterModalVisible(true)}>
+                <Text style={styles.actionText}>✉️</Text> {/* You can change the icon */}
+              </TouchableOpacity>
+              <TouchableOpacity 
+                style={styles.actionButton} 
+                onPress={() => setMeetingModalVisible(true)} // ✅ Open Popup
+                >
+                  <Text style={styles.actionIcon}>📅</Text>
                 </TouchableOpacity>
+
                 <TouchableOpacity style={styles.actionButton}>
-                  <Text style={styles.actionText}>📝</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
-                  <Text style={styles.actionText}>📅</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.actionButton}>
-                  <Text style={styles.actionText}>❌</Text>
+                  <Text style={styles.actionIcon}>❌</Text>
                 </TouchableOpacity>
               </View>
             </View>
           ))}
+          <Modal visible={isMeetingModalVisible} transparent animationType="slide">
+  <View style={styles.overlay}>
+    <View style={styles.popup}>
+      {/* 🔹 Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>פגישה</Text>
+        <TouchableOpacity onPress={() => setMeetingModalVisible(false)}>
+          <Text style={styles.closeButton}>✖</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 🔹 Description Input */}
+      <TextInput style={styles.inputLarge} placeholder="נושא" />
+
+      {/* 🔹 Date Picker */}
+      <TextInput style={styles.input} placeholder="תאריך ושעה" />
+
+      {/* 🔹 Participants Input */}
+      <TextInput style={styles.input} placeholder="בחר משתתפים" />
+
+      <View style={styles.checkboxContainer}>
+  <TouchableOpacity 
+    style={[styles.checkbox, meetingType === "פרונטלי" && styles.selectedCheckbox]}
+    onPress={() => setMeetingType("פרונטלי")}
+  >
+    <Text style={[styles.checkboxText, meetingType === "פרונטלי" && styles.selectedText]}>פרונטלי</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity 
+    style={[styles.checkbox, meetingType === "זום" && styles.selectedCheckbox]}
+    onPress={() => setMeetingType("זום")}
+  >
+    <Text style={[styles.checkboxText, meetingType === "זום" && styles.selectedText]}>זום</Text>
+  </TouchableOpacity>
+</View>
+
+
+      {/* 🔹 Buttons */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.cancelButton} onPress={() => setMeetingModalVisible(false)}>
+          <Text style={styles.cancelButtonText}>ביטול</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sendButton}>
+          <Text style={styles.sendButtonText}>שלח</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+<Modal visible={isLetterModalVisible} transparent animationType="slide">
+  <View style={styles.overlay}>
+    <View style={styles.popup}>
+      {/* 🔹 Header */}
+      <View style={styles.header}>
+        <View style={styles.titleContainer}>
+          <View style={styles.iconBox}>
+            <Text style={styles.icon}>✉️</Text>
+          </View>
+          <Text style={styles.title}>מכתב להורים</Text>
+        </View>
+        <TouchableOpacity onPress={() => setLetterModalVisible(false)}>
+          <Text style={styles.closeButton}>✖</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 🔹 Subject Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="📌 נושא המכתב"
+        value={letterSubject}
+        onChangeText={setLetterSubject}
+      />
+
+      {/* 🔹 Letter Content */}
+      <TextInput
+        style={styles.textArea}
+        placeholder="✍️ תוכן המכתב..."
+        value={letterContent}
+        onChangeText={setLetterContent}
+        multiline
+      />
+
+      {/* 🔹 Buttons */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => setLetterModalVisible(false)}
+        >
+          <Text style={styles.cancelButtonText}>ביטול</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sendButton} onPress={() => {
+          if (!letterSubject.trim() || !letterContent.trim()) {
+            Alert.alert("❌ שגיאה", "יש למלא את כל השדות לפני השליחה.");
+            return;
+          }
+          Alert.alert("✅ הצלחה", "המכתב נשלח בהצלחה!");
+          setLetterModalVisible(false);
+        }}>
+          <Text style={styles.sendButtonText}>📨 שלח</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+<Modal visible={isSignatureModalVisible} transparent animationType="slide">
+  <View style={styles.overlay}>
+    <View style={styles.popup}>
+      
+      {/* 🔹 Header */}
+      <View style={styles.header}>
+        <View style={styles.titleContainer}>
+          <View style={styles.iconBox}>
+            <Text style={styles.icon}>📤</Text>
+          </View>
+          <Text style={styles.title}>אישור לחתימה</Text>
+        </View>
+        <TouchableOpacity onPress={() => setSignatureModalVisible(false)}>
+          <Text style={styles.closeButton}>✖</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* 🔹 File Upload */}
+      <TouchableOpacity style={styles.uploadArea} onPress={() => pickFile()}>
+  <Text style={styles.uploadText}>
+    {selectedFile ? `📎 ${selectedFile.name}` : "📂 העלה קובץ (PDF, DOC, JPG)"}
+  </Text>
+</TouchableOpacity>
+
+
+      {/* 🔹 Parent Selection */}
+      <TextInput
+        style={styles.input}
+        placeholder="👤 הורה מקבל"
+        value={parentName}
+        onChangeText={setParentName}
+      />
+
+      {/* 🔹 File Description */}
+      <TextInput
+        style={styles.textArea}
+        placeholder="📝 תיאור הקובץ..."
+        value={fileDescription}
+        onChangeText={setFileDescription}
+        multiline
+      />
+
+      {/* 🔹 Auto-filled Date */}
+      <Text style={styles.uploadDate}>📅 תאריך שליחה: {uploadDate}</Text>
+
+      {/* 🔹 Buttons */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => setSignatureModalVisible(false)}
+        >
+          <Text style={styles.cancelButtonText}>ביטול</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.sendButton} onPress={() => sendFile()}>
+          <Text style={styles.sendButtonText}>📨 אישור ושלח</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
+
         </View>
       </ScrollView>
     </View>
-  );
+  
+
+);
 };
 
 
@@ -267,6 +490,444 @@ const styles = StyleSheet.create({
   actionsContainer: { flexDirection: "row", justifyContent: "center" },
   actionButton: { marginHorizontal: 5, padding: 5 },
   actionText: { fontSize: 18 },
+  actionText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'blue', // Or any other color you like
+    padding: 10,
+  },
+  
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Dark overlay
+  },
+
+  popup: {
+    width: "90%",
+    maxWidth: 500,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+  },
+
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingBottom: 10,
+  },
+
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+
+  titleIcon: {
+    backgroundColor: "#EAEAEA",
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+
+  closeButton: {
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+
+  inputLarge: {
+    height: 100,
+    textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+
+  toggleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: "#ddd",
+    marginVertical: 12,
+  },
+
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
+
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#ddd",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginRight: 10,
+  },
+
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  sendButton: {
+    flex: 1,
+    backgroundColor: "black",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+
+  sendButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+  tableContainer: {
+    marginTop: 10,
+    borderRadius: 10,
+    overflow: "hidden",
+    backgroundColor: "#fff",
+    padding: 10,
+  },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#ddd",
+    padding:10,
+    borderRadius: 5,
+  },
+  headerCell: {
+    flex: 1, // Ensures equal column width
+    fontWeight: "bold",
+    textAlign: "center",
+    minWidth: 80, // Prevents columns from shrinking too much
+  },
+  tableRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ccc",
+  },
+  cell: {
+    flex: 1,
+    textAlign: "center",
+    paddingHorizontal: 5, // Prevents text from touching the edges
+    minWidth: 80, // Ensures cells don't get too small
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-start",  // 🔹 Ensures icons stick together
+    alignItems: "center",
+    flex: 1,
+    gap: 0,  // ❌ Ensures no extra space
+    padding: 0,  // ❌ Remove padding
+    margin: 0,  // ❌ Remove margin
+  },
+  
+  
+  actionButton: {
+    padding: 0,  // ❌ Remove padding
+    margin: 0,   // ❌ Remove margins
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  actionIcon: {
+    fontSize: 20,  
+    textAlign: "center",
+    color: "#333",
+    padding: 0,  // ❌ Remove padding
+    margin: 0,   // ❌ Remove margins
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
+    padding: 10,
+  },
+  checkbox: {
+    flex: 1,
+    alignItems: "center",
+    padding: 10,
+  },
+  selectedCheckbox: {
+    backgroundColor: "black",
+    borderRadius: 5,
+  },
+  checkboxText: {
+    fontSize: 16,
+    color: "black",
+  },
+  selectedText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+
+
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  popup: {
+    width: "90%",
+    maxWidth: 500,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+  },
+  
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingBottom: 10,
+  },
+  
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  
+  iconBox: {
+    backgroundColor: "#EAEAEA",
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  
+  closeButton: {
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+  
+  textArea: {
+    height: 100,
+    textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+  
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
+  
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#ddd",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  
+  sendButton: {
+    flex: 1,
+    backgroundColor: "black",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  
+  sendButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  popup: {
+    width: "90%",
+    maxWidth: 500,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+  },
+  
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingBottom: 10,
+  },
+  
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  
+  iconBox: {
+    backgroundColor: "#EAEAEA",
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  
+  closeButton: {
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  
+  uploadArea: {
+    borderWidth: 2,
+    borderColor: "#ddd",
+    borderStyle: "dashed",
+    borderRadius: 8,
+    padding: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 12,
+  },
+  
+  uploadText: {
+    fontSize: 16,
+    color: "#666",
+  },
+  
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+  
+  textArea: {
+    height: 80,
+    textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+  
+  uploadDate: {
+    fontSize: 14,
+    color: "#555",
+    textAlign: "right",
+    marginBottom: 12,
+  },
+  
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
+  
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#ddd",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  
+  sendButton: {
+    flex: 1,
+    backgroundColor: "black",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  
+  sendButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+
 });
 
 export default ContactsScreen;

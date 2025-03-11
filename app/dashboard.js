@@ -18,7 +18,7 @@ import { useNavigation } from "@react-navigation/native";
 
 
 const stats = [
-  { id: "3", title: "אירועים משמעתיים", value: "1", icon: "🔔" },
+  { id: "3", title: "משמעת", value: "1", icon: "🔔" },
   { id: "4", title: "שיעורי בית", value: "5", icon: "📚" },
   { id: "5", title: "פגישות", value: "2", icon: "📅" },
 ];
@@ -73,10 +73,15 @@ export default function Dashboard() {
   const removeTask = (taskId) => {
     setTasks(tasks.filter((task) => task.id !== taskId));
   };
+  // ✅ Yearly Events Data
+const yearlyEvents = [
+  { id: "1", title: "🎉 פסח", date: "22 באפריל 2024" },
+  { id: "2", title: "🚌 טיול שנתי", date: "15 במאי 2024" },
+  { id: "3", title: "📅 יום המורה", date: "30 ביוני 2024" },
+];
 
   return (
-    <View style={styles.container}>
-          
+    <View style={styles.container}>          
           {/* 🔹 TOP BAR */}
                     <View style={styles.topBar}>
                       <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
@@ -185,6 +190,7 @@ export default function Dashboard() {
   </TouchableOpacity>
 ))}
 
+
           <TextInput
             value={newTask}
             onChangeText={setNewTask}
@@ -196,9 +202,37 @@ export default function Dashboard() {
             <Text style={{ color: "black" }}>➕ הוסף</Text>
           </TouchableOpacity>
         </View>
+              {/* 🔹 NEW: YEARLY EVENTS SECTION */}
+<View style={styles.eventsContainer}>
+  <Text style={styles.sectionTitle}>📅 אירועים שנתיים</Text>
+
+  {yearlyEvents.map((event) => (
+    <View key={event.id} style={styles.eventCard}>
+      {/* 🔹 Left Icon */}
+      <View style={styles.eventIconContainer}>
+        <Text style={styles.eventIcon}>🏫</Text>
+      </View>
+
+      {/* 🔹 Event Details */}
+      <View style={styles.eventTextContainer}>
+        <Text style={styles.eventTitle}>{event.title}</Text>
+        <Text style={styles.eventDate}>{event.date}</Text>
+        {event.details && <Text style={styles.eventDetails}>{event.details}</Text>}
+      </View>
+
+      {/* 🔹 Edit Button (Right Side) */}
+      <TouchableOpacity style={styles.editButton}>
+        <Text style={styles.editIcon}>✎</Text>
+      </TouchableOpacity>
+    </View>
+  ))}
+</View>
       </ScrollView>
     </View>
+    
   );
+  
+  
 }
 
 // 🎨 **עיצוב הדף**
@@ -267,7 +301,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   cell: { flex: 1, textAlign: "center" },
-
   switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
 
   updateButton: {
@@ -286,7 +319,7 @@ const styles = StyleSheet.create({
 
   // 🔹 INFO CARDS (3 PER ROW)
   statsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-  statCard: { width: "30%", backgroundColor: "#fff", padding: 15, alignItems: "center", borderRadius: 8, marginBottom: 10 },
+  statCard: { width: "30%", backgroundColor: "#fff", padding: 0, alignItems: "center", borderRadius: 8, marginBottom: 5 },
 
   // 📊 PIE CHART
   section: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginTop: 20 },
@@ -299,6 +332,67 @@ const styles = StyleSheet.create({
     backgroundColor: "#b2f2bb", // ✅ Green when completed
   },
   taskText: { flex: 1 }, // Ensure text takes space
+
+// 🔹 EVENTS SECTION STYLES
+eventsContainer: {
+  backgroundColor: "#F4F4F4",
+  padding: 2,
+  borderRadius: 15,
+  marginTop: 5,
+},
+
+eventCard: {
+  flexDirection: "row",
+  alignItems: "center",
+  backgroundColor: "#fff",
+  borderWidth: 1,
+  borderColor: "#000",
+  padding: 12,
+  borderRadius: 15,
+  marginBottom: 13,
+  justifyContent: "space-between",
+},
+
+eventIconContainer: {
+  backgroundColor: "#F4F4F4",
+  padding: 0,
+  borderRadius: 50,
+},
+
+eventIcon: {
+  fontSize: 20,
+},
+
+eventTextContainer: {
+  flex: 1,
+  marginLeft: 12,
+},
+
+eventTitle: {
+  fontSize: 14,
+  fontWeight: "bold",
+},
+
+eventDate: {
+  fontSize: 14,
+  color: "#666",
+},
+
+eventDetails: {
+  fontSize: 13,
+  color: "#888",
+},
+
+editButton: {
+  padding: 8,
+  borderRadius: 10,
+},
+
+editIcon: {
+  fontSize: 10,
+  color: "#000",
+},
+
   
 
 
