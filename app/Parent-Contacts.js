@@ -120,10 +120,6 @@ const ContactsScreen = () => {
                 <TouchableOpacity onPress={() => setLetterModalVisible(true)}>
                   <Text style={styles.actionText}>✉️</Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity style={styles.actionButton}>
-                  <Text style={styles.actionText}>❌</Text>
-                </TouchableOpacity>
               </View>
             </View>
           ))}
@@ -293,7 +289,6 @@ const styles = StyleSheet.create({
   tableRow: { flexDirection: "row", paddingVertical: 10, alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#ccc" },
   cell: { flex: 1, textAlign: "center" },
   actionsContainer: { flexDirection: "row", justifyContent: "center" },
-  actionButton: { marginHorizontal: 5, padding: 5 },
   actionText: { fontSize: 18 },
 
   //המכתב
