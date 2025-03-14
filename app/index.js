@@ -7,6 +7,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Imp
 const validUsers = [
   { username: "Steve", password: "12345", role: "מורה" },
   { username: "loki", password: "12345", role: "מורה" },
+  { username: "Steve", password: "12345", role: "הורה" },
+  { username: "loki", password: "12345", role: "הורה" },
 ];
 
 export default function LoginScreen() {
@@ -23,16 +25,25 @@ export default function LoginScreen() {
 
   // 🔑 **Handle Login**
   const handleLogin = async () => {
-    const user = validUsers.find((u) => u.username === username && u.password === password && u.role === role);
-  
+    const user = validUsers.find(
+      (u) => u.username === username && u.password === password && u.role === role
+    );
+
     if (user) {
       await AsyncStorage.setItem("user", JSON.stringify({ fullName: user.fullName, role: user.role })); // ✅ Save user info
       setIsLoggedIn(true);  // ✅ Mark as logged in
-      router.push("/dashboard");  // ✅ Navigate to Dashboard
+
+      // ✅ הפניה לפי תפקיד המשתמש
+      if (user.role === "מורה") {
+        router.push("/dashboard");  // 🔹 מורה -> Dashboard
+      } else if (user.role === "הורה") {
+        router.push("/Parent-Dashboard");  // 🔹 הורה -> Parent-Dashboard
+      }
     } else {
       setErrorMessage("❌ שם משתמש או סיסמא לא תקינים!");
     }
-  };
+};
+
   
 
   return (
