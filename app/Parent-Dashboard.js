@@ -141,9 +141,15 @@ const getChartData = (timeIndex) => {
                           <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>🚪 התנתקות</Text>
                           </TouchableOpacity>
+              
+                          {/* Navigate to ParentUserProfile Page */}
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/ParentUserProfile"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>👤 פרופיל הורה</Text>
+                          </TouchableOpacity>
                         </View>
                       </View>
                     </Modal>
+
 
 
       <ScrollView contentContainerStyle={styles.content}>
