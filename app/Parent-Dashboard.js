@@ -13,10 +13,6 @@ import { PieChart } from "react-native-chart-kit";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 
-
-
-
-
 const stats = [
   { id: "3", title: "אירועים משמעתיים", value: "1", icon: "🔔" },
   { id: "4", title: "שיעורי בית", value: "5", icon: "📚" },
@@ -59,6 +55,49 @@ export default function Dashboard() {
     });
   }
 
+  const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
+const timeRanges = ["יומי", "שבועי", "חודשי", "סמסטריאלי", "שנתי"];
+
+const handleChangeTimeRange = (direction) => {
+  let newIndex = selectedTimeIndex + direction;
+  if (newIndex >= 0 && newIndex < timeRanges.length) {
+    setSelectedTimeIndex(newIndex);
+  }
+};
+
+const getChartData = (timeIndex) => {
+  switch (timeIndex) {
+    case 0: // יומי
+      return [
+        { name: "נוכחים", population: 28, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
+        { name: "נעדרים", population: 2, color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
+      ];
+    case 1: // שבועי
+      return [
+        { name: "נוכחים", population: 135, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
+        { name: "נעדרים", population: 15, color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
+      ];
+    case 2: // חודשי
+      return [
+        { name: "נוכחים", population: 550, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
+        { name: "נעדרים", population: 50, color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
+      ];
+    case 3: // סמסטריאלי
+      return [
+        { name: "נוכחים", population: 3200, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
+        { name: "נעדרים", population: 200, color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
+      ];
+    case 4: // שנתי
+      return [
+        { name: "נוכחים", population: 6200, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
+        { name: "נעדרים", population: 300, color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
+      ];
+    default:
+      return [];
+  }
+};
+
+  
 
   return (
     <View style={styles.container}>
@@ -83,19 +122,19 @@ export default function Dashboard() {
                           </View>
               
               
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Dashboard"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>📊 כללי</Text>
                           </TouchableOpacity>
               
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Homework"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
                           </TouchableOpacity>
               
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Contacts"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
                           </TouchableOpacity>
               
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Archive"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>📁 ארכיון</Text>
                           </TouchableOpacity>
               
@@ -119,26 +158,45 @@ export default function Dashboard() {
           ))}
         </View>
 
-        {/* 📊 PIE CHART */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>📊 נוכחות</Text>
-          <PieChart
-            data={[
-              { name: "נוכחים", population: 30, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
-              { name: "נעדרים", population: 5, color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
-            ]}
-            width={250}
-            height={150}
-            chartConfig={{
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            }}
-            accessor="population"
-            backgroundColor="transparent"
-          />
-          
-        </View>
+                {/* 🔹 בחירת טווח זמן לפאי צ'ארט */}
+                <View style={styles.section}>
+  <Text style={styles.sectionTitle}>📊 נוכחות</Text>
+
+  <View style={styles.timeSelectorContainer}>
+    {selectedTimeIndex > 0 ? (
+      <TouchableOpacity onPress={() => handleChangeTimeRange(-1)}>
+        <Text style={styles.arrow}>⬅️</Text>
+      </TouchableOpacity>
+    ): (
+        <Text style={styles.arrow}>{"\u200B"}</Text> // אייקון בלתי נראה
+      )}
+
+    <Text style={styles.headerText}>{timeRanges[selectedTimeIndex]}</Text>
+
+    {selectedTimeIndex < timeRanges.length - 1 ? (
+      <TouchableOpacity onPress={() => handleChangeTimeRange(1)}>
+        <Text style={styles.arrow}>➡️</Text>
+      </TouchableOpacity>
+    ): (
+        <Text style={styles.arrow}>{"\u200B"}</Text> // אייקון בלתי נראה
+      )}
+  </View>
+
+  <PieChart
+    data={getChartData(selectedTimeIndex)}
+    width={250}
+    height={150}
+    chartConfig={{
+      backgroundGradientFrom: "#ffffff",
+      backgroundGradientTo: "#ffffff",
+      color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    }}
+    accessor="population"
+    backgroundColor="transparent"
+  />
+</View>
+
+
            {/* 🔥 הוספת משפט מוטיבציה מתחת לגרף */}
             <Text style={styles.motivationText}>
                 "למידה היא המפתח להצלחה! המשיכו כך! 🚀"
@@ -158,7 +216,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 85,
+    height: 80,
     backgroundColor: "black",
     flexDirection: "row",
     alignItems: "center",
@@ -175,19 +233,20 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     borderBottomWidth: 1, 
     borderBottomColor: "#fff", 
-    paddingHorizontal: 10, // מרווח פנימי מהצדדים
+    paddingHorizontal: 5, // מרווח פנימי מהצדדים
   },
-  menuButton: { padding: 10 },
+  menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
   username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
-  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 30 },
+  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
   sidebarUser: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+    marginTop: 15, 
   },
   
   closeButton: {
@@ -198,27 +257,44 @@ const styles = StyleSheet.create({
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
-  /* 🔹 עיצוב ה-SIDEBAR */
-  sidebar: { 
-    position: "absolute", 
-    left: 0, 
-    width: 250, 
-    height: "100%", 
-    backgroundColor: "black", 
-    padding: 30, 
-    zIndex: 20 // ✅ ה-SIDEBAR תמיד מעל התוכן
-  },
-
-  sidebarItem: { paddingVertical: 15 },
-  sidebarText: { color: "white", fontSize: 18 },
-  closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
-
   // 🔹 INFO CARDS (3 PER ROW)
   statsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
   statCard: { width: "30%", backgroundColor: "#fff", padding: 15, alignItems: "center", borderRadius: 8, marginBottom: 10 },
 
   // 📊 PIE CHART
-  section: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginTop: 20 },
+  section: { 
+    backgroundColor: "#fff", 
+    padding: 15, 
+    borderRadius: 10, 
+    marginTop: 20,
+    alignItems: "center", // למרכז את כל התוכן
+  },
+  
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  
+  timeSelectorContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  
+  arrow: {
+    fontSize: 22,
+    paddingHorizontal: 15,
+  },
+  
+  headerText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  
   pieChartLabels: { flexDirection: "row", justifyContent: "space-around", marginTop: 10 },
 
   //motivation text

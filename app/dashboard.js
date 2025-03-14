@@ -124,10 +124,6 @@ const yearlyEvents = [
                           <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>📁 ארכיון</Text>
                           </TouchableOpacity>
-
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Dashboard"); setSidebarVisible(false); }}>
-                            <Text style={styles.sidebarText}>📁 hore</Text>
-                          </TouchableOpacity>
               
                           <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
                             <Text style={styles.sidebarText}>🚪 התנתקות</Text>
