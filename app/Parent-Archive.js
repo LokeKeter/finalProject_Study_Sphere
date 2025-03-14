@@ -14,10 +14,10 @@ import { useNavigation } from "@react-navigation/native";
 const classesData = ["כל המכתבים", "מכתבים שנשלחו"];
 
 const messagesData = [
-    { id: "1", title: "אסיפת הורים", sender: "יוסי כהן", date: "10-03", type: "התקבלו" },
-    { id: "2", title: "תזכורת", sender: "רונית לוי", date: "09-03", type: "נשלחו" },
-    { id: "3", title: "מערכת שעות", sender: "משה ישראלי", date: "08-03", type: "התקבלו" },
-    { id: "4", title: "טיול שנתי", sender: "שרה דויד", date: "07-03", type: "נשלחו" },
+    { id: "1", title: "אסיפת הורים", sender: "יוסי כהן", date: "10.03", type: "התקבלו" },
+    { id: "2", title: "תזכורת", sender: "רונית לוי", date: "09.03", type: "נשלחו" },
+    { id: "3", title: "מערכת שעות", sender: "משה ישראלי", date: "08.03", type: "התקבלו" },
+    { id: "4", title: "טיול שנתי", sender: "שרה דויד", date: "07.03", type: "נשלחו" },
   ];  
 
 const PAGE_SIZE = 20;
@@ -102,7 +102,7 @@ const ArchiveScreen = () => {
                     <View style={styles.sidebar}>
                       <View style={styles.sidebarHeader}>
                         <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                          <Text style={styles.sidebarUser}>👤 מורה</Text>
+                          <Text style={styles.sidebarUser}>👤 הורה</Text>
                         </TouchableOpacity>
                         
                         <TouchableOpacity onPress={() => setSidebarVisible(false)}>
@@ -160,7 +160,7 @@ const ArchiveScreen = () => {
                                     }} 
                                     style={styles.sendMessageButton}
                                   >
-                                    <Text style={styles.sendMessageButtonText}>שלח הודעה</Text>
+                                    <Text style={styles.sendMessageButtonText}>שלח</Text>
                                   </TouchableOpacity>
                                   
                                 )}
@@ -253,7 +253,7 @@ const ArchiveScreen = () => {
       {/* 🔹 תיבת חיפוש */}
       <TextInput
         style={styles.searchInput}
-        placeholder="🔍 חפש לפי שם שולח או כותרת"
+        placeholder="חפש לפי שם שולח או כותרת 🔍"
         value={searchQuery}
         onChangeText={(text) => {
           setSearchQuery(text);
@@ -418,6 +418,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginTop: 15, // ✅ הפרדה טובה יותר מתיבת החיפוש לתוכן
     marginHorizontal: 20, // ✅ מוסיף מרווח מהקצוות
+    textAlign: "right",
   },
 
   /* 🔹 טבלה */
@@ -613,11 +614,6 @@ const styles = StyleSheet.create({
   
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-  },
-  
-  closeButton: {
-    fontSize: 22,
     fontWeight: "bold",
   },
   
