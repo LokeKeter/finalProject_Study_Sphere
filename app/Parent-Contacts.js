@@ -11,10 +11,10 @@ import {
 import { useRouter } from "expo-router";
 
 const parentsData = [
-  { id: "1", parentName: "יוסי כהן", studentName: "דנה כהן", classId: "כיתה א'" },
-  { id: "2", parentName: "רונית לוי", studentName: "איתי לוי", classId: "כיתה ב'" },
-  { id: "3", parentName: "משה ישראלי", studentName: "נועה ישראלי", classId: "כיתה א'" },
-  { id: "4", parentName: "שרה דויד", studentName: "עומר דויד", classId: "כיתה ג'" },
+  { id: "1", parentName: "יוסי כהן", studentName: "מטמטיקה" },
+  { id: "2", parentName: "רונית לוי", studentName: "היסטוריה" },
+  { id: "3", parentName: "משה ישראלי", studentName: "לשון" },
+  { id: "4", parentName: "שרה דויד", studentName: "תנ''ך" },
 ];
 
 const ContactsScreen = () => {
@@ -61,7 +61,7 @@ const ContactsScreen = () => {
                           <View style={styles.sidebar}>
                             <View style={styles.sidebarHeader}>
                               <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                                <Text style={styles.sidebarUser}>👤 מורה</Text>
+                                <Text style={styles.sidebarUser}>👤 הורה</Text>
                               </TouchableOpacity>
                               
                               <TouchableOpacity onPress={() => setSidebarVisible(false)}>
@@ -96,7 +96,7 @@ const ContactsScreen = () => {
       {/* 🔹 חיפוש לפי שם הורה/תלמיד */}
       <TextInput
         style={styles.searchInput}
-        placeholder="🔍 חפש לפי שם הורה או תלמיד"
+        placeholder="חפש לפי שם הורה או תלמיד 🔍"
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -105,9 +105,8 @@ const ContactsScreen = () => {
       <ScrollView>
         <View style={styles.table}>
           <View style={styles.tableHeader}>
-            <Text style={styles.headerCell}>שם ההורה</Text>
-            <Text style={styles.headerCell}>שם התלמיד</Text>
-            <Text style={styles.headerCell}>פעולות      </Text>
+            <Text style={styles.headerCell}>       שם המורה</Text>
+            <Text style={styles.headerCell}>            מקצוע</Text>
           </View>
 
           {filteredParents.map((parent) => (
@@ -118,7 +117,7 @@ const ContactsScreen = () => {
               {/* 🔹 פעולות */}
               <View style={styles.actionsContainer}>
                 <TouchableOpacity onPress={() => setLetterModalVisible(true)}>
-                  <Text style={styles.actionText}>✉️</Text>
+                  <Text style={styles.actionText}>✉️   </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -235,14 +234,13 @@ const styles = StyleSheet.create({
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
-
   
   headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
   headerText: { fontSize: 18, fontWeight: "bold" },
   arrow: { fontSize: 22, paddingHorizontal: 10 },
   table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
-  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
+  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 , justifyContent: "center", alignItems: "center"},
+  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center", alignSelf: "stretch", textAlignVertical: "center", paddingVertical: 5,},
 
   tableRow: {
     flexDirection: "row", // ✅ סידור שורות לרוחב
@@ -250,8 +248,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
     paddingVertical: 10,
     alignItems: "center",
+    justifyContent: "center",
   },
-  cell: { flex: 1, textAlign: "center" },
+  cell: { flex: 1,  textAlign: "center", alignSelf: "stretch", textAlignVertical: "center", paddingVertical: 5,},
 
   switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
 
@@ -270,7 +269,6 @@ const styles = StyleSheet.create({
   },
 
   
-  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
   headerText: { fontSize: 18, fontWeight: "bold" },
   arrow: { fontSize: 22, paddingHorizontal: 10 },
 
@@ -282,12 +280,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     marginBottom: 15,
+    textAlign: "right",
   },
 
-  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "left", paddingLeft: 10},
-  tableRow: { flexDirection: "row", paddingVertical: 10, alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#ccc" },
-  cell: { flex: 1, textAlign: "center" },
+
   actionsContainer: { flexDirection: "row", justifyContent: "center" },
   actionText: { fontSize: 18 },
 
@@ -331,11 +327,6 @@ const styles = StyleSheet.create({
   
   title: {
     fontSize: 20,
-    fontWeight: "bold",
-  },
-  
-  closeButton: {
-    fontSize: 22,
     fontWeight: "bold",
   },
   

@@ -1,90 +1,256 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   ScrollView,
   StyleSheet,
   Modal,
 } from "react-native";
+import { useRouter } from "expo-router";
 
-const homeworkData = [
-  { id: "1", teacher: "יוסי כהן", subject: "מתמטיקה", dueDate: "12-03-2024", details: "עמוד 45 תרגילים 1-5" },
-  { id: "2", teacher: "רונית לוי", subject: "אנגלית", dueDate: "10-03-2024", details: "לקרוא את פרק 3 ולסכם" },
-  { id: "3", teacher: "משה ישראלי", subject: "מדעים", dueDate: "15-03-2024", details: "ללמוד על מחזור המים" },
-  { id: "4", teacher: "שרה דויד", subject: "היסטוריה", dueDate: "18-03-2024", details: "לכתוב חיבור על מלחמת העצמאות" },
+const assignmentsData = [
+  { id: "1", teacher: "יוסי כהן", subject: "מתמטיקה", dueDate: "15.03" },
+  { id: "2", teacher: "רונית לוי", subject: "אנגלית", dueDate: "20.03" },
+  { id: "3", teacher: "משה ישראלי", subject: "היסטוריה", dueDate: "25.03" },
+  { id: "4", teacher: "שרה דויד", subject: "מדעים", dueDate: "30.03" },
 ];
 
-const HomeworkScreen = () => {
-  const [selectedHomework, setSelectedHomework] = useState(null);
+
+
+
+const PAGE_SIZE = 20;
+
+const AssignmentScreen = () => {
+  const router = useRouter();
+  //sidebar and topbar
+  const [sidebarVisible, setSidebarVisible] = useState(false); // ✅ קובע האם התפריט פתוח או סגור
+  const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const filteredAssignments = assignmentsData.filter(
+    (assignment) =>
+      assignment.teacher.includes(searchQuery) || assignment.subject.includes(searchQuery)
+  );
+
+  const totalPages = Math.ceil(filteredAssignments.length / PAGE_SIZE);
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const displayedAssignments = filteredAssignments.slice(startIndex, startIndex + PAGE_SIZE);
+
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const openPopup = (homework) => {
-    setSelectedHomework(homework);
+  const handleOpenAssignment = (assignment) => {
+    setSelectedAssignment(assignment);
     setModalVisible(true);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>📚 שיעורי בית</Text>
+      
+      {/* 🔹 TOP BAR */}
+                            <View style={styles.topBar}>
+                              <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+                                <Text style={styles.menuIcon}>☰</Text>
+                              </TouchableOpacity>
+                              <Text style={styles.dateTime}>{currentTime}</Text>
+                            </View>
+                      
+                            {/* 🔹 SIDEBAR MENU */}
+                            <Modal visible={sidebarVisible} animationType="slide" transparent>
+                              <View style={styles.modalBackground}>
+                                <View style={styles.sidebar}>
+                                  <View style={styles.sidebarHeader}>
+                                    <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
+                                      <Text style={styles.sidebarUser}>👤 הורה</Text>
+                                    </TouchableOpacity>
+                                    
+                                    <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+                                      <Text style={styles.closeButton}>✖</Text>
+                                    </TouchableOpacity>
+                                  </View>
+                      
+                      
+                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Dashboard"); setSidebarVisible(false); }}>
+                                    <Text style={styles.sidebarText}>📊 כללי</Text>
+                                  </TouchableOpacity>
+                      
+                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Homework"); setSidebarVisible(false); }}>
+                                    <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+                                  </TouchableOpacity>
+            
+                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Contacts"); setSidebarVisible(false); }}>
+                                    <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+                                  </TouchableOpacity>
+                      
+                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Archive"); setSidebarVisible(false); }}>
+                                    <Text style={styles.sidebarText}>📁 ארכיון</Text>
+                                  </TouchableOpacity>
+                      
+                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+                                    <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+                                  </TouchableOpacity>
+                                </View>
+                              </View>
+                            </Modal>
 
-      {/* 🔹 טבלה של שיעורי בית */}
+      {/* 🔹 חיפוש */}
+      <TextInput
+        style={styles.searchInput}
+        placeholder="חפש לפי מורה או מקצוע 🔍" 
+        value={searchQuery}
+        onChangeText={(text) => {
+          setSearchQuery(text);
+          setCurrentPage(1);
+        }}
+      />
+
+      {/* 🔹 טבלה */}
       <ScrollView>
-        <View style={styles.table}>
+        <View style={styles.tableContainer}>
           <View style={styles.tableHeader}>
             <Text style={styles.headerCell}>מורה</Text>
             <Text style={styles.headerCell}>מקצוע</Text>
             <Text style={styles.headerCell}>תאריך סיום</Text>
-            <Text style={styles.headerCell}>ש.ב    </Text>
           </View>
 
-          {homeworkData.map((hw) => (
-            <View key={hw.id} style={styles.tableRow}>
-              <Text style={styles.cell}>{hw.teacher}</Text>
-              <Text style={styles.cell}>{hw.subject}</Text>
-              <Text style={styles.cell}>{hw.dueDate}</Text>
-
-              {/* 🔹 כפתור הצגת פרטים */}
-              <TouchableOpacity style={styles.button} onPress={() => openPopup(hw)}>
-                <Text style={styles.buttonText}>📄 הצג</Text>
-              </TouchableOpacity>
-            </View>
+          {displayedAssignments.map((assignment) => (
+            <TouchableOpacity
+              key={assignment.id}
+              style={styles.tableRow}
+              onPress={() => handleOpenAssignment(assignment)}
+            >
+              <Text style={styles.cell}>{assignment.teacher}</Text>
+              <Text style={styles.cell}>{assignment.subject}</Text>
+              <Text style={styles.cell}>{assignment.dueDate}</Text>
+            </TouchableOpacity>
           ))}
         </View>
       </ScrollView>
 
-      {/* 🔹 POPUP לפרטי שיעורי הבית */}
-      <Modal visible={modalVisible} transparent animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            {selectedHomework && (
-              <>
-                <Text style={styles.modalTitle}>{selectedHomework.subject}</Text>
-                <Text style={styles.modalText}>👩‍🏫 מורה: {selectedHomework.teacher}</Text>
-                <Text style={styles.modalText}>📅 תאריך סיום: {selectedHomework.dueDate}</Text>
-                <Text style={styles.modalText}>📖 פירוט: {selectedHomework.details}</Text>
-              </>
-            )}
-            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>סגור</Text>
-            </TouchableOpacity>
+      {/* 🔹 Modal */}
+      <Modal visible={modalVisible} transparent animationType="fade">
+        <View style={styles.modalBackground}>
+          <View style={styles.messageModal}>
+            <ScrollView style={{ width: "100%" }}>
+              <Text style={styles.messageTitle}>{selectedAssignment?.subject}</Text>
+              <Text style={styles.messageSender}>מורה: {selectedAssignment?.teacher}</Text>
+              <Text style={styles.messageDate}>תאריך סיום: {selectedAssignment?.dueDate}</Text>
+              <Text style={styles.messageContent}>פרטי המטלה</Text>
+            </ScrollView>
+
+            <View style={styles.modalButtonsContainer}>
+              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeMessageButton}>
+                <Text style={styles.closeMessageButtonText}>סגור</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  alert("המטלה סומנה כהושלמה!");
+                  setModalVisible(false);
+                }}
+                style={styles.completeButton}
+              >
+                <Text style={styles.completeButtonText}>✔️ סיים</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
+      
     </View>
   );
 };
 
-// 🎨 **סגנונות**
+// 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#F4F4F4" },  //עיצוב הדף
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 15, textAlign: "center" }, //עיצוב כותרת
+  container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
+  topBar: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    backgroundColor: "black",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 15,
+    paddingTop: 30,
+  },
+  menuButton: { padding: 4 },
+  menuIcon: { color: "white", fontSize: 26 },
+  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
-  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10 },  //עיצוב טבלה
-  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },   //עיצוב הכותרות
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" }, //עיצוב התאים של הכותרות
+  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  sidebar: {
+    position: "absolute",
+    left: 0,
+    width: 250,
+    height: "100%",
+    backgroundColor: "black",
+    padding: 50,
+  },
+  sidebarHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between", 
+    alignItems: "center",
+    width: "100%",
+    paddingBottom: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: "#fff", 
+    paddingHorizontal: 5,
+  },
+  sidebarUser: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 15, 
+  },
+  closeButton: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+  },
+  sidebarItem: { paddingVertical: 15 },
+  sidebarText: { color: "white", fontSize: 18 },
+  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
+  
+  searchInput: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    backgroundColor: "#fff",
+    marginVertical: 15,
+    marginHorizontal: 20,
+    textAlign: "right",
+  },
 
-  //עיצוב שורות הטבלה
+  tableContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 10,
+    marginHorizontal: 10,
+    marginTop: 20,
+  },
+  tableHeader: {
+    flexDirection: "row",
+    backgroundColor: "#ddd",
+    padding: 10,
+    borderRadius: 5,
+  },
+  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
   tableRow: {
     flexDirection: "row",
     borderBottomWidth: 1,
@@ -92,29 +258,79 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
   },
-
-  //עיצוב תאי הטבלה
   cell: { flex: 1, textAlign: "center" },
 
-  //עיצוב הכפתורים
-  button: {
-    backgroundColor: "#000",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    alignSelf: "center",
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
+  messageModal: {
+    width: "85%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  messageTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "right",
+  },
+  messageSender: {
+    fontSize: 16,
+    marginBottom: 5,
+    textAlign: "right",
+  },
+  messageDate: {
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 15,
+    textAlign: "right",
+  },
+  messageContent: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    textAlign: "right",
   },
 
-  //עיצוב תא הכפתורים
-  buttonText: { color: "white", fontSize: 14, fontWeight: "bold" },
-
-  //
-  modalContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(0,0,0,0.5)" },
-  modalContent: { width: 300, backgroundColor: "#fff", padding: 20, borderRadius: 10, alignItems: "center" },
-  modalTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 10 },
-  modalText: { fontSize: 16, marginBottom: 10, textAlign: "center" },
-  closeButton: { marginTop: 10, backgroundColor: "#d32f2f", padding: 10, borderRadius: 5 },
-  closeButtonText: { color: "white", fontSize: 14, fontWeight: "bold" },
+  modalButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 15,
+  },
+  closeMessageButton: {
+    backgroundColor: "#ccc",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: "center",
+    marginRight: 5,
+  },
+  closeMessageButtonText: {
+    color: "#000",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  completeButton: {
+    backgroundColor: "green",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: "center",
+    marginLeft: 5,
+  },
+  completeButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
 
-export default HomeworkScreen;
+export default AssignmentScreen;
