@@ -7,12 +7,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Imp
 const validUsers = [
   { username: "Steve", password: "12345", role: "מורה" },
   { username: "loki", password: "12345", role: "מורה" },
-<<<<<<< Updated upstream
   { username: "Steve", password: "12345", role: "הורה" },
   { username: "loki", password: "12345", role: "הורה" },
-=======
-  { username: "lok", password: "12345", role: "הורה" },
->>>>>>> Stashed changes
+
+
+
 ];
 
 export default function LoginScreen() {

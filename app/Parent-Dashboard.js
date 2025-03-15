@@ -120,9 +120,10 @@ const yearlyEvents = [
                       <View style={styles.modalBackground}>
                         <View style={styles.sidebar}>
                           <View style={styles.sidebarHeader}>
-                            <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                              <Text style={styles.sidebarUser}>👤 הורה</Text>
-                            </TouchableOpacity>
+                          {/* Navigate to ParentUserProfile Page */}
+                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/ParentUserProfile"); setSidebarVisible(false); }}>
+                            <Text style={styles.sidebarText}>👤 פרופיל הורה</Text>
+                          </TouchableOpacity>
                             <TouchableOpacity onPress={() => setSidebarVisible(false)}>
                               <Text style={styles.closeButton}>✖</Text>
                             </TouchableOpacity>
@@ -149,10 +150,7 @@ const yearlyEvents = [
                             <Text style={styles.sidebarText}>🚪 התנתקות</Text>
                           </TouchableOpacity>
               
-                          {/* Navigate to ParentUserProfile Page */}
-                          <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/ParentUserProfile"); setSidebarVisible(false); }}>
-                            <Text style={styles.sidebarText}>👤 פרופיל הורה</Text>
-                          </TouchableOpacity>
+
                         </View>
                       </View>
                     </Modal>

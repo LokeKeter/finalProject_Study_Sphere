@@ -156,7 +156,7 @@ const UserProfile = () => {
 const styles = StyleSheet.create({
     userInfo: { 
       width: "100%", 
-      marginTop: 20, 
+      margin: 500, 
       padding: 20, 
       backgroundColor: "#FFF", 
       borderRadius: 10 
