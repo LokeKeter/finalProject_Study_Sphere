@@ -18,10 +18,25 @@ import { useNavigation } from "@react-navigation/native";
 
 
 const stats = [
-  { id: "3", title: "משמעת", value: "1", icon: "🔔" },
-  { id: "4", title: "שיעורי בית", value: "5", icon: "📚" },
-  { id: "5", title: "פגישות", value: "2", icon: "📅" },
+  { id: "3", title: "משמעת", value: "1", icon: "🔔", type: "discipline" },
+  { id: "4", title: "שיעורים ", value: "5", icon: "📚", type: "homework" },
+  { id: "5", title: "פגישות", value: "2", icon: "📅", type: "meetings" },
 ];
+
+const taskData = {
+  discipline: [
+    { id: "1", title: "איחור לשיעור", date: "03/03/2024" },
+    { id: "2", title: "דיבור בזמן המורה", date: "05/03/2024" },
+  ],
+  homework: [
+    { id: "1", title: "תרגול מתמטיקה", date: "03/03/2024" },
+    { id: "2", title: "קריאה באנגלית", date: "04/03/2024" },
+  ],
+  meetings: [
+    { id: "1", title: "פגישה עם הורים - כיתה א'", date: "07/03/2024" },
+    { id: "2", title: "ישיבת צוות מורים", date: "10/03/2024" },
+  ],
+};
 
 const initialTasks = [
   { id: "1", title: "בדיקת שיעורי בית" },
@@ -32,7 +47,21 @@ export default function Dashboard() {
     const router = useRouter();  // ✅ Move inside function
     const navigation = useNavigation();  // ✅ Correct way to initialize navigation
     const [completedTasks, setCompletedTasks] = useState({}); // ✅ Track completed tasks
-
+    const [popupVisible, setPopupVisible] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
+  
+    const openPopup = (type) => {
+      setSelectedCategory(type);
+      setPopupVisible(true);
+      setSearchQuery("");
+    };
+    const filteredTasks =
+    selectedCategory && taskData[selectedCategory]
+      ? taskData[selectedCategory].filter((task) =>
+          task.title.includes(searchQuery)
+        )
+      : [];
     // ✅ Toggle task completion
     const toggleTaskCompletion = (taskId) => {
       setCompletedTasks((prev) => ({
@@ -134,20 +163,23 @@ const yearlyEvents = [
 
 
       <ScrollView contentContainerStyle={styles.content}>
-        {/* 🔹 INFO CARDS (3 PER ROW) */}
-        <View style={styles.statsContainer}>
-          {stats.map((item, index) => (
-            <View key={item.id} style={[styles.statCard, index >= 3 && styles.statCardBelow]}>
-              <Text style={styles.statIcon}>{item.icon}</Text>
-              <Text style={styles.statValue}>{item.value}</Text>
-              <Text style={styles.statLabel}>{item.title}</Text>
-            </View>
+      <View style={styles.statsContainer}>
+          {stats.map((item) => (
+            <TouchableOpacity key={item.id} onPress={() => openPopup(item.type)}>
+              <View style={styles.statCard}>
+                <Text style={styles.statIcon}>{item.icon}</Text>
+                <Text style={styles.statValue}>{item.value}</Text>
+                <Text style={styles.statLabel}>{item.title}</Text>
+              </View>
+            </TouchableOpacity>
           ))}
         </View>
+        
+        
 
         {/* 📊 PIE CHART */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>📊 נוכחות</Text>
+          <Text style={styles.sectionTitle}>📊  נוכחות</Text>
           <PieChart
             data={[
               { name: "נוכחים", population: 30, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
@@ -224,7 +256,43 @@ const yearlyEvents = [
   ))}
 </View>
       </ScrollView>
+      <Modal transparent={true} visible={popupVisible} animationType="slide">
+        <View style={styles.popupOverlay}>
+          <View style={styles.popupContainer}>
+            <Text style={styles.popupTitle}>
+              {selectedCategory === "discipline"
+                ? "📌 אירועי משמעת"
+                : selectedCategory === "homework"
+                ? "📚 שיעורים"
+                : "📅 פגישות"}
+            </Text>
+
+            <TextInput
+              style={styles.searchBar}
+              placeholder="🔍 חפש משימה..."
+              value={searchQuery}
+              onChangeText={(text) => setSearchQuery(text)}
+            />
+
+            <FlatList
+              data={filteredTasks}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <View style={styles.taskItem}>
+                  <Text style={styles.taskTitle}>{item.title}</Text>
+                  <Text style={styles.taskDate}>{item.date}</Text>
+                </View>
+              )}
+            />
+
+            <TouchableOpacity onPress={() => setPopupVisible(false)} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>❌ סגור</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
+    
     
   );
   
@@ -313,10 +381,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  // 🔹 INFO CARDS (3 PER ROW)
-  statsContainer: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
-  statCard: { width: "30%", backgroundColor: "#fff", padding: 0, alignItems: "center", borderRadius: 8, marginBottom: 5 },
-
+   // 🔹 INFO CARDS (3 PER ROW)
+   statsContainer: { flexDirection: "row",  },
+   statCard: { width: "92%",
+    backgroundColor: "#fff", 
+    padding:30, alignItems: "center",
+    borderRadius: 10,
+    margin:13,
+       },
+ 
   // 📊 PIE CHART
   section: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginTop: 20 },
   pieChartLabels: { flexDirection: "row", justifyContent: "space-around", marginTop: 10 },
@@ -388,8 +461,79 @@ editIcon: {
   fontSize: 10,
   color: "#000",
 },
+  // 🔹 Overlay for the popup background
+  popupOverlay: { 
+    flex: 1, 
+    backgroundColor: "rgba(0,0,0,0.5)", 
+    justifyContent: "center", 
+    alignItems: "center" 
+  },
 
-  
+  // 🔹 Container for the popup
+  popupContainer: { 
+    width: "90%", 
+    backgroundColor: "#FFF", 
+    padding: 20, 
+    borderRadius: 12, 
+    alignItems: "center" 
+  },
 
+  // 🔹 Title text in the popup
+  popupTitle: { 
+    fontSize: 20, 
+    fontWeight: "bold", 
+    marginBottom: 15 
+  },
 
+  // 🔹 Search bar inside the popup
+  searchBar: { 
+    width: "100%", 
+    height: 40, 
+    borderColor: "#ddd", 
+    borderWidth: 1, 
+    borderRadius: 8, 
+    padding: 10, 
+    marginBottom: 10 
+  },
+
+  // 🔹 Task list item
+  taskItem: { 
+    width: "100%", 
+    flexDirection: "row", 
+    justifyContent: "space-between", 
+    paddingVertical: 10, 
+    borderBottomWidth: 1, 
+    borderBottomColor: "#ddd" 
+  },
+
+  // 🔹 Task title in the list
+  taskTitle: { 
+    fontSize: 16 
+  },
+
+  // 🔹 Task date in the list
+  taskDate: { 
+    fontSize: 14, 
+    color: "gray" 
+  },
+
+  // 🔹 Close button for the popup
+  closeButton: { 
+    marginTop: 15, 
+    backgroundColor: "#ddd", 
+    paddingVertical: 12, 
+    paddingHorizontal: 20, 
+    borderRadius: 8 
+  },
+
+  // 🔹 Text inside the close button
+  closeButtonText: { 
+    fontSize: 16, 
+    fontWeight: "bold", 
+    color: "black" 
+  }
 });
+
+
+
+

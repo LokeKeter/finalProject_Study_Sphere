@@ -1,20 +1,21 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-  Modal,
-  Switch,  // ✅ Add this line
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  ScrollView, 
+  StyleSheet, 
+  TextInput, 
+  Modal, 
+  Alert
 } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
 import { useRouter } from "expo-router";
-import React, { useState, useEffect } from "react";  // ✅ Add `useState`
+import React, { useState, useEffect } from "react";
 
+// 🔹 Class Data
 const classesData = ["כיתה א'", "כיתה ב'", "כיתה ג'"];
 
-const parentsData = [
+// 🔹 Default Parents Data
+const initialParentsData = [
   { id: "1", parentName: "יוסי כהן", studentName: "דנה כהן", classId: "כיתה א'" },
   { id: "2", parentName: "רונית לוי", studentName: "איתי לוי", classId: "כיתה ב'" },
   { id: "3", parentName: "משה ישראלי", studentName: "נועה ישראלי", classId: "כיתה א'" },
@@ -27,7 +28,44 @@ const ContactsScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarVisible, setSidebarVisible] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+  const [contacts, setContacts] = useState(initialParentsData);
 
+  // ✅ Add missing modal states
+  const [isLetterModalVisible, setLetterModalVisible] = useState(false);
+  const [isMeetingModalVisible, setMeetingModalVisible] = useState(false);
+  const [isSignatureModalVisible, setSignatureModalVisible] = useState(false);
+
+  // ✅ Fix missing meetingType state
+  const [meetingType, setMeetingType] = useState("פרונטלי"); // Default to פרונטלי
+
+  // ✅ Fix missing letter modal states
+  const [letterSubject, setLetterSubject] = useState("");
+  const [letterContent, setLetterContent] = useState("");
+
+  // ✅ Fix missing selectedFile state
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  // ✅ Fix missing parentName state
+  const [parentName, setParentName] = useState("");
+
+  // ✅ Fix missing fileDescription state
+  const [fileDescription, setFileDescription] = useState("");
+
+  // ✅ Fix missing uploadDate state
+  const [uploadDate, setUploadDate] = useState(new Date().toLocaleDateString());
+
+  // 🔹 Modal States
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
+  const [isMessageModalVisible, setMessageModalVisible] = useState(false);
+
+  // 🔹 Current Contact in Modals
+  const [currentContact, setCurrentContact] = useState(null);
+
+  // 🔹 New Contact Modal
+  const [addContactModalVisible, setAddContactModalVisible] = useState(false);
+  const [newContact, setNewContact] = useState({ parentName: "", studentName: "", classId: classesData[selectedClassIndex] });
+
+  // 🔹 Update Time
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
@@ -35,7 +73,7 @@ const ContactsScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔹 שינוי הכיתה עם חצים
+  // 🔹 Change Selected Class
   const handleChangeClass = (direction) => {
     let newIndex = selectedClassIndex + direction;
     if (newIndex >= 0 && newIndex < classesData.length) {
@@ -43,115 +81,88 @@ const ContactsScreen = () => {
     }
   };
 
-  // 🔹 סינון נתונים לפי כיתה ושם
-  const filteredParents = parentsData.filter(
-    (parent) =>
-      parent.classId === classesData[selectedClassIndex] &&
-      (parent.parentName.includes(searchQuery) || parent.studentName.includes(searchQuery))
-
-      
+  // 🔹 Filter Contacts by Class & Search
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.classId === classesData[selectedClassIndex] &&
+      (contact.parentName.includes(searchQuery) || contact.studentName.includes(searchQuery))
   );
-  const [isSignatureModalVisible, setSignatureModalVisible] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [parentName, setParentName] = useState("");
-  const [fileDescription, setFileDescription] = useState("");
-  const [uploadDate, setUploadDate] = useState(new Date().toLocaleDateString());
 
-  const [isMeetingModalVisible, setMeetingModalVisible] = useState(false);
-
-  const [meetingType, setMeetingType] = useState("פרונטלי"); // Default to פרונטלי
-  const [isLetterModalVisible, setLetterModalVisible] = useState(false);
-  const [letterSubject, setLetterSubject] = useState("");
-  const [letterContent, setLetterContent] = useState("");
-
-
-  const pickFile = async () => {
-    try {
-      let result = await DocumentPicker.getDocumentAsync({
-        type: ["application/pdf", "application/msword", "image/jpeg"],
-      });
-  
-      if (result.type === "cancel") return; // If user cancels, do nothing
-  
-      if (result.size > 10 * 1024 * 1024) { // 10MB limit
-        Alert.alert("❌ קובץ גדול מדי", "הקובץ חייב להיות קטן מ-10MB.");
-        return;
-      }
-  
-      setSelectedFile(result);
-    } catch (err) {
-      console.error("File picking error: ", err);
+  // 🔹 Add New Contact
+  const addNewContact = () => {
+    if (!newContact.parentName || !newContact.studentName) {
+      Alert.alert("❌ שגיאה", "נא למלא את כל השדות.");
+      return;
     }
+
+    const newEntry = {
+      id: Date.now().toString(),
+      parentName: newContact.parentName,
+      studentName: newContact.studentName,
+      classId: newContact.classId,
+    };
+    
+
+
+    setContacts([...contacts, newEntry]);
+    setNewContact({ parentName: "", studentName: "", classId: classesData[selectedClassIndex] });
+    setAddContactModalVisible(false);
   };
-  
 
-const sendFile = () => {
-  if (!selectedFile || !parentName.trim() || !fileDescription.trim()) {
-    Alert.alert("❌ שגיאה", "נא למלא את כל השדות ולהעלות קובץ.");
-    return;
-  }
-
-  Alert.alert("✅ הצלחה", `הקובץ ${selectedFile.name} נשלח בהצלחה אל ${parentName}!`);
-  setSignatureModalVisible(false);
-};
-
-  
-  
 
   return (
     <View style={styles.container}>
+                {/* 🔹 TOP BAR */}
+                          <View style={styles.topBar}>
+                            <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
+                              <Text style={styles.menuIcon}>☰</Text>
+                            </TouchableOpacity>
+                            <Text style={styles.dateTime}>{currentTime}</Text>
+                          </View>
+                    
+                          {/* 🔹 SIDEBAR MENU */}
+                          <Modal visible={sidebarVisible} animationType="slide" transparent>
+                            <View style={styles.modalBackground}>
+                              <View style={styles.sidebar}>
+                                <View style={styles.sidebarHeader}>
+                                  <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
+                                    <Text style={styles.sidebarUser}>👤 מורה</Text>
+                                  </TouchableOpacity>
       
-      {/* 🔹 TOP BAR */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.dateTime}>{currentTime}</Text>
-      </View>
-
-      {/* 🔹 SIDEBAR MENU */}
-      <Modal visible={sidebarVisible} animationType="slide" transparent>
-        <View style={styles.modalBackground}>
-          <View style={styles.sidebar}>
-            <View style={styles.sidebarHeader}>
-              <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarUser}>👤 מורה</Text>
-              </TouchableOpacity>
-              
-              <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-                <Text style={styles.closeButton}>✖</Text>
-              </TouchableOpacity>
-            </View>
-
-
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
-              <Text style={styles.sidebarText}>📊 כללי</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
-              <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-                  <Text style={styles.sidebarText}>🏫 כיתות</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
-              <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
-              <Text style={styles.sidebarText}>📁 ארכיון</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-              <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* 🔹 בחירת כיתה עם חצים */}
+                                  <TouchableOpacity onPress={() => setSidebarVisible(false)}>
+                                    <Text style={styles.cButton}>✖</Text>
+                                  </TouchableOpacity>
+                                </View>
+                    
+                    
+                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
+                                  <Text style={styles.sidebarText}>📊 כללי</Text>
+                                </TouchableOpacity>
+                    
+                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
+                                  <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
+                                </TouchableOpacity>
+          
+                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
+                                      <Text style={styles.sidebarText}>🏫 כיתות</Text>
+                                </TouchableOpacity>
+                    
+                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
+                                  <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
+                                </TouchableOpacity>
+                    
+                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
+                                  <Text style={styles.sidebarText}>📁 ארכיון</Text>
+                                </TouchableOpacity>
+                    
+                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
+                                  <Text style={styles.sidebarText}>🚪 התנתקות</Text>
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          </Modal>
+      
+      {/* 🔹 Class Selector */}
       <View style={styles.headerContainer}>
         {selectedClassIndex > 0 && (
           <TouchableOpacity onPress={() => handleChangeClass(-1)}>
@@ -166,7 +177,7 @@ const sendFile = () => {
         )}
       </View>
 
-      {/* 🔹 חיפוש לפי שם הורה/תלמיד */}
+      {/* 🔹 Search Box */}
       <TextInput
         style={styles.searchInput}
         placeholder="🔍 חפש לפי שם הורה או תלמיד"
@@ -174,7 +185,7 @@ const sendFile = () => {
         onChangeText={setSearchQuery}
       />
 
-      {/* 🔹 טבלה */}
+      {/* 🔹 Contacts Table */}
       <ScrollView>
         <View style={styles.table}>
           <View style={styles.tableHeader}>
@@ -182,8 +193,10 @@ const sendFile = () => {
             <Text style={styles.headerCell}>שם התלמיד</Text>
             <Text style={styles.headerCell}>פעולות      </Text>
           </View>
+          
 
-          {filteredParents.map((parent) => (
+          {filteredContacts.map((parent) => (
+
             <View key={parent.id} style={styles.tableRow}>
               <Text style={styles.cell}>{parent.parentName}</Text>
               <Text style={styles.cell}>{parent.studentName}</Text>
@@ -338,7 +351,6 @@ const sendFile = () => {
   </Text>
 </TouchableOpacity>
 
-
       {/* 🔹 Parent Selection */}
       <TextInput
         style={styles.input}
@@ -374,15 +386,43 @@ const sendFile = () => {
     </View>
   </View>
 </Modal>
-
-
         </View>
+
+
+        {/* 🔹 Add Contact Button */}
+        <TouchableOpacity style={styles.addContactButton} onPress={() => setAddContactModalVisible(true)}>
+          <Text style={styles.addContactButtonText}>➕ הוסף איש קשר</Text>
+        </TouchableOpacity>
+
+        {/* 🔹 Add Contact Modal */}
+        <Modal visible={addContactModalVisible} animationType="slide" transparent>
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>👤 הוסף איש קשר חדש</Text>
+
+              <TextInput style={styles.input} placeholder="שם ההורה" value={newContact.parentName} onChangeText={(text) => setNewContact({ ...newContact, parentName: text })} />
+              <TextInput style={styles.input} placeholder="שם התלמיד" value={newContact.studentName} onChangeText={(text) => setNewContact({ ...newContact, studentName: text })} />
+
+              <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.cancelButton} onPress={() => setAddContactModalVisible(false)}>
+                  <Text style={styles.cancelButtonText}> בטל</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.saveButton} onPress={addNewContact}>
+                  <Text style={styles.saveButtonText}> שמור</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
       </ScrollView>
     </View>
-  
-
-);
+  );
 };
+
+
+
+
 
 
 // 🎨 **עיצוב הדף**
@@ -426,14 +466,13 @@ const styles = StyleSheet.create({
     marginTop: 15, 
   },
   
-  closeButton: {
+  cButton: {
     color: "white",
     fontSize: 22,
     fontWeight: "bold",
   },
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
-
 
   
   headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
@@ -698,7 +737,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-
   overlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.5)",
@@ -706,13 +744,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   
-  popup: {
-    width: "90%",
-    maxWidth: 500,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-  },
+  
   
   header: {
     flexDirection: "row",
@@ -927,7 +959,79 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
   },
+  addContactButton: {
+    backgroundColor: "black",
+    padding: 15,
+    borderRadius: 8,
+    margin: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5,
+  },
+  addContactButtonText: {
+    color: "white",
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  // 🔹 Center the modal and add a slight shadow
+modalContent: {
+  alignItems: "center",
+  width: "85%",
+  padding: 20,
+  backgroundColor: "#FFF",
+  borderRadius: 12,
+  shadowColor: "#000",
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.2,
+  shadowRadius: 6,
+},
+buttonContainer: {
+  flexDirection: "row",  // Arrange buttons in a row
+  justifyContent: "space-between",  // Ensure space between buttons
+  alignItems: "center",  // Align buttons vertically
+  width: "100%",  // Make sure the container takes full width
+  marginTop: 15,
+  gap: 10,  // Add space between buttons (optional)
+},
+
+cancelButton: {
+  flex: 1, // ✅ Make buttons take equal space
+  backgroundColor: "#ddd",
+  paddingVertical: 14,
+  borderRadius: 8,
+  alignItems: "center",
+  justifyContent: "center", // ✅ Ensures text is centered
+  minWidth: 120, // ✅ Prevents buttons from being too small
+},
+
+cancelButtonText: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "#D32F2F", // ✅ Red for cancel button
+},
+
+saveButton: {
+  flex: 1, // ✅ Make buttons take equal space
+  backgroundColor: "black",
+  paddingVertical: 14,
+  borderRadius: 8,
+  alignItems: "center",
+  justifyContent: "center", // ✅ Ensures text is centered
+  minWidth: 120, // ✅ Prevents buttons from being too small
+},
+
+saveButtonText: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "white",
+},
+
+
+
 
 });
 
 export default ContactsScreen;
+
+
