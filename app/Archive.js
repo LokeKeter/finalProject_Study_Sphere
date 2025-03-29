@@ -105,6 +105,10 @@ const ArchiveScreen = () => {
                       <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
                         <Text style={styles.sidebarText}>📁 ארכיון</Text>
                       </TouchableOpacity>
+
+                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/TestScore"); setSidebarVisible(false); }}>
+                        <Text style={styles.sidebarText}>📝 ציונים</Text>
+                      </TouchableOpacity>
           
                       <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
                         <Text style={styles.sidebarText}>🚪 התנתקות</Text>
