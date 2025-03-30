@@ -385,14 +385,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-   // 🔹 INFO CARDS (3 PER ROW)
-   statsContainer: { flexDirection: "row",  },
-   statCard: { width: "92%",
-    backgroundColor: "#fff", 
-    padding:30, alignItems: "center",
-    borderRadius: 10,
-    margin:13,
-       },
+ // 🔹 INFO CARDS (3 PER ROW)
+ statsContainer: { flexDirection: "row", flexWrap: "wrap", margin:15, justifyContent: "space-between", },
+ statCard: { width: "100%", backgroundColor: "#fff", padding:20, alignItems: "center", borderRadius: 8,},
+
  
   // 📊 PIE CHART
   section: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginTop: 20 },
