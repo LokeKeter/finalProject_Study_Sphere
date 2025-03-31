@@ -255,6 +255,8 @@ const ArchiveScreen = () => {
       <TextInput
         style={styles.searchInput}
         placeholder="חפש לפי שם שולח או כותרת 🔍"
+        placeholderTextColor="black"
+        textAlign="right"
         value={searchQuery}
         onChangeText={(text) => {
           setSearchQuery(text);

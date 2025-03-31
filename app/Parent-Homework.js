@@ -107,6 +107,8 @@ const AssignmentScreen = () => {
       <TextInput
         style={styles.searchInput}
         placeholder="חפש לפי מורה או מקצוע 🔍" 
+                    placeholderTextColor="black"
+             textAlign="right"
         value={searchQuery}
         onChangeText={(text) => {
           setSearchQuery(text);
