@@ -185,6 +185,8 @@ const ContactsScreen = () => {
       <TextInput
         style={styles.searchInput}
         placeholder="🔍 חפש לפי שם הורה או תלמיד"
+        textAlign= "right"
+        placeholderTextColor="black"
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -239,13 +241,23 @@ const ContactsScreen = () => {
       </View>
 
       {/* 🔹 Description Input */}
-      <TextInput style={styles.inputLarge} placeholder="נושא" />
+      <TextInput style={styles.inputLarge}
+        placeholder="נושא"
+        placeholderTextColor="black"  // ✅ Makes text black
+        textAlign="right"   />
+      
 
       {/* 🔹 Date Picker */}
-      <TextInput style={styles.input} placeholder="תאריך ושעה" />
+      <TextInput style={styles.input}
+       placeholder="תאריך ושעה"
+       placeholderTextColor="black"  // ✅ Makes text black
+       textAlign="right"   />
 
       {/* 🔹 Participants Input */}
-      <TextInput style={styles.input} placeholder="בחר משתתפים" />
+      <TextInput style={styles.input}
+       placeholder="בחר משתתפים"
+       placeholderTextColor="black"  // ✅ Makes text black
+       textAlign="right"   />
 
       <View style={styles.checkboxContainer}>
   <TouchableOpacity 
@@ -298,6 +310,8 @@ const ContactsScreen = () => {
         placeholder="📌 נושא המכתב"
         value={letterSubject}
         onChangeText={setLetterSubject}
+        placeholderTextColor="black"  // ✅ Makes text black
+        textAlign="right"  
       />
 
       {/* 🔹 Letter Content */}
@@ -307,6 +321,8 @@ const ContactsScreen = () => {
         value={letterContent}
         onChangeText={setLetterContent}
         multiline
+        placeholderTextColor="black"  // ✅ Makes text black
+        textAlign="right"  
       />
 
       {/* 🔹 Buttons */}
@@ -361,6 +377,8 @@ const ContactsScreen = () => {
         placeholder="👤 הורה מקבל"
         value={parentName}
         onChangeText={setParentName}
+        placeholderTextColor="black"  // ✅ Makes text black
+        textAlign="right"  
       />
 
       {/* 🔹 File Description */}
@@ -370,6 +388,9 @@ const ContactsScreen = () => {
         value={fileDescription}
         onChangeText={setFileDescription}
         multiline
+        placeholderTextColor="black"  // ✅ Makes text black
+        textAlign="right"  
+        
       />
 
       {/* 🔹 Auto-filled Date */}
@@ -403,17 +424,30 @@ const ContactsScreen = () => {
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
               <Text style={styles.modalTitle}>👤 הוסף איש קשר חדש</Text>
+              
 
-              <TextInput style={styles.input} placeholder="שם ההורה" value={newContact.parentName} onChangeText={(text) => setNewContact({ ...newContact, parentName: text })} />
-              <TextInput style={styles.input} placeholder="שם התלמיד" value={newContact.studentName} onChangeText={(text) => setNewContact({ ...newContact, studentName: text })} />
+              <TextInput style={styles.input} 
+              placeholder="שם ההורה" 
+              value={newContact.parentName} 
+              onChangeText={(text) => setNewContact({ ...newContact, parentName: text })}
+              textAlign= "right"
+              placeholderTextColor="black"
+               />
+              <TextInput style={styles.input} 
+              placeholder="שם התלמיד" value={newContact.studentName}
+              onChangeText={(text) => setNewContact({ ...newContact, studentName: text })} 
+              textAlign= "right"
+              placeholderTextColor="black"
+               />
 
               <View style={styles.buttonContainer}>
               <TouchableOpacity style={styles.cancelButton} onPress={() => setAddContactModalVisible(false)}>
                   <Text style={styles.cancelButtonText}> בטל</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.saveButton} onPress={addNewContact}>
-                  <Text style={styles.saveButtonText}> שמור</Text>
+                <TouchableOpacity style={styles.sendButton} onPress={addNewContact}>
+                  <Text style={styles.sendButtonText}>שמור</Text> 
                 </TouchableOpacity>
+
               </View>
             </View>
           </View>
@@ -524,6 +558,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     marginBottom: 15,
+
   },
 
   tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
@@ -559,6 +594,7 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
   },
 
+
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -586,20 +622,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 
-  closeButton: {
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 16,
-    backgroundColor: "#F9F9F9",
-  },
+ 
 
   inputLarge: {
     height: 100,
@@ -630,33 +653,8 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
 
-  cancelButton: {
-    flex: 1,
-    backgroundColor: "#ddd",
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginRight: 10,
-  },
 
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
 
-  sendButton: {
-    flex: 1,
-    backgroundColor: "black",
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-
-  sendButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-  },
   tableContainer: {
     marginTop: 10,
     borderRadius: 10,
@@ -694,24 +692,21 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",  // 🔹 Ensures icons stick together
     alignItems: "center",
     flex: 1,
-    gap: 0,  // ❌ Ensures no extra space
-    padding: 0,  // ❌ Remove padding
-    margin: 0,  // ❌ Remove margin
+    
   },
   
   
   actionButton: {
-    padding: 0,  // ❌ Remove padding
-    margin: 0,   // ❌ Remove margins
-    alignItems: "center",
     justifyContent: "center",
+   
+    
   },
   actionIcon: {
-    fontSize: 20,  
+    fontSize: 15,  
     textAlign: "center",
     color: "#333",
-    padding: 0,  // ❌ Remove padding
-    margin: 0,   // ❌ Remove margins
+    padding: 5,  // ❌ Remove padding
+    marginRight:5,
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -777,20 +772,21 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   
-  closeButton: {
-    fontSize: 22,
-    fontWeight: "bold",
+ 
+  
+
+  input: {
+    borderWidth: 1, 
+    borderColor: "#ddd", 
+    borderRadius: 8, 
+    padding: 12, 
+    margin: 5, 
+    fontSize: 16, 
+    backgroundColor: "#F9F9F9",
+    width: "100%", // ✅ Ensures the input field spans full width
+    textAlign: "right", // ✅ Aligns placeholder and text to the right
   },
   
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 16,
-    backgroundColor: "#F9F9F9",
-  },
   
   textArea: {
     height: 100,
@@ -810,33 +806,9 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   
-  cancelButton: {
-    flex: 1,
-    backgroundColor: "#ddd",
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginRight: 10,
-  },
+
   
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  
-  sendButton: {
-    flex: 1,
-    backgroundColor: "black",
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  
-  sendButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-  },
+
 
   overlay: {
     flex: 1,
@@ -845,13 +817,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   
-  popup: {
-    width: "90%",
-    maxWidth: 500,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 20,
-  },
   
   header: {
     flexDirection: "row",
@@ -901,15 +866,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   
-  input: {
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 16,
-    backgroundColor: "#F9F9F9",
-  },
+
   
   textArea: {
     height: 80,
@@ -936,33 +893,9 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   
-  cancelButton: {
-    flex: 1,
-    backgroundColor: "#ddd",
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: "center",
-    marginRight: 10,
-  },
+
   
-  cancelButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  
-  sendButton: {
-    flex: 1,
-    backgroundColor: "black",
-    paddingVertical: 14,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  
-  sendButtonText: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "white",
-  },
+
   addContactButton: {
     backgroundColor: "black",
     padding: 15,
@@ -999,22 +932,37 @@ buttonContainer: {
   gap: 10,  // Add space between buttons (optional)
 },
 
-cancelButton: {
-  flex: 1, // ✅ Make buttons take equal space
-  backgroundColor: "#ddd",
-  paddingVertical: 14,
-  borderRadius: 8,
-  alignItems: "center",
-  justifyContent: "center", // ✅ Ensures text is centered
-  minWidth: 120, // ✅ Prevents buttons from being too small
-},
-
 cancelButtonText: {
   fontSize: 16,
   fontWeight: "bold",
   color: "#D32F2F", // ✅ Red for cancel button
 },
 
+cancelButton: {
+  flex: 1,
+  backgroundColor: "#ddd",
+  paddingVertical: 14,
+  borderRadius: 8,
+  alignItems: "center",
+  marginRight: 10,
+},
+
+sendButton: {
+  flex: 1,
+  backgroundColor: "black",
+  paddingVertical: 14,
+  borderRadius: 8,
+  alignItems: "center",
+},
+
+sendButtonText: {
+  fontSize: 16,
+  fontWeight: "bold",
+  color: "white",
+},
+
+
+/*
 saveButton: {
   flex: 1, // ✅ Make buttons take equal space
   backgroundColor: "black",
@@ -1031,7 +979,7 @@ saveButtonText: {
   color: "white",
 },
 
-
+*/
 
 
 });

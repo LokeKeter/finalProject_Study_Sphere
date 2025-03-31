@@ -208,7 +208,9 @@ const yearlyEvents = [
 
         {/* ✅ TEACHER TASKS UNDER PIE CHART */}
         <View style={[styles.section, styles.tasksSection]}>
-          <Text style={styles.sectionTitle}>📝 משימות למורה</Text>
+          <Text style={styles.sectionTitle}>📝 משימות למורה
+            
+          </Text>
           {tasks.map((task) => (
   <TouchableOpacity 
     key={task.id} 
@@ -227,10 +229,15 @@ const yearlyEvents = [
             value={newTask}
             onChangeText={setNewTask}
             placeholder="הוסף משימה..."
-            style={styles.input}
+            textAlign="right"
+            borderWidth="0.5"    // Thickness of the border
+            borderColor= "black" // Color of the border
+            borderRadius= "10"      // (Optional) Rounded corners
             placeholderTextColor="black"
+            style={styles.input}
+            
           />
-          <TouchableOpacity onPress={addTask} style={styles.addButton}>
+          <TouchableOpacity onPress={addTask} style={styles.addTaskButton}>
             <Text style={{ color: "black" }}>➕ הוסף</Text>
           </TouchableOpacity>
         </View>
@@ -337,18 +344,16 @@ const styles = StyleSheet.create({
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
   sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
+
   sidebarUser: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 15, 
+    
   },
   
-  closeButton: {
-    color: "white",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
+
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
@@ -391,8 +396,10 @@ const styles = StyleSheet.create({
 
  
   // 📊 PIE CHART
-  section: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginTop: 20 },
+  section: { backgroundColor: "#fff", padding: 15, borderRadius: 10, marginTop: 20, },
   pieChartLabels: { flexDirection: "row", justifyContent: "space-around", marginTop: 10 },
+ 
+
 
   // 🔹 TASKS
   tasksSection: { marginTop: 20 },
@@ -531,8 +538,45 @@ editIcon: {
     fontSize: 16, 
     fontWeight: "bold", 
     color: "black" 
+  },
+
+  addTaskButton: {
+    alignSelf: "flex-end",  // ✅ Moves the button to the right
+    padding: 10, 
+    color:"black",
+    backgroundColor:" rgba(66, 65, 65, 0.27)", 
+    borderRadius: 8, 
+    marginTop: 15,
+    
+  },
+
+  input: {
+    height: 50,  // Adjust height if needed
+    borderWidth: 0.5,  // ✅ Make border thicker
+    borderColor: "black",  // ✅ Border color
+    borderRadius: 10,  // ✅ Optional: Rounded corners
+    paddingHorizontal: 15,  // ✅ Adjust inner spacing
+    paddingVertical: 10,  // ✅ Adjust vertical padding
+    textAlign: "right",  // ✅ Align text to right
+    fontSize: 16,  // ✅ Make text more readable
+    color: "black",  // ✅ Text color
+    backgroundColor: "white", // ✅ Background color for clarity
+  },
+  sectionTitle:{
+    textAlign: "center",  // ✅ Align text to right
+    marginBottom:15,
+    marginTop:5,
+    color:"bold",
+    fontWeight: "bold",
+    borderRadius: 10,  // ✅ Optional: Rounded corners
+
   }
+
+
 });
+  
+  
+
 
 
 

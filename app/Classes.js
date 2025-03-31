@@ -137,9 +137,12 @@ const ClassesScreen = () => {
 
       {/* 🔹 Class Selection */}
       <Text style={styles.title}>בחר כיתה</Text>
+      
       <TextInput
         style={styles.searchInput}
         placeholder="🔍 חפש כיתה..."
+        placeholderTextColor="black"  // ✅ Makes text black
+        textAlign="right"  
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
@@ -165,6 +168,8 @@ const ClassesScreen = () => {
           <TextInput
             style={styles.homeworkInput}
             placeholder="📚 הוסף שיעורי בית..."
+            placeholderTextColor="black"  // ✅ Makes the placeholder text black
+            textAlign="right"  
             value={newHomework}
             onChangeText={setNewHomework}
           />
@@ -212,12 +217,15 @@ const ClassesScreen = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>📩 שליחת הודעה לכיתה {selectedClass?.name}</Text>
             <TextInput
-              style={styles.messageInput}
-              placeholder="💬 הקלד הודעה לכיתה..."
-              value={messageText}
-              onChangeText={setMessageText}
-              multiline
-            />
+                style={styles.messageInput}
+                placeholder="💬 הקלד הודעה לכיתה..."
+                placeholderTextColor="black"  // ✅ Makes the placeholder text black
+                value={messageText}
+                onChangeText={setMessageText}
+                multiline
+                textAlign="right"  // ✅ Aligns the text and placeholder to the right
+              />
+
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
                 <Text style={styles.sendButtonText}>📨 שלח</Text>
@@ -239,7 +247,8 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1, 
     paddingTop: 85, 
-    backgroundColor: "#F4F4F4" 
+    backgroundColor: "#F4F4F4", 
+    
   },
 
   // 🔹 Top navigation bar
@@ -391,7 +400,8 @@ const styles = StyleSheet.create({
   title: { 
     fontSize: 22, 
     fontWeight: "bold", 
-    marginVertical: 10 
+    marginVertical: 10 ,
+    textAlign:"center",
   },
   searchInput: { 
     padding: 10, 
@@ -469,8 +479,8 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.5)" 
   },
   modalContent: { 
-    width: "80%", 
-    height: 150,
+    width: "90%", 
+    height: 250,
     borderWidth: 1, 
     backgroundColor: "rgb(255, 255, 255)", 
     padding: 20, 
@@ -492,8 +502,11 @@ const styles = StyleSheet.create({
     padding: 10, 
     borderRadius: 5, 
     marginBottom: 10, 
-    textAlignVertical: "top" 
+    textAlignVertical: "top", 
+    backgroundColor: "#fff", // ✅ Ensures good contrast
+    color: "black", // ✅ Ensures user-typed text is black
   },
+  
   modalButtons: { 
     flexDirection: "row", 
     justifyContent: "space-between" 
