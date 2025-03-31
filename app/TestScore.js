@@ -64,6 +64,18 @@ const TestScreen = () => {
     setScores({ ...scores, [className]: updatedClass });
   };
 
+//כפתור שלח ציונים
+const handleSubmitScores = () => {
+  const missingScore = scores[selectedClass].some((student) => student.score === "");
+  if (missingScore) {
+    alert("יש תלמידים בלי ציון. נא להשלים לפני שליחה.");
+    return;
+  }
+  alert("הציונים נשלחו בהצלחה!");
+};
+
+
+
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -195,7 +207,13 @@ const TestScreen = () => {
           )}
         </ScrollView>
       </View>
+      {selectedClass && (
+        <TouchableOpacity style={styles.sendScoresButton} onPress={handleSubmitScores}>
+          <Text style={styles.sendScoresButtonText}>שלח ציונים</Text>
+        </TouchableOpacity>
+      )}
     </KeyboardAvoidingView>
+    
   );
 };
 
@@ -238,13 +256,6 @@ const styles = StyleSheet.create({
   headerText: { fontSize: 22, fontWeight: "bold" },
   arrow: { fontSize: 26, marginHorizontal: 20 },
 
-  classButtons: {
-    flexDirection: "row",
-  flexWrap: "wrap", // מאפשר ירידה לשורות
-  justifyContent: "center", // מרכז את הכפתורים
-  gap: 10, // 🔥 מוסיף מרווח בין כפתורים (אם נתמך)
-  margin: 10,
-  },
   classButton: {
     paddingVertical: 10,
     paddingHorizontal: 15,
@@ -310,6 +321,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: "#f9f9f9",
   },
+
+  //כפתור שלח
+  sendScoresButton: {
+    backgroundColor: "black",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    alignSelf: "center",
+    borderRadius: 8,
+    marginTop: 20,
+  },
+  sendScoresButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  
 });
 
 export default TestScreen;

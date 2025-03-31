@@ -30,6 +30,23 @@ const ArchiveScreen = () => {
   const [sidebarVisible, setSidebarVisible] = useState(false); // ✅ Sidebar state
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString()); // ✅ Current time state
 
+  // מודל הצגת ההודעה
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // מודל שליחת הודעה
+  const [isLetterModalVisible, setLetterModalVisible] = useState(false);
+  const [letterSubject, setLetterSubject] = useState(""); 
+  const [letterRecipient, setLetterRecipient] = useState(""); 
+  const [letterContent, setLetterContent] = useState(""); 
+
+  //לחיצה על הודעה
+  const handleOpenMessage = (msg) => {
+    setSelectedMessage(msg);
+    setModalVisible(true);
+  };
+  
+
   // ⏳ ✅ Update time every second
   useEffect(() => {
     const interval = setInterval(() => {
@@ -154,14 +171,110 @@ const ArchiveScreen = () => {
     </View>
 
     {displayedMessages.map((msg) => (
-      <View key={msg.id} style={styles.tableRow}>
-        <Text style={styles.cell}>{msg.title}</Text>
-        <Text style={styles.cell}>{msg.sender}</Text>
-        <Text style={styles.cell}>{msg.date}</Text>
-      </View>
-    ))}
+  <TouchableOpacity key={msg.id} style={styles.tableRow} onPress={() => handleOpenMessage(msg)}>
+    <Text style={styles.cell}>{msg.title}</Text>
+    <Text style={styles.cell}>{msg.sender}</Text>
+    <Text style={styles.cell}>{msg.date}</Text>
+  </TouchableOpacity>
+  ))}
   </View>
 </ScrollView>
+{selectedMessage && (
+<Modal visible={modalVisible} transparent animationType="fade">
+  <View style={styles.modalBackground}>
+    <View style={styles.messageModal}>
+      <ScrollView style={{ width: "100%" }}>
+        <Text style={styles.messageTitle}>{selectedMessage?.title}</Text>
+        <Text style={styles.messageSender}>נשלח על ידי: {selectedMessage?.sender}</Text>
+        <Text style={styles.messageDate}>תאריך: {selectedMessage?.date}</Text>
+        <Text style={styles.messageContent}>
+          {selectedMessage?.content || "אין תוכן להצגה"}
+        </Text>
+      </ScrollView>
+
+      <View style={styles.modalButtonsContainer}>
+        <TouchableOpacity
+          onPress={() => setModalVisible(false)}
+          style={styles.closeMessageButton}
+        >
+          <Text style={styles.closeMessageButtonText}>סגור</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setLetterSubject(selectedMessage?.title);
+            setLetterRecipient(selectedMessage?.sender);
+            setLetterModalVisible(true);
+          }}
+          style={styles.sendMessageButton}
+        >
+          <Text style={styles.sendMessageButtonText}>שלח</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+)}
+<Modal visible={isLetterModalVisible} transparent animationType="slide">
+  <View style={styles.overlay}>
+    <View style={styles.popup}>
+      <View style={styles.header}>
+        <View style={styles.titleContainer}>
+          <View style={styles.iconBox}>
+            <Text style={styles.icon}>✉️</Text>
+          </View>
+          <Text style={styles.title}>שליחת הודעה</Text>
+        </View>
+        <TouchableOpacity onPress={() => setLetterModalVisible(false)}>
+          <Text style={styles.closeButton}>✖</Text>
+        </TouchableOpacity>
+      </View>
+
+      <TextInput
+        style={styles.input}
+        placeholder="👤 נמען"
+        value={letterRecipient}
+        editable={false}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="📌 נושא ההודעה"
+        value={letterSubject}
+        editable={false}
+      />
+      <TextInput
+        style={styles.textArea}
+        placeholder="✍️ תוכן ההודעה..."
+        value={letterContent}
+        onChangeText={setLetterContent}
+        multiline
+      />
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.cancelButton}
+          onPress={() => setLetterModalVisible(false)}
+        >
+          <Text style={styles.cancelButtonText}>ביטול</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={() => {
+            if (!letterContent.trim()) {
+              alert("נא להזין תוכן להודעה.");
+              return;
+            }
+            alert("ההודעה נשלחה בהצלחה!");
+            setLetterModalVisible(false);
+          }}
+        >
+          <Text style={styles.sendButtonText}>📨 שלח</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
 {/* 🔹 חצים למעבר בין דפים */}
 {totalPages > 1 && (
   <View style={styles.pagination}>
@@ -335,6 +448,200 @@ const styles = StyleSheet.create({
     flex: 1, 
     textAlign: "center" 
   },
+
+  //עיצוב מכתב
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
+  
+  messageModal: {
+    width: "85%",
+    backgroundColor: "#fff",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  
+  messageTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "right"
+  },
+  
+  messageSender: {
+    fontSize: 16,
+    marginBottom: 5,
+    textAlign: "right"
+  },
+  
+  messageDate: {
+    fontSize: 14,
+    color: "#777",
+    marginBottom: 15,
+    textAlign: "right"
+  },
+  
+  messageContent: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    textAlign: "right"
+  },
+  
+  closeMessageButton: {
+    backgroundColor: "#000",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  
+  closeMessageButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  modalButtonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginTop: 15,
+  },
+  
+  closeMessageButton: {
+    backgroundColor: "#ccc",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: "center",
+    marginRight: 5,
+  },
+  
+  closeMessageButtonText: {
+    color: "#000",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  
+  sendMessageButton: {
+    backgroundColor: "#000",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    flex: 1,
+    alignItems: "center",
+    marginLeft: 5,
+  },
+  
+  sendMessageButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  
+  //שלח הודעה
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  
+  popup: {
+    width: "90%",
+    maxWidth: 500,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 20,
+  },
+  
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    paddingBottom: 10,
+  },
+  
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  
+  iconBox: {
+    backgroundColor: "#EAEAEA",
+    padding: 10,
+    borderRadius: 8,
+    marginRight: 10,
+  },
+  
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  
+  input: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+  
+  textArea: {
+    height: 100,
+    textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: "#F9F9F9",
+  },
+  
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 15,
+  },
+  
+  cancelButton: {
+    flex: 1,
+    backgroundColor: "#ddd",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  
+  cancelButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  
+  sendButton: {
+    flex: 1,
+    backgroundColor: "black",
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: "center",
+  },
+  
+  sendButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+
 
   /* 🔹 עיצוב העמודים (Pagination) */
   pagination: { 
