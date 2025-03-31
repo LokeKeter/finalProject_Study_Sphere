@@ -205,13 +205,15 @@ const handleSubmitScores = () => {
               ))}
             </View>
           )}
-        </ScrollView>
-      </View>
-      {selectedClass && (
+          {selectedClass && (
         <TouchableOpacity style={styles.sendScoresButton} onPress={handleSubmitScores}>
           <Text style={styles.sendScoresButtonText}>שלח ציונים</Text>
         </TouchableOpacity>
       )}
+        </ScrollView>
+        
+      </View>
+      
     </KeyboardAvoidingView>
     
   );
