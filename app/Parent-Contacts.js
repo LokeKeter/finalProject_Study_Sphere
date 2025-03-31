@@ -99,6 +99,8 @@ const ContactsScreen = () => {
         placeholder="חפש לפי שם הורה או תלמיד 🔍"
         value={searchQuery}
         onChangeText={setSearchQuery}
+        placeholderTextColor="black"
+        textAlign="right"
       />
 
       {/* 🔹 טבלה */}
@@ -281,6 +283,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     marginBottom: 15,
     textAlign: "right",
+    
   },
 
 
