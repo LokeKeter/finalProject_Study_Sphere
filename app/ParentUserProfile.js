@@ -129,8 +129,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
       },
       
-    
-    title: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
+
     label: { fontSize: 16, fontWeight: "bold", marginBottom: 5 },
     input: { borderWidth: 1, borderColor: "#ddd", padding: 10, borderRadius: 5, margin: 15, fontSize: 16 },
     button: { backgroundColor: "black", padding: 12, borderRadius: 5, alignItems: "center", marginTop: 10 },
@@ -164,17 +163,10 @@ const styles = StyleSheet.create({
     },
     menuButton: { padding: 4 },
     menuIcon: { color: "white", fontSize: 26 },
-    username: { color: "white", fontSize: 18, fontWeight: "bold" },
     dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
   
     modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
     sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
-    sidebarUser: {
-      color: "white",
-      fontSize: 18,
-      fontWeight: "bold",
-      marginTop: 15,
-    },
   
     closeButton: {
       color: "white",

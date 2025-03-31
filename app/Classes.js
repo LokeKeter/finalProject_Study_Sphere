@@ -284,11 +284,6 @@ const styles = StyleSheet.create({
     color: "white", 
     fontSize: 26 
   },
-  username: { 
-    color: "white", 
-    fontSize: 18, 
-    fontWeight: "bold" 
-  },
   dateTime: { 
     color: "white", 
     fontSize: 16, 
@@ -329,73 +324,6 @@ const styles = StyleSheet.create({
     fontSize: 18 
   },
 
-  // 🔹 Table styles (if used)
-  headerContainer: { 
-    flexDirection: "row", 
-    alignItems: "center", 
-    justifyContent: "center", 
-    marginVertical: 10 
-  },
-  headerText: { 
-    fontSize: 18, 
-    fontWeight: "bold" 
-  },
-  arrow: { 
-    fontSize: 22, 
-    paddingHorizontal: 10 
-  },
-  table: { 
-    backgroundColor: "#fff", 
-    borderRadius: 10, 
-    padding: 10, 
-    marginTop: 10 
-  },
-  tableHeader: { 
-    flexDirection: "row", 
-    backgroundColor: "#ddd", 
-    padding: 10, 
-    borderRadius: 5 
-  },
-  headerCell: { 
-    flex: 1, 
-    fontWeight: "bold", 
-    textAlign: "center" 
-  },
-
-  // 🔹 Table row styling
-  tableRow: {
-    flexDirection: "row", // ✅ Arrange rows horizontally
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  cell: { 
-    flex: 1, 
-    textAlign: "center" 
-  },
-
-  // 🔹 Toggle button container (for switches)
-  switchContainer: { 
-    flex: 1, 
-    alignItems: "center" 
-  },
-
-  // 🔹 Update button styling
-  updateButton: {
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  updateButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  
   // 🔹 Class selection section
   title: { 
     fontSize: 22, 
@@ -442,19 +370,6 @@ const styles = StyleSheet.create({
     textAlign: "center", 
     fontSize: 16,
     fontWeight: "bold" 
-  },
-  homeworkItem: { 
-    flexDirection: "row", 
-    justifyContent: "space-between", 
-    padding: 10, 
-    backgroundColor: "white", 
-    marginVertical: 5 
-  },
-  completedHomework: { 
-    backgroundColor: "lightgreen" 
-  },
-  deleteIcon: { 
-    color: "red" 
   },
 
   // ✅ Send Message Button
