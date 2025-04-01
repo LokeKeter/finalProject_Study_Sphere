@@ -234,6 +234,7 @@ const yearlyEvents = [
             borderColor= "black" // Color of the border
             borderRadius= "10"      // (Optional) Rounded corners
             placeholderTextColor="black"
+            
             style={styles.input}
             
           />
@@ -268,21 +269,29 @@ const yearlyEvents = [
 </View>
       </ScrollView>
       <Modal transparent={true} visible={popupVisible} animationType="slide">
-        <View style={styles.popupOverlay}>
-          <View style={styles.popupContainer}>
+        <View style={styles.popupOverlay}
+        >
+          <View style={styles.popupContainer}
+          >
             <Text style={styles.popupTitle}>
+              
               {selectedCategory === "discipline"
                 ? "📌 אירועי משמעת"
                 : selectedCategory === "homework"
                 ? "📚 שיעורים"
                 : "📅 פגישות"}
+                
             </Text>
 
             <TextInput
               style={styles.searchBar}
               placeholder="🔍 חפש משימה..."
+              placeholderTextColor={"black"}
+              color="black"
               value={searchQuery}
               onChangeText={(text) => setSearchQuery(text)}
+              textAlign="right"
+              
             />
 
             <FlatList
@@ -500,7 +509,8 @@ editIcon: {
     borderWidth: 1, 
     borderRadius: 8, 
     padding: 10, 
-    marginBottom: 10 
+    marginBottom: 10, 
+    
   },
 
   // 🔹 Task list item

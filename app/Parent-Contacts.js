@@ -11,7 +11,7 @@ import {
 import { useRouter } from "expo-router";
 
 const parentsData = [
-  { id: "1", parentName: "יוסי כהן", studentName: "מטמטיקה" },
+  { id: "1", parentName: "יוסי כהן", studentName: "מתמטיקה" },
   { id: "2", parentName: "רונית לוי", studentName: "היסטוריה" },
   { id: "3", parentName: "משה ישראלי", studentName: "לשון" },
   { id: "4", parentName: "שרה דויד", studentName: "תנ''ך" },
@@ -146,6 +146,9 @@ const ContactsScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="📌 נושא המכתב"
+        placeholderTextColor={"black"}
+        color="black"
+        textAlign="right"
         value={letterSubject}
         onChangeText={setLetterSubject}
       />
@@ -154,6 +157,9 @@ const ContactsScreen = () => {
       <TextInput
         style={styles.textArea}
         placeholder="✍️ תוכן המכתב..."
+        placeholderTextColor={"black"}
+        color="black"
+        textAlign="right"
         value={letterContent}
         onChangeText={setLetterContent}
         multiline
