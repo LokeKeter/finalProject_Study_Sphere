@@ -222,7 +222,6 @@ const styles = StyleSheet.create({
   },
   menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
-  username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
@@ -242,10 +241,6 @@ const styles = StyleSheet.create({
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
-  
-  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
-  headerText: { fontSize: 18, fontWeight: "bold" },
-  arrow: { fontSize: 22, paddingHorizontal: 10 },
   table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
   tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 , justifyContent: "center", alignItems: "center"},
   headerCell: { flex: 1, fontWeight: "bold", textAlign: "center", alignSelf: "stretch", textAlignVertical: "center", paddingVertical: 5,},
@@ -259,26 +254,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   cell: { flex: 1,  textAlign: "center", alignSelf: "stretch", textAlignVertical: "center", paddingVertical: 5,},
-
-  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
-
-  updateButton: {
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  updateButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  
-  headerText: { fontSize: 18, fontWeight: "bold" },
-  arrow: { fontSize: 22, paddingHorizontal: 10 },
 
   searchInput: {
     height: 40,

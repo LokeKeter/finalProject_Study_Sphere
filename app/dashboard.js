@@ -348,7 +348,6 @@ const styles = StyleSheet.create({
   },
   menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
-  username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
@@ -361,44 +360,9 @@ const styles = StyleSheet.create({
     marginTop: 15, 
     
   },
-  
-
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
-
-
   
-  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
-  headerText: { fontSize: 18, fontWeight: "bold" },
-  arrow: { fontSize: 22, paddingHorizontal: 10 },
-  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
-  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
-
-  tableRow: {
-    flexDirection: "row", // ✅ סידור שורות לרוחב
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  cell: { flex: 1, textAlign: "center" },
-  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
-
-  updateButton: {
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  updateButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
  // 🔹 INFO CARDS (3 PER ROW)
  statsContainer: { flexDirection: "row", flexWrap: "wrap", margin:15, justifyContent: "space-between", },
  statCard: { width: "100%", backgroundColor: "#fff", padding:20, alignItems: "center", borderRadius: 8,},

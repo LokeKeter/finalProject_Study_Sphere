@@ -267,17 +267,10 @@ const styles = StyleSheet.create({
   },
   menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
-  username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
   sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
-  sidebarUser: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 15, 
-  },
   
   closeButton: {
     color: "white",
@@ -325,8 +318,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   
-  pieChartLabels: { flexDirection: "row", justifyContent: "space-around", marginTop: 10 },
-
   //motivation text
   motivationText: {
     marginTop: 15, 

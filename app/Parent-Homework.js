@@ -193,7 +193,12 @@ const styles = StyleSheet.create({
   menuIcon: { color: "white", fontSize: 26 },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
-  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.6)",
+  },
   sidebar: {
     position: "absolute",
     left: 0,
@@ -225,7 +230,6 @@ const styles = StyleSheet.create({
   },
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
-  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
   
   searchInput: {
     height: 40,
@@ -262,12 +266,7 @@ const styles = StyleSheet.create({
   },
   cell: { flex: 1, textAlign: "center" },
 
-  modalBackground: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.6)",
-  },
+  
   messageModal: {
     width: "85%",
     backgroundColor: "#fff",

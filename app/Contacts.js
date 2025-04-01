@@ -208,16 +208,15 @@ const ContactsScreen = () => {
               <Text style={styles.cell}>{parent.studentName}</Text>
 
               {/* 🔹 פעולות */}
-              <View style={{ flexDirection: "row", gap: 0, padding: 0, margin: 0 }}>
+              <View style={{ flexDirection: "row"}}>
               <TouchableOpacity onPress={() => setSignatureModalVisible(true)}>
-                <Text style={styles.actionText}>📝</Text> {/* Upload Icon */}
+                <Text style={styles.actionIcon}>📝</Text> {/* Upload Icon */}
               </TouchableOpacity>
 
                <TouchableOpacity onPress={() => setLetterModalVisible(true)}>
-                <Text style={styles.actionText}>✉️</Text> {/* You can change the icon */}
+                <Text style={styles.actionIcon}>✉️</Text> {/* You can change the icon */}
               </TouchableOpacity>
               <TouchableOpacity 
-                style={styles.actionButton} 
                 onPress={() => setMeetingModalVisible(true)} // ✅ Open Popup
                 >
                   <Text style={styles.actionIcon}>📅</Text>
@@ -492,7 +491,6 @@ const styles = StyleSheet.create({
   },
   menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
-  username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
   modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
@@ -518,7 +516,7 @@ const styles = StyleSheet.create({
   arrow: { fontSize: 22, paddingHorizontal: 10 },
   table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
   tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
+
 
   tableRow: {
     flexDirection: "row", // ✅ סידור שורות לרוחב
@@ -527,28 +525,6 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
   },
-  cell: { flex: 1, textAlign: "center" },
-
-  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
-
-  updateButton: {
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  updateButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  
-  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
-  headerText: { fontSize: 18, fontWeight: "bold" },
-  arrow: { fontSize: 22, paddingHorizontal: 10 },
 
   searchInput: {
     height: 40,
@@ -561,13 +537,7 @@ const styles = StyleSheet.create({
 
   },
 
-  tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
-  headerCell: { flex: 1, fontWeight: "bold", textAlign: "left", paddingLeft: 10},
-  tableRow: { flexDirection: "row", paddingVertical: 10, alignItems: "center", borderBottomWidth: 1, borderBottomColor: "#ccc" },
-  cell: { flex: 1, textAlign: "center" },
-  actionsContainer: { flexDirection: "row", justifyContent: "center" },
-  actionButton: { marginHorizontal: 5, padding: 5 },
-  actionText: { fontSize: 18 },
+  actionButton: { justifyContent: "center",marginHorizontal: 5},
   actionText: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -610,13 +580,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  titleIcon: {
-    backgroundColor: "#EAEAEA",
-    padding: 10,
-    borderRadius: 8,
-    marginRight: 10,
-  },
-
   title: {
     fontSize: 20,
     fontWeight: "bold",
@@ -635,78 +598,30 @@ const styles = StyleSheet.create({
     fontSize: 16,
     backgroundColor: "#F9F9F9",
   },
-
-  toggleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: "#ddd",
-    marginVertical: 12,
-  },
-
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 15,
-  },
-
-
-
-  tableContainer: {
-    marginTop: 10,
-    borderRadius: 10,
-    overflow: "hidden",
-    backgroundColor: "#fff",
-    padding: 10,
-  },
-  tableHeader: {
-    flexDirection: "row",
-    backgroundColor: "#ddd",
-    padding:10,
-    borderRadius: 5,
-  },
+  
   headerCell: {
     flex: 1, // Ensures equal column width
     fontWeight: "bold",
     textAlign: "center",
     minWidth: 80, // Prevents columns from shrinking too much
+    paddingLeft: 10,
   },
-  tableRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-  },
+
   cell: {
     flex: 1,
     textAlign: "center",
     paddingHorizontal: 5, // Prevents text from touching the edges
     minWidth: 80, // Ensures cells don't get too small
   },
-  actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-start",  // 🔹 Ensures icons stick together
-    alignItems: "center",
-    flex: 1,
-    
-  },
+
   
   
-  actionButton: {
-    justifyContent: "center",
-   
-    
-  },
+
   actionIcon: {
-    fontSize: 15,  
+    fontSize: 17,  
     textAlign: "center",
     color: "#333",
-    padding: 5,  // ❌ Remove padding
-    marginRight:5,
+    padding: 3,
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -743,35 +658,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   
-  
-  
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    paddingBottom: 10,
-  },
-  
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  
   iconBox: {
     backgroundColor: "#EAEAEA",
     padding: 10,
     borderRadius: 8,
     marginRight: 10,
   },
-  
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  
  
   
 
@@ -800,51 +692,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F9F9F9",
   },
   
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 15,
-  },
-  
-
-  
-
-
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  
-  
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    paddingBottom: 10,
-  },
-  
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  
-  iconBox: {
-    backgroundColor: "#EAEAEA",
-    padding: 10,
-    borderRadius: 8,
-    marginRight: 10,
-  },
-  
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  
   closeButton: {
     fontSize: 22,
     fontWeight: "bold",
@@ -866,31 +713,11 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   
-
-  
-  textArea: {
-    height: 80,
-    textAlignVertical: "top",
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-    fontSize: 16,
-    backgroundColor: "#F9F9F9",
-  },
-  
   uploadDate: {
     fontSize: 14,
     color: "#555",
     textAlign: "right",
     marginBottom: 12,
-  },
-  
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 15,
   },
   
 

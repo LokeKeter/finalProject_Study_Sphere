@@ -347,10 +347,8 @@ const styles = StyleSheet.create({
   },
   menuButton: { padding: 4 },
   menuIcon: { color: "white", fontSize: 26 },
-  username: { color: "white", fontSize: 18, fontWeight: "bold" },
   dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
 
-  modalBackground: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)" },
   sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
   sidebarUser: {
     color: "white",
@@ -367,39 +365,9 @@ const styles = StyleSheet.create({
   sidebarItem: { paddingVertical: 15 },
   sidebarText: { color: "white", fontSize: 18 },
 
-
-  
-  headerContainer: { flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 10 },
-  headerText: { fontSize: 18, fontWeight: "bold" },
-  arrow: { fontSize: 22, paddingHorizontal: 10 },
-  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 },
+  table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 ,borderRadius: 5 },
   tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
   headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
-
-  tableRow: {
-    flexDirection: "row", // ✅ סידור שורות לרוחב
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  cell: { flex: 1, textAlign: "center" },
-
-  switchContainer: { flex: 1, alignItems: "center" }, // ✅ סידור הכפתורים
-
-  updateButton: {
-    backgroundColor: "black",
-    paddingVertical: 12,
-    borderRadius: 8,
-    alignItems: "center",
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  updateButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
 
   /* 🔹 כותרת עם חצים */
   headerContainer: {
@@ -433,19 +401,6 @@ const styles = StyleSheet.create({
     marginTop: 20, // ✅ מרווח טוב אחרי תיבת החיפוש
   },
 
-  tableHeader: {
-    flexDirection: "row",
-    backgroundColor: "#ddd",
-    padding: 10,
-    borderRadius: 5,
-  },
-
-  headerCell: { 
-    flex: 1, 
-    fontWeight: "bold", 
-    textAlign: "center" 
-  },
-
   /* 🔹 שורות הטבלה */
   tableRow: {
     flexDirection: "row",
@@ -477,7 +432,6 @@ const styles = StyleSheet.create({
     color: "white", 
     fontSize: 16 
   },
-  disabledButton: { backgroundColor: "#ccc" },
   pageText: { 
     fontSize: 16, 
     fontWeight: "bold" 
@@ -526,18 +480,6 @@ const styles = StyleSheet.create({
     textAlign: "right"
   },
   
-  closeMessageButton: {
-    backgroundColor: "#000",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-  },
-  
-  closeMessageButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
   modalButtonsContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
