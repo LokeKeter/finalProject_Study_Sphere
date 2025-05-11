@@ -10,6 +10,7 @@ import {
   FlatList,
 } from "react-native";
 import { useRouter } from "expo-router";
+import TopSidebar from "../components/TopSidebar";
 
 const initialClassesData = [
   { id: "1", name: "כיתה א'", subjects: ["מתמטיקה", "אנגלית", "עברית"] },
@@ -25,13 +26,9 @@ const ClassesScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [newHomework, setNewHomework] = useState("");
   const [currentTime, setCurrentTime] = useState("");
-
-  // ✅ States for adding classes
   const [classes, setClasses] = useState(initialClassesData);
   const [newClassName, setNewClassName] = useState("");
   const [addClassModalVisible, setAddClassModalVisible] = useState(false);
-
-  // ✅ States for sending messages
   const [messageText, setMessageText] = useState("");
   const [messageModalVisible, setMessageModalVisible] = useState(false);
 
@@ -42,13 +39,11 @@ const ClassesScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔹 Select a class
   const handleClassSelect = (classObj) => {
     setSelectedClass(classObj);
-    setHomeworkList([]); // Reset homework when selecting a class
+    setHomeworkList([]);
   };
 
-  // ✅ Add new class (Fully Working)
   const addClass = () => {
     if (!newClassName.trim()) {
       Alert.alert("שגיאה", "שם הכיתה לא יכול להיות ריק!");
@@ -60,14 +55,12 @@ const ClassesScreen = () => {
     setAddClassModalVisible(false);
   };
 
-  // ✅ Add new homework (Fully Working)
   const addHomework = () => {
     if (!newHomework.trim()) return;
     setHomeworkList([...homeworkList, { id: Date.now().toString(), text: newHomework, completed: false }]);
     setNewHomework("");
   };
 
-  // ✅ Send message (Fully Working)
   const sendMessage = () => {
     if (!messageText.trim()) {
       Alert.alert("שגיאה", "לא ניתן לשלוח הודעה ריקה.");
@@ -80,74 +73,23 @@ const ClassesScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* 🔹 Top Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <Text style={styles.dateTime}>{currentTime}</Text>
-      </View>
+      <TopSidebar
+        currentTime={currentTime}
+        sidebarVisible={sidebarVisible}
+        setSidebarVisible={setSidebarVisible}
+      />
 
-
-                          {/* 🔹 SIDEBAR MENU */}
-                          <Modal visible={sidebarVisible} animationType="slide" transparent>
-                            <View style={styles.modalBackground}>
-                              <View style={styles.sidebar}>
-                                <View style={styles.sidebarHeader}>
-                                  <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                                    <Text style={styles.sidebarUser}>👤 מורה</Text>
-                                  </TouchableOpacity>
-      
-                                  <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-                                    <Text style={styles.closeButton}>✖</Text>
-                                  </TouchableOpacity>
-                                </View>
-                    
-                    
-                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
-                                  <Text style={styles.sidebarText}>📊 כללי</Text>
-                                </TouchableOpacity>
-                    
-                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
-                                  <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-                                </TouchableOpacity>
-          
-                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-                                      <Text style={styles.sidebarText}>🏫 כיתות</Text>
-                                </TouchableOpacity>
-                    
-                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
-                                  <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-                                </TouchableOpacity>
-                    
-                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
-                                  <Text style={styles.sidebarText}>📁 ארכיון</Text>
-                                </TouchableOpacity>
-
-                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/TestScore"); setSidebarVisible(false); }}>
-                                  <Text style={styles.sidebarText}>📝 ציונים</Text>
-                                </TouchableOpacity>
-                    
-                                <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-                                  <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-                                </TouchableOpacity>
-                              </View>
-                            </View>
-                          </Modal>
-
-      {/* 🔹 Class Selection */}
       <Text style={styles.title}>בחר כיתה</Text>
-      
+
       <TextInput
         style={styles.searchInput}
         placeholder="🔍 חפש כיתה..."
-        placeholderTextColor="black"  // ✅ Makes text black
-        textAlign="right"  
+        placeholderTextColor="black"
+        textAlign="right"
         value={searchQuery}
         onChangeText={setSearchQuery}
       />
 
-      {/* 🔹 Class List */}
       <FlatList
         data={classes}
         keyExtractor={(item) => item.id}
@@ -159,17 +101,14 @@ const ClassesScreen = () => {
         )}
       />
 
- 
-
-      {/* ✅ Homework Section */}
       {selectedClass && (
         <>
           <Text style={styles.title}>שיעורי בית ל{selectedClass.name}</Text>
           <TextInput
             style={styles.homeworkInput}
             placeholder="📚 הוסף שיעורי בית..."
-            placeholderTextColor="black"  // ✅ Makes the placeholder text black
-            textAlign="right"  
+            placeholderTextColor="black"
+            textAlign="right"
             value={newHomework}
             onChangeText={setNewHomework}
           />
@@ -177,18 +116,16 @@ const ClassesScreen = () => {
             <Text style={styles.addButtonText}>➕ הוספת שיעורי בית</Text>
           </TouchableOpacity>
 
-          {/* ✅ Button to Open Message Modal */}
           <TouchableOpacity style={styles.messageButton} onPress={() => setMessageModalVisible(true)}>
             <Text style={styles.messageButtonText}>📢 שליחת הודעה</Text>
           </TouchableOpacity>
         </>
       )}
-           {/* ✅ Button for Adding a Class */}
-           <TouchableOpacity style={styles.addClassButton} onPress={() => setAddClassModalVisible(true)}>
+
+      <TouchableOpacity style={styles.addClassButton} onPress={() => setAddClassModalVisible(true)}>
         <Text style={styles.addClassButtonText}>➕ הוסף כיתה</Text>
       </TouchableOpacity>
 
-      {/* ✅ Add Class Modal */}
       <Modal visible={addClassModalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
@@ -211,21 +148,19 @@ const ClassesScreen = () => {
         </View>
       </Modal>
 
-      {/* ✅ Send Message Modal */}
       <Modal visible={messageModalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>📩 שליחת הודעה לכיתה {selectedClass?.name}</Text>
             <TextInput
-                style={styles.messageInput}
-                placeholder="💬 הקלד הודעה לכיתה..."
-                placeholderTextColor="black"  // ✅ Makes the placeholder text black
-                value={messageText}
-                onChangeText={setMessageText}
-                multiline
-                textAlign="right"  // ✅ Aligns the text and placeholder to the right
-              />
-
+              style={styles.messageInput}
+              placeholder="💬 הקלד הודעה לכיתה..."
+              placeholderTextColor="black"
+              value={messageText}
+              onChangeText={setMessageText}
+              multiline
+              textAlign="right"
+            />
             <View style={styles.modalButtons}>
               <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
                 <Text style={styles.sendButtonText}>📨 שלח</Text>

@@ -1,50 +1,53 @@
-# Welcome to your Expo app 👋
+🧑‍🏫 Study Sphere
+A modern, responsive teacher dashboard built with React Native, enabling educators to manage classroom activities, assignments, discipline, meetings, and events in one intuitive mobile application.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+---
 
-## Get started
+📱 What the App Does
+The Study Sphere is a comprehensive mobile tool for teachers and parents that helps them:
 
-1. Install dependencies
+Teacher Features:
+📊 Track real-time class attendance
+📚 Manage and view homework assignments
+🔔 Monitor and log discipline events
+📅 Schedule and view meetings
+📆 Review yearly school events
+📝 Create, view, and mark tasks as complete
+💬 Send messages to classes
+👤 Navigate to key sections such as homework, archive, contacts, and profile
+📈 Visualize data via built-in pie charts
+🔎 Use pop-up views with search filters for homework, discipline, and meetings
 
-   ```bash
-   npm install
-   ```
+Parent Features:
+📝 View homework assignments for their children
+📅 Check the class schedule and upcoming events
+📊 Monitor their child’s attendance and discipline records
+💬 Send direct messages to teachers and receive important updates
+👨‍👩‍👦 Access a parent dashboard to track their children’s progress
+📚 Access homework archives to keep track of past tasks
 
-2. Start the app
+All features are fully localized for Hebrew and optimized for mobile and tablet devices.
 
-   ```bash
-    npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+🚀 Tech Stack
+| Technology              | Purpose                                |
+|--------------------------|----------------------------------------|
+| React Native         | Mobile application development         |
+| Expo Router          | Simplified navigation and routing      |
+| React Navigation     | Navigation management                  |
+| React Native Chart Kit | Data visualization (pie charts)     |
+| JavaScript (ES6)     | Logic and interactivity                |
+| StyleSheet API       | Custom component styling               |
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+🛠️ Installation and Running the App
+Prerequisites:
+Node.js (v14+)
+npm or yarn
+Expo CLI
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Steps:
+Clone the repo:```bash
+git clone https://github.com/stiven0766/Study_Sphere
+cd Study_Sphere

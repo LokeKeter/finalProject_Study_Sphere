@@ -8,8 +8,9 @@ import {
   StyleSheet,
   Modal,
 } from "react-native";
-import { useRouter } from "expo-router"; // ✅ Router for navigation
+import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
+import TopSidebar from "../components/TopSidebar";
 
 const classesData = ["כל המכתבים", "כיתה א'", "כיתה ב'", "כיתה ג'"];
 
@@ -23,14 +24,13 @@ const messagesData = [
 const PAGE_SIZE = 20;
 
 const ArchiveScreen = () => {
-  const router = useRouter(); // ✅ Initialize router
+  const router = useRouter();
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sidebarVisible, setSidebarVisible] = useState(false); // ✅ Sidebar state
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString()); // ✅ Current time state
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
-  // ⏳ ✅ Update time every second
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString());
@@ -38,7 +38,6 @@ const ArchiveScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔹 שינוי הסינון בכותרת עם חצים
   const handleChangeClass = (direction) => {
     let newIndex = selectedClassIndex + direction;
     if (newIndex >= 0 && newIndex < classesData.length) {
@@ -47,7 +46,6 @@ const ArchiveScreen = () => {
     }
   };
 
-  // 🔹 סינון לפי כיתה ושם שולח/כותרת
   const filteredMessages = messagesData.filter(
     (msg) =>
       (classesData[selectedClassIndex] === "כל המכתבים" ||
@@ -55,78 +53,25 @@ const ArchiveScreen = () => {
       (msg.sender.includes(searchQuery) || msg.title.includes(searchQuery))
   );
 
-  // 🔹 חישוב מספר הדפים
   const totalPages = Math.ceil(filteredMessages.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const displayedMessages = filteredMessages.slice(startIndex, startIndex + PAGE_SIZE);
 
   return (
     <View style={styles.container}>
-      
-      {/* 🔹 TOP BAR */}
-                <View style={styles.topBar}>
-                  <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-                    <Text style={styles.menuIcon}>☰</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.dateTime}>{currentTime}</Text>
-                </View>
-          
-                {/* 🔹 SIDEBAR MENU */}
-                <Modal visible={sidebarVisible} animationType="slide" transparent>
-                  <View style={styles.modalBackground}>
-                    <View style={styles.sidebar}>
-                      <View style={styles.sidebarHeader}>
-                        <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                          <Text style={styles.sidebarUser}>👤 מורה</Text>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-                          <Text style={styles.closeButton}>✖</Text>
-                        </TouchableOpacity>
-                      </View>
-          
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>📊 כללי</Text>
-                      </TouchableOpacity>
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-                      </TouchableOpacity>
+      <TopSidebar
+        currentTime={currentTime}
+        sidebarVisible={sidebarVisible}
+        setSidebarVisible={setSidebarVisible}
+      />
 
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-                            <Text style={styles.sidebarText}>🏫 כיתות</Text>
-                      </TouchableOpacity>
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-                      </TouchableOpacity>
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>📁 ארכיון</Text>
-                      </TouchableOpacity>
-
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/TestScore"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>📝 ציונים</Text>
-                      </TouchableOpacity>
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
-
-      {/* 🔹 כותרת עם חצים לסינון */}
       <View style={styles.headerContainer}>
         {selectedClassIndex > 0 && (
           <TouchableOpacity onPress={() => handleChangeClass(-1)}>
             <Text style={styles.arrow}>⬅️</Text>
           </TouchableOpacity>
         )}
-
         <Text style={styles.headerText}>{classesData[selectedClassIndex]}</Text>
-
         {selectedClassIndex < classesData.length - 1 && (
           <TouchableOpacity onPress={() => handleChangeClass(1)}>
             <Text style={styles.arrow}>➡️</Text>
@@ -134,7 +79,6 @@ const ArchiveScreen = () => {
         )}
       </View>
 
-      {/* 🔹 תיבת חיפוש */}
       <TextInput
         style={styles.searchInput}
         placeholder="🔍 חפש לפי שם שולח או כותרת"
@@ -146,56 +90,45 @@ const ArchiveScreen = () => {
           setCurrentPage(1);
         }}
       />
-      {/* 🔹 טבלה של המכתבים */}
-<ScrollView>
-  <View style={styles.tableContainer}>
-    <View style={styles.tableHeader}>
-      <Text style={styles.headerCell}>כותרת</Text>
-      <Text style={styles.headerCell}>שם שולח</Text>
-      <Text style={styles.headerCell}>תאריך</Text>
-    </View>
 
-    {displayedMessages.map((msg) => (
-      <View key={msg.id} style={styles.tableRow}>
-        <Text style={styles.cell}>{msg.title}</Text>
-        <Text style={styles.cell}>{msg.sender}</Text>
-        <Text style={styles.cell}>{msg.date}</Text>
-      </View>
-    ))}
-  </View>
-</ScrollView>
-{/* 🔹 חצים למעבר בין דפים */}
-{totalPages > 1 && (
-  <View style={styles.pagination}>
-    {currentPage > 1 && (
-      <TouchableOpacity
-        onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-        style={styles.pageButton}
-      >
-        <Text style={styles.pageButtonText}>⬅️</Text>
-      </TouchableOpacity>
-    )}
+      <ScrollView>
+        <View style={styles.tableContainer}>
+          <View style={styles.tableHeader}>
+            <Text style={styles.headerCell}>כותרת</Text>
+            <Text style={styles.headerCell}>שם שולח</Text>
+            <Text style={styles.headerCell}>תאריך</Text>
+          </View>
 
-    <Text style={styles.pageText}>
-      עמוד {currentPage} מתוך {totalPages}
-    </Text>
+          {displayedMessages.map((msg) => (
+            <View key={msg.id} style={styles.tableRow}>
+              <Text style={styles.cell}>{msg.title}</Text>
+              <Text style={styles.cell}>{msg.sender}</Text>
+              <Text style={styles.cell}>{msg.date}</Text>
+            </View>
+          ))}
+        </View>
+      </ScrollView>
 
-    {currentPage < totalPages && (
-      <TouchableOpacity
-        onPress={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-        style={styles.pageButton}
-      >
-        <Text style={styles.pageButtonText}>➡️</Text>
-      </TouchableOpacity>
-    )}
-  </View>
-)}
+      {totalPages > 1 && (
+        <View style={styles.pagination}>
+          {currentPage > 1 && (
+            <TouchableOpacity onPress={() => setCurrentPage((prev) => Math.max(prev - 1, 1))} style={styles.pageButton}>
+              <Text style={styles.pageButtonText}>⬅️</Text>
+            </TouchableOpacity>
+          )}
 
+          <Text style={styles.pageText}>עמוד {currentPage} מתוך {totalPages}</Text>
+
+          {currentPage < totalPages && (
+            <TouchableOpacity onPress={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))} style={styles.pageButton}>
+              <Text style={styles.pageButtonText}>➡️</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   );
 };
-
-
 // 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
@@ -311,7 +244,5 @@ const styles = StyleSheet.create({
     fontSize: 16 
   },
 });
-
-
 
 export default ArchiveScreen;

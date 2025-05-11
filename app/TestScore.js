@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { useRouter } from "expo-router";
+import TopSidebar from "../components/TopSidebar";
 
 const testTypes = ["מבחן", "בוחן"];
 const classNames = ["כיתה א'", "כיתה ב'", "כיתה ג'", "כיתה ד'", "כיתה ה'", "כיתה ו'", "כיתה ז'"];
@@ -78,58 +79,12 @@ const handleSubmitScores = () => {
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
-      <View style={styles.container}>
-        {/* 🔹 TOP BAR */}
-        <View style={styles.topBar}>
-          <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-            <Text style={styles.menuIcon}>☰</Text>
-          </TouchableOpacity>
-          <Text style={styles.dateTime}>{currentTime}</Text>
-        </View>
-
-        {/* 🔹 SIDEBAR */}
-        <Modal visible={sidebarVisible} animationType="slide" transparent>
-          <View style={styles.modalBackground}>
-            <View style={styles.sidebar}>
-              <View style={styles.sidebarHeader}>
-                <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                  <Text style={styles.sidebarUser}>👤 מורה</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-                  <Text style={styles.closeButton}>✖</Text>
-                </TouchableOpacity>
-              </View>
-
-              <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/dashboard"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarText}>📊 כללי</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Homework"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Classes"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarText}>🏫 כיתות</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Contacts"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Archive"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarText}>📁 ארכיון</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/TestScore"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarText}>📝 ציונים</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-                <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
+          <View style={styles.container}>
+            <TopSidebar
+              currentTime={currentTime}
+              sidebarVisible={sidebarVisible}
+              setSidebarVisible={setSidebarVisible}
+            />
 
         {/* 🔹 סוג מבחן עם חצים */}
         <View style={styles.headerContainer}>
