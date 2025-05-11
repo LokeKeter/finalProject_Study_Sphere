@@ -59,11 +59,9 @@ const ArchiveScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TopSidebar
-        currentTime={currentTime}
-        sidebarVisible={sidebarVisible}
-        setSidebarVisible={setSidebarVisible}
-      />
+
+      {/* top and side bar */}
+      <TopSidebar userRole="teacher" />
 
       <View style={styles.headerContainer}>
         {selectedClassIndex > 0 && (

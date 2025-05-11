@@ -80,11 +80,8 @@ const handleSubmitScores = () => {
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
           <View style={styles.container}>
-            <TopSidebar
-              currentTime={currentTime}
-              sidebarVisible={sidebarVisible}
-              setSidebarVisible={setSidebarVisible}
-            />
+            {/* top and side bar */}
+            <TopSidebar userRole="parent" />
 
         {/* 🔹 סוג מבחן עם חצים */}
         <View style={styles.headerContainer}>

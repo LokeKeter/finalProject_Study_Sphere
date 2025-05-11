@@ -9,6 +9,7 @@ import {
   Modal,
 } from "react-native";
 import { useRouter } from "expo-router";
+import TopSidebar from '../components/TopSidebar';
 
 const assignmentsData = [
   { id: "1", teacher: "יוסי כהן", subject: "מתמטיקה", dueDate: "15.03" },
@@ -57,51 +58,8 @@ const AssignmentScreen = () => {
   return (
     <View style={styles.container}>
       
-      {/* 🔹 TOP BAR */}
-                            <View style={styles.topBar}>
-                              <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-                                <Text style={styles.menuIcon}>☰</Text>
-                              </TouchableOpacity>
-                              <Text style={styles.dateTime}>{currentTime}</Text>
-                            </View>
-                      
-                            {/* 🔹 SIDEBAR MENU */}
-                            <Modal visible={sidebarVisible} animationType="slide" transparent>
-                              <View style={styles.modalBackground}>
-                                <View style={styles.sidebar}>
-                                  <View style={styles.sidebarHeader}>
-                                    <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                                      <Text style={styles.sidebarUser}>👤 הורה</Text>
-                                    </TouchableOpacity>
-                                    
-                                    <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-                                      <Text style={styles.closeButton}>✖</Text>
-                                    </TouchableOpacity>
-                                  </View>
-                      
-                      
-                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Dashboard"); setSidebarVisible(false); }}>
-                                    <Text style={styles.sidebarText}>📊 כללי</Text>
-                                  </TouchableOpacity>
-                      
-                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Homework"); setSidebarVisible(false); }}>
-                                    <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-                                  </TouchableOpacity>
-            
-                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Contacts"); setSidebarVisible(false); }}>
-                                    <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-                                  </TouchableOpacity>
-                      
-                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Archive"); setSidebarVisible(false); }}>
-                                    <Text style={styles.sidebarText}>📁 ארכיון</Text>
-                                  </TouchableOpacity>
-                      
-                                  <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-                                    <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-                                  </TouchableOpacity>
-                                </View>
-                              </View>
-                            </Modal>
+      {/* top and side bar */}
+      <TopSidebar userRole="parent" />
 
       {/* 🔹 חיפוש */}
       <TextInput

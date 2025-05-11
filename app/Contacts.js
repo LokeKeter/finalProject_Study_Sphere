@@ -113,11 +113,9 @@ const ContactsScreen = () => {
 
    return (
      <View style={styles.container}>
-       <TopSidebar
-         currentTime={currentTime}
-         sidebarVisible={sidebarVisible}
-         setSidebarVisible={setSidebarVisible}
-       />
+
+      {/* top and side bar */}
+       <TopSidebar userRole="teacher" />
       
       {/* 🔹 Class Selector */}
       <View style={styles.headerContainer}>

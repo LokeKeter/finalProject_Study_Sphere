@@ -53,11 +53,10 @@ const UserProfile = () => {
 
     return (
       <View style={styles.container}>
-        <TopSidebar
-          currentTime={currentTime}
-          sidebarVisible={sidebarVisible}
-          setSidebarVisible={setSidebarVisible}
-        />   
+
+        {/* top and side bar */}
+          <TopSidebar userRole="teacher" />
+
       {/* 🔹 User Info */}
       <View style={styles.userInfo}>
         <Text style={styles.label}>שם מלא:</Text>

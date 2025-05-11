@@ -9,6 +9,7 @@ import {
   Modal,
 } from "react-native";
 import { useRouter } from "expo-router"; // ✅ Router for navigation
+import TopSidebar from '../components/TopSidebar';
 import { useNavigation } from "@react-navigation/native";
 
 const classesData = ["כל המכתבים", "מכתבים שנשלחו"];
@@ -27,18 +28,7 @@ const ArchiveScreen = () => {
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sidebarVisible, setSidebarVisible] = useState(false); // ✅ Sidebar state
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString()); // ✅ Current time state
   
-
-  
-  // ⏳ ✅ Update time every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   // 🔹 שינוי הסינון בכותרת עם חצים
   const handleChangeClass = (direction) => {
@@ -89,51 +79,9 @@ const ArchiveScreen = () => {
   return (
     <View style={styles.container}>
       
-      {/* 🔹 TOP BAR */}
-                <View style={styles.topBar}>
-                  <TouchableOpacity onPress={() => setSidebarVisible(true)} style={styles.menuButton}>
-                    <Text style={styles.menuIcon}>☰</Text>
-                  </TouchableOpacity>
-                  <Text style={styles.dateTime}>{currentTime}</Text>
-                </View>
-          
-                {/* 🔹 SIDEBAR MENU */}
-                <Modal visible={sidebarVisible} animationType="slide" transparent>
-                  <View style={styles.modalBackground}>
-                    <View style={styles.sidebar}>
-                      <View style={styles.sidebarHeader}>
-                        <TouchableOpacity onPress={() => { router.push("/UserProfile"); setSidebarVisible(false); }}>
-                          <Text style={styles.sidebarUser}>👤 הורה</Text>
-                        </TouchableOpacity>
-                        
-                        <TouchableOpacity onPress={() => setSidebarVisible(false)}>
-                          <Text style={styles.closeButton}>✖</Text>
-                        </TouchableOpacity>
-                      </View>
-          
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Dashboard"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>📊 כללי</Text>
-                      </TouchableOpacity>
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Homework"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>📚 שיעורי בית</Text>
-                      </TouchableOpacity>
+      {/* top and side bar */}
+      <TopSidebar userRole="parent" />
 
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Contacts"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>👥 אנשי קשר</Text>
-                      </TouchableOpacity>
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/Parent-Archive"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>📁 ארכיון</Text>
-                      </TouchableOpacity>
-          
-                      <TouchableOpacity style={styles.sidebarItem} onPress={() => { router.push("/"); setSidebarVisible(false); }}>
-                        <Text style={styles.sidebarText}>🚪 התנתקות</Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
-                </Modal>
                 <Modal visible={modalVisible} transparent animationType="fade">
                     <View style={styles.modalBackground}>
                         <View style={styles.messageModal}>
@@ -321,49 +269,7 @@ const ArchiveScreen = () => {
 // 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
-  topBar: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 80,
-    backgroundColor: "black",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 15,
-    paddingTop: 30,
-  },
-
-  sidebarHeader: {
-    flexDirection: "row", 
-    justifyContent: "space-between", // מרווח בין שם המשתמש לכפתור הסגירה
-    alignItems: "center",
-    width: "100%",
-    paddingBottom: 10,
-    borderBottomWidth: 1, 
-    borderBottomColor: "#fff", 
-    paddingHorizontal: 5, // מרווח פנימי מהצדדים
-  },
-  menuButton: { padding: 4 },
-  menuIcon: { color: "white", fontSize: 26 },
-  dateTime: { color: "white", fontSize: 16, fontWeight: "bold" },
-
-  sidebar: { position: "absolute", left: 0, width: 250, height: "100%", backgroundColor: "black", padding: 50 },
-  sidebarUser: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    marginTop: 15, 
-  },
   
-  closeButton: {
-    color: "white",
-    fontSize: 22,
-    fontWeight: "bold",
-  },
-  sidebarItem: { paddingVertical: 15 },
-  sidebarText: { color: "white", fontSize: 18 },
 
   table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 ,borderRadius: 5 },
   tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
