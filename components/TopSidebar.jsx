@@ -8,7 +8,7 @@ const sidebarLinks = {
       { label: '📚 שיעורי בית', route: '/Homework' },
       { label: '🏫 כיתות', route: '/Classes' },
       { label: '👥 אנשי קשר', route: '/Contacts' },
-      { label: '🤖 AI תבנית', route: 'TeacherAITemplate' },
+      { label: 'AI תבנית 🤖', route: '/TeacherAITemplate' },
       { label: '📁 ארכיון', route: '/Archive' },
       { label: '🚪 התנתקות', route: '/' },
     ],
@@ -16,7 +16,7 @@ const sidebarLinks = {
       { label: '📊 כללי', route: '/Parent-Dashboard' },
       { label: '📚 שיעורי בית', route: '/Parent-Homework' },
       { label: '👥 אנשי קשר', route: '/Parent-Contacts' },
-      { label: '🤖 AI תבנית', route: '/ParentAITemplate' },
+      { label: ' AI תבנית 🤖', route: '/ParentAITemplate' },
       { label: '📁 ארכיון', route: '/Parent-Archive' },
       { label: '🚪 התנתקות', route: '/' },
     ]
