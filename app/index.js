@@ -5,11 +5,11 @@ import { useAuth } from "./_layout";  // ✅ Import authentication hook
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import storage
 // 🔐 **Valid Users**
 const validUsers = [
-  { username: "Steve", password: "12345", role: "מורה" },
-  { username: "loki", password: "12345", role: "מורה" },
+  { username: "Steven", password: "12345", role: "מורה" },
+  { username: "loki1", password: "12345", role: "מורה" },
   { username: "Steve", password: "12345", role: "הורה" },
   { username: "loki", password: "12345", role: "הורה" },
-
+  {username: "Moshe", password:"12345", role: "admin"}
 
 
 ];
@@ -28,24 +28,38 @@ export default function LoginScreen() {
 
   // 🔑 **Handle Login**
   const handleLogin = async () => {
-    const user = validUsers.find(
-      (u) => u.username === username && u.password === password && u.role === role
-    );
+  // קודם בדיקה של שם משתמש + סיסמה בלבד
+  const user = validUsers.find(
+    (u) => u.username === username && u.password === password
+  );
 
-    if (user) {
-      await AsyncStorage.setItem("user", JSON.stringify({ fullName: user.fullName, role: user.role })); // ✅ Save user info
-      setIsLoggedIn(true);  // ✅ Mark as logged in
+  if (user) {
+    // אם התפקיד שנבחר תואם לתפקיד המשתמש
+    if (user.role === role) {
+      await AsyncStorage.setItem("user", JSON.stringify({ role: user.role }));
+      setIsLoggedIn(true);
 
-      // ✅ הפניה לפי תפקיד המשתמש
       if (user.role === "מורה") {
-        router.push("/dashboard");  // 🔹 מורה -> Dashboard
+        router.push("/dashboard");
       } else if (user.role === "הורה") {
-        router.push("/Parent-Dashboard");  // 🔹 הורה -> Parent-Dashboard
+        router.push("/Parent-Dashboard");
       }
+
+    // אם התפקיד של המשתמש הוא ADMIN, נכניס אותו ישירות
+    } else if (user.role === "admin") {
+      await AsyncStorage.setItem("user", JSON.stringify({ role: user.role }));
+      setIsLoggedIn(true);
+      router.push("/Admin-Users");
+
     } else {
-      setErrorMessage("❌ שם משתמש או סיסמא לא תקינים!");
+      setErrorMessage("❌ התפקיד שנבחר לא תואם למשתמש.");
     }
+
+  } else {
+    setErrorMessage("❌ שם משתמש או סיסמה לא תקינים!");
+  }
 };
+
 
   
 

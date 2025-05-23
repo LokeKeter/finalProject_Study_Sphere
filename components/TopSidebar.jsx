@@ -3,6 +3,11 @@ import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
 const sidebarLinks = {
+  admin: [
+      { label: '👥 ניהול משתמשים', route: '/Parent-Dashboard' },
+      { label: '📅 אירועים שנתיים', route: '/Admin-Calendar' },
+      { label: '🚪 התנתקות', route: '/' },
+    ],
     teacher: [
       { label: '📊 כללי', route: '/dashboard' },
       { label: '📚 שיעורי בית', route: '/Homework' },

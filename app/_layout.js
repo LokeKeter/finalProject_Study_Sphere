@@ -17,6 +17,7 @@ export default function Layout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
           <Stack.Screen name="dashboard" />
+          <Stack.Screen name="admin-users" />
         </Stack>
       </View>
     </AuthContext.Provider>
