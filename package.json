@@ -62,7 +62,19 @@
     "jest": "~29.7.0",
     "jest-expo": "^52.0.0",
     "react-test-renderer": "18.3.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.8.3"
   },
-  "private": true
+  "private": true,
+  "description": "🧑‍🏫 Study Sphere\r A modern, responsive teacher dashboard built with React Native, enabling educators to manage classroom activities, assignments, discipline, meetings, and events in one intuitive mobile application.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stiven0766/Study_Sphere.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stiven0766/Study_Sphere/issues"
+  },
+  "homepage": "https://github.com/stiven0766/Study_Sphere#readme"
 }
