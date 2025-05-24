@@ -59,7 +59,7 @@ export default function AdminCalendar() {
 
   return (
     <View style={styles.container}>
-      <TopSidebar userRole="parent" />
+      <TopSidebar userRole="admin" />
 
       {/* כפתור הוספת אירוע */}
       <TouchableOpacity
@@ -163,8 +163,6 @@ export default function AdminCalendar() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 85, padding: 16, backgroundColor: '#fff' },
-  addButton: { backgroundColor: '#4CAF50', padding: 12, borderRadius: 8, alignItems: 'center', marginBottom: 10 },
-  addButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
   searchInput: {
     borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
     padding: 10, marginBottom: 16, textAlign: 'right'
@@ -186,8 +184,23 @@ const styles = StyleSheet.create({
     padding: 10, marginBottom: 10, textAlign: 'right'
   },
   modalButtons: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
-  saveButton: { backgroundColor: '#2196F3', padding: 10, borderRadius: 8, flex: 1, alignItems: 'center', marginRight: 5 },
+  saveButton: { backgroundColor: 'black', padding: 10, borderRadius: 8, flex: 1, alignItems: 'center', marginRight: 5 },
   saveText: { color: '#fff', fontWeight: 'bold' },
   deleteButton: { backgroundColor: 'red', padding: 10, borderRadius: 8, flex: 1, alignItems: 'center', marginLeft: 5 },
   deleteText: { color: '#fff', fontWeight: 'bold' },
+    addButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 16,
+    right: 16,
+    backgroundColor: 'black',
+    padding: 14,
+    borderRadius: 8,
+    zIndex: 10,
+  },
+  addButtonText: {
+    color: 'white',
+    textAlign: 'center',
+    fontWeight: 'bold',
+  }
 });

@@ -88,7 +88,10 @@ const ParentAITemplate = () => {
         onChangeText={text => handleChange('subject', text)}
       />
 
-      <Button title="📄 צור תבניות הודעה" onPress={generateTemplates} />
+      <TouchableOpacity onPress={generateTemplates} style={styles.blackButton}>
+  <Text style={styles.buttonText}>📄 צור תבניות הודעה</Text>
+</TouchableOpacity>
+
 
       {templates.length > 0 && (
         <View style={styles.templatesSection}>
@@ -161,6 +164,19 @@ const styles = StyleSheet.create({
   copyText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+   blackButton: {
+    backgroundColor: 'black',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   }
   
 });

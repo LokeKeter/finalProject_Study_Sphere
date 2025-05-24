@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 
 const sidebarLinks = {
   admin: [
-      { label: '👥 ניהול משתמשים', route: '/Parent-Dashboard' },
+      { label: '👥 ניהול משתמשים', route: '/Admin-Users' },
       { label: '📅 אירועים שנתיים', route: '/Admin-Calendar' },
       { label: '🚪 התנתקות', route: '/' },
     ],
