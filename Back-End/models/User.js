@@ -5,11 +5,37 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  idNumber: {
+  email: {
     type: String,
     required: true,
     unique: true
+  },
+  studentName: {
+    type: String,
+    required: false  // רלוונטי רק להורה
+  },
+  studentId: {
+    type: String,
+    required: false  // רלוונטי רק להורה
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    enum: ['teacher', 'parent'],
+    required: true
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
   }
-}, { timestamps: true });
+});
 
 module.exports = mongoose.model('User', userSchema);
