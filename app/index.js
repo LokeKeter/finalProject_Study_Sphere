@@ -3,16 +3,16 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorSch
 import { useRouter } from "expo-router";
 import { useAuth } from "./_layout";  // ✅ Import authentication hook
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import storage
+import axios from 'axios';
+
 // 🔐 **Valid Users**
-const validUsers = [
-  { username: "Steven", password: "12345", role: "מורה" },
-  { username: "loki1", password: "12345", role: "מורה" },
-  { username: "Steve", password: "12345", role: "הורה" },
-  { username: "loki", password: "12345", role: "הורה" },
-  {username: "Moshe", password:"12345", role: "admin"}
-
-
-];
+// const validUsers = [
+//   { username: "Steven", password: "12345", role: "מורה" },
+//   { username: "loki1", password: "12345", role: "מורה" },
+//   { username: "Steve", password: "12345", role: "הורה" },
+//   { username: "loki", password: "12345", role: "הורה" },
+//   {username: "Moshe", password:"12345", role: "admin"}
+// ];
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -24,44 +24,35 @@ export default function LoginScreen() {
   const router = useRouter();
   const { setIsLoggedIn } = useAuth();  // ✅ Authentication Context
 
-  
-
   // 🔑 **Handle Login**
   const handleLogin = async () => {
-  // קודם בדיקה של שם משתמש + סיסמה בלבד
-  const user = validUsers.find(
-    (u) => u.username === username && u.password === password
-  );
+  try {
+    const response = await axios.post('http://localhost:5000/api/users/login', {
+      username,
+      password,
+      role: role === 'מורה' ? 'teacher' : 'parent', // המרה לעברית->אנגלית
+    });
 
-  if (user) {
-    // אם התפקיד שנבחר תואם לתפקיד המשתמש
-    if (user.role === role) {
-      await AsyncStorage.setItem("user", JSON.stringify({ role: user.role }));
-      setIsLoggedIn(true);
+    const user = response.data;
 
-      if (user.role === "מורה") {
-        router.push("/dashboard");
-      } else if (user.role === "הורה") {
-        router.push("/Parent-Dashboard");
-      }
+    await AsyncStorage.setItem('user', JSON.stringify(user));
+    setIsLoggedIn(true);
 
-    // אם התפקיד של המשתמש הוא ADMIN, נכניס אותו ישירות
-    } else if (user.role === "admin") {
-      await AsyncStorage.setItem("user", JSON.stringify({ role: user.role }));
-      setIsLoggedIn(true);
-      router.push("/Admin-Users");
-
-    } else {
-      setErrorMessage("❌ התפקיד שנבחר לא תואם למשתמש.");
+    if (user.role === 'teacher') {
+      router.push('/Dashboard');
+    } else if (user.role === 'parent') {
+      router.push('/Parent-Dashboard');
+    } else if (user.role === 'admin') {
+      router.push('/Admin-Users');
     }
-
-  } else {
-    setErrorMessage("❌ שם משתמש או סיסמה לא תקינים!");
+  } catch (error) {
+    if (error.response) {
+      setErrorMessage(error.response.data.message);
+    } else {
+      setErrorMessage("⚠️ שגיאה לא צפויה בשרת");
+    }
   }
 };
-
-
-  
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>

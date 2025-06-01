@@ -6,5 +6,5 @@ const classSchema = new mongoose.Schema({
     ref: 'User'
   },
   subject: String,
-  schedule: String // או מבנה מפורט אם רוצים שעות לימוד
+  schedule: String 
 });

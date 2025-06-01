@@ -49,10 +49,45 @@ const deleteUser = async (req, res) => {
   }
 };
 
+//שליטה על התחברות
+const bcrypt = require('bcrypt');
+
+const login = async (req, res) => {
+  try {
+    console.log("📦 DATABASE בפועל:", require("mongoose").connection.name);
+    const { username, password, role } = req.body;
+
+    const user = await User.findOne({ username });
+    console.log("🔍 תוצאה מ־MongoDB:", user);
+
+    if (!user) {
+      return res.status(401).json({ message: '❌ משתמש לא נמצא' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: '❌ סיסמה שגויה' });
+    }
+
+    if (user.role !== role) {
+      return res.status(403).json({ message: '⚠️ תפקיד לא תואם למשתמש' });
+    }
+
+    res.json({
+      id: user._id,
+      username: user.username,
+      role: user.role
+    });
+  } catch (err) {
+    res.status(500).json({ message: '🔥 שגיאת שרת' });
+  }
+};
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
-  deleteUser
+  deleteUser,
+  login
 };

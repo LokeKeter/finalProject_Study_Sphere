@@ -25,4 +25,5 @@ const messageSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Message', messageSchema);
+// 🧠 אם המודל כבר מוגדר, השתמש בו — אחרת תגדיר חדש
+module.exports = mongoose.models.Message || mongoose.model('Message', messageSchema);

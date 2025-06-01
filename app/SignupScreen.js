@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
+import axios from 'axios';
 
 const SignupScreen = () => {
   const [form, setForm] = useState({
@@ -16,6 +17,26 @@ const SignupScreen = () => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
+
+  const handleSignup = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/users", {
+        name: form.name,
+        email: form.email,
+        studentName: form.studentName,
+        studentId: form.studentID,
+        username: form.username,
+        password: form.password,
+        role: form.role === "מורה" ? "teacher" : "parent",
+      });
+
+      console.log("✅ נרשמת בהצלחה:", response.data);
+      router.push("/"); // מעבר למסך התחברות
+    } catch (error) {
+      console.error("❌ שגיאה בהרשמה:", error.response?.data || error.message);
+      alert(error.response?.data?.error || "שגיאה בהרשמה");
+    }
+  };
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
@@ -71,7 +92,7 @@ const SignupScreen = () => {
       </View>
 
       {/* 🔹 כפתור הרשמה */}
-      <TouchableOpacity style={styles.signupButton}>
+      <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
         <Text style={styles.signupButtonText}>הרשמה</Text>
       </TouchableOpacity>
 
