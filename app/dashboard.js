@@ -69,13 +69,6 @@ export default function Dashboard() {
   const [tasks, setTasks] = useState(initialTasks);
   const [newTask, setNewTask] = useState("");
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(getFormattedDateTime());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
   function getFormattedDateTime() {
     const now = new Date();
     return now.toLocaleString("he-IL", {

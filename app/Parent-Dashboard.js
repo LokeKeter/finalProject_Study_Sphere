@@ -2,16 +2,11 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  FlatList,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Modal,
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
-import { useRouter } from "expo-router";
-import { useNavigation } from "@react-navigation/native";
 import TopSidebar from '../components/TopSidebar';
 
 const stats = [
@@ -20,41 +15,7 @@ const stats = [
   { id: "5", title: "פגישות", value: "2", icon: "📅" },
 ];
 
-
 export default function Dashboard() {
-    const router = useRouter();  // ✅ Move inside function
-    const navigation = useNavigation();  // ✅ Correct way to initialize navigation
-    const [completedTasks, setCompletedTasks] = useState({}); // ✅ Track completed tasks
-
-    // ✅ Toggle task completion
-    const toggleTaskCompletion = (taskId) => {
-      setCompletedTasks((prev) => ({
-        ...prev,
-        [taskId]: !prev[taskId], // Toggle true/false
-      }));
-    };
-    
-  const [newTask, setNewTask] = useState("");
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(getFormattedDateTime());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  function getFormattedDateTime() {
-    const now = new Date();
-    return now.toLocaleString("he-IL", {
-      weekday: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  }
 
   const [selectedTimeIndex, setSelectedTimeIndex] = useState(0);
 const timeRanges = ["יומי", "שבועי", "חודשי", "סמסטריאלי", "שנתי"];
