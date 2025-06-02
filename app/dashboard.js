@@ -42,8 +42,6 @@ const initialTasks = [
 ];
 
 export default function Dashboard() {
-    const router = useRouter();  // ✅ Move inside function
-    const navigation = useNavigation();  // ✅ Correct way to initialize navigation
     const [completedTasks, setCompletedTasks] = useState({}); // ✅ Track completed tasks
     const [popupVisible, setPopupVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -70,8 +68,6 @@ export default function Dashboard() {
     
   const [tasks, setTasks] = useState(initialTasks);
   const [newTask, setNewTask] = useState("");
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
 
   useEffect(() => {
     const interval = setInterval(() => {

@@ -1,12 +1,27 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
+import axios from 'axios';
 
 const ForgotPassword = () => {
   const [username, setUsername] = useState("");
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
+
+  //פונקציית איפוס סיסמא
+  const handleResetPassword = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/reset-password', {
+        username,
+      });
+      alert(`📧 סיסמה חדשה נשלחה לכתובת`);
+      router.push('/');
+    } catch (error) {
+      console.error("❌ שגיאת איפוס:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "שגיאה באיפוס הסיסמה");
+    }
+  };
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
@@ -38,7 +53,7 @@ const ForgotPassword = () => {
       />
 
       {/* 🔹 כפתור איפוס סיסמה */}
-      <TouchableOpacity style={styles.resetButton}>
+      <TouchableOpacity style={styles.resetButton} onPress={handleResetPassword}>
         <Text style={styles.resetButtonText}>איפוס סיסמא</Text>
       </TouchableOpacity>
 

@@ -30,7 +30,6 @@ const SignupScreen = () => {
         role: form.role === "מורה" ? "teacher" : "parent",
       });
 
-      console.log("✅ נרשמת בהצלחה:", response.data);
       router.push("/"); // מעבר למסך התחברות
     } catch (error) {
       console.error("❌ שגיאה בהרשמה:", error.response?.data || error.message);

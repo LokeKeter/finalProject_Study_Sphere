@@ -54,11 +54,9 @@ const bcrypt = require('bcrypt');
 
 const login = async (req, res) => {
   try {
-    console.log("📦 DATABASE בפועל:", require("mongoose").connection.name);
     const { username, password, role } = req.body;
 
     const user = await User.findOne({ username });
-    console.log("🔍 תוצאה מ־MongoDB:", user);
 
     if (!user) {
       return res.status(401).json({ message: '❌ משתמש לא נמצא' });
@@ -83,11 +81,59 @@ const login = async (req, res) => {
   }
 };
 
+//איפוס סיסמא
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+
+const resetPassword = async (req, res) => {
+  const { username } = req.body;
+
+  try {
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: 'משתמש לא נמצא' });
+
+    // יצירת סיסמה חדשה באורך 6 תווים
+    const newPassword = crypto.randomBytes(3).toString('hex');
+    console.log("📩 סיסמה חדשה נשלחה למייל:");
+
+    // הצפנת הסיסמה החדשה
+    user.password = newPassword;
+
+    // שמירה במסד הנתונים
+    await user.save();
+
+    // שליחת מייל
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: user.email,
+      subject: 'איפוס סיסמה - StudySphere',
+      text: `הסיסמה החדשה שלך היא: >>${newPassword}<<`
+
+      //text: `הסיסמה החדשה שלך היא: ${newPassword}`
+    });
+
+    res.json({ message: 'סיסמה נשלחה למייל בהצלחה' });
+  } catch (err) {
+    console.error("שגיאה באיפוס סיסמה:", err);
+    res.status(500).json({ message: 'שגיאה באיפוס הסיסמה' });
+  }
+};
+
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
-  login
+  login,
+  resetPassword 
 };
