@@ -29,17 +29,10 @@ const SignupScreen = () => {
       role: form.role === "מורה" ? "teacher" : "parent",
     };
 
-<<<<<<< Updated upstream
-      router.push("/"); // מעבר למסך התחברות
-    } catch (error) {
-      console.error("❌ שגיאה בהרשמה:", error.response?.data || error.message);
-      alert(error.response?.data?.error || "שגיאה בהרשמה");
-=======
     // ✅ Add student info ONLY if role is "הורה"
     if (form.role === "הורה") {
       payload.studentName = form.studentName;
       payload.studentId = form.studentID;
->>>>>>> Stashed changes
     }
 
     const response = await axios.post("http://localhost:5000/api/users", payload);
