@@ -33,9 +33,10 @@ export default function LoginScreen() {
       role: role === 'מורה' ? 'teacher' : 'parent', // המרה לעברית->אנגלית
     });
 
-    const user = response.data;
-
+    const { token, user } = response.data;
+    await AsyncStorage.setItem('token', token);
     await AsyncStorage.setItem('user', JSON.stringify(user));
+
     setIsLoggedIn(true);
 
     if (user.role === 'teacher') {
@@ -156,4 +157,3 @@ const styles = StyleSheet.create({
   loginText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   signupLink: { fontSize: 14, textDecorationLine: "underline", marginTop: 10 },
 });
-
