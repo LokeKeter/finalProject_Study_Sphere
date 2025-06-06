@@ -9,7 +9,7 @@ const sidebarLinks = {
       { label: '🚪 התנתקות', route: '/' },
     ],
     teacher: [
-      { label: '📊 כללי', route: '/dashboard' },
+      { label: '📊 כללי', route: '/Dashboard' },
       { label: '📚 שיעורי בית', route: '/Homework' },
       { label: '🏫 כיתות', route: '/Classes' },
       { label: '👥 אנשי קשר', route: '/Contacts' },

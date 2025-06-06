@@ -79,16 +79,42 @@ export default function Dashboard() {
       hour12: false,
     });
   }
+const addTask = async () => {
+  if (!newTask.trim()) return;
+  try {
+    const response = await fetch('http://localhost:5000/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newTask }),
+    });
+    const data = await response.json();
+    setTasks([...tasks, data]);
+    setNewTask('');
+  } catch (error) {
+    console.error('Error adding task:', error);
+  }
+};
 
-  const addTask = () => {
-    if (!newTask.trim()) return;
-    setTasks([...tasks, { id: String(tasks.length + 1), title: newTask }]);
-    setNewTask("");
-  };
+const removeTask = async (taskId) => {
+  try {
+    const response = await fetch(`http://10.0.2.2:5000/api/tasks/${taskId}`, {
+      method: 'DELETE',
+    });
 
-  const removeTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-  };
+    if (response.ok) {
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } else {
+      const errorData = await response.json();
+      console.error('❌ Failed to delete task:', errorData.message || 'Unknown error');
+    }
+  } catch (error) {
+    console.error('Error deleting task:', error.message);
+  }
+};
+
+
+
+
   // ✅ Yearly Events Data
 const yearlyEvents = [
   { id: "1", title: "🎉 פסח", date: "22 באפריל 2024" },
@@ -148,18 +174,19 @@ const yearlyEvents = [
           <Text style={styles.sectionTitle}>📝 משימות למורה
             
           </Text>
-          {tasks.map((task) => (
+{tasks.map((task) => (
   <TouchableOpacity 
-    key={task.id} 
-    style={[styles.task, completedTasks[task.id] && styles.completedTask]} 
-    onPress={() => toggleTaskCompletion(task.id)} // ✅ Mark as completed
+    key={task._id}
+    style={[styles.task, completedTasks[task._id] && styles.completedTask]}
+    onPress={() => toggleTaskCompletion(task._id)}
   >
     <Text style={styles.taskText}>{task.title}</Text>
-    <TouchableOpacity onPress={() => removeTask(task.id)}>
+    <TouchableOpacity onPress={() => removeTask(task._id)}>
       <Text style={styles.deleteIcon}>❌</Text>
     </TouchableOpacity>
   </TouchableOpacity>
 ))}
+
 
 
           <TextInput

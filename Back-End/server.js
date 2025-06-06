@@ -22,6 +22,8 @@ const meetingRoutes = require('./routes/meetingRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const archiveRoutes = require('./routes/archiveRoutes');
+const taskRoutes = require('./routes/taskRoutes');
+const eventRoutes = require('./routes/eventRoutes');
 
 // ראוטים ראשיים
 app.use('/api/users', userRoutes);
@@ -30,6 +32,8 @@ app.use('/api/meetings', meetingRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/archives', archiveRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/events', eventRoutes);
 
 // טיפול ב־404 (נתיב שלא קיים)
 app.use((req, res, next) => {
