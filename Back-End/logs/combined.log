@@ -4,3 +4,5 @@
 [2025-06-06T17:45:52.726Z] INFO: Login success: Stevenite
 [2025-06-06T17:54:22.631Z] INFO: Login attempt: Stevenite
 [2025-06-06T17:54:22.693Z] ERROR: Login failed for Stevenite: ⚠️ תפקיד לא תואם למשתמש
+[2025-06-06T17:59:00.766Z] INFO: Login attempt: Stevenite
+[2025-06-06T17:59:00.833Z] INFO: Login success: Stevenite
