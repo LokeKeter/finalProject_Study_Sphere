@@ -27,6 +27,7 @@ export default function LoginScreen() {
   // 🔑 **Handle Login**
   const handleLogin = async () => {
   try {
+    console.log("📤 Sending login request", { username, password, role });
     const response = await axios.post('http://localhost:5000/api/users/login', {
       username,
       password,

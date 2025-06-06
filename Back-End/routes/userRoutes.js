@@ -20,15 +20,10 @@ router.post(
   userController.register
 );
 
-// 🛡️ נתיב שמוגן בטוקן
-//router.post("/login", userController.login);
-
-router.post("/login", (req, res, next) => {
-  console.log("🔵 login route hit:", req.body);
-  next();
-}, userController.login);
+router.post("/login", (req, res, next) => {next();}, userController.login);
 
 router.get("/users", authMiddleware, authorizeRoles(["admin"]), userController.getAllUsers);
 router.delete("/users/:id",authMiddleware,authorizeRoles(["admin"]), userController.deleteUser);
+router.post("/reset-password", userController.resetPassword);
 
 module.exports = router;

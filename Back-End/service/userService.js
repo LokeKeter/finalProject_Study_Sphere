@@ -1,8 +1,8 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+const emailService = require("./emailService");
 
 async function createUser(data) {
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -45,7 +45,9 @@ async function login({ username, password, role }) {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("❌ סיסמה שגויה");
 
-  if (user.role !== role) throw new Error("⚠️ תפקיד לא תואם למשתמש");
+  if (user.role !== role && user.role !== "admin") {
+    throw new Error("⚠️ תפקיד לא תואם למשתמש");
+  }
 
   //יוצר TOKEN
   const token = jwt.sign(
@@ -82,20 +84,7 @@ async function resetPassword({ username }) {
   await user.save();
 
   //שליחת סיסמא במייל
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
-  });
-
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: user.email,
-    subject: "איפוס סיסמה - StudySphere",
-    text: `הסיסמה החדשה שלך היא: >>${newPassword}<<`
-  });
+  await emailService.sendPasswordResetEmail(user.email, newPassword);
 
   return { message: "סיסמה נשלחה למייל בהצלחה" };
 }

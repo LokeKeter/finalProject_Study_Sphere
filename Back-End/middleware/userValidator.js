@@ -11,6 +11,7 @@ const registerValidation = [
       if (existingUser) {
         throw new Error("שם המשתמש כבר קיים במערכת");
       }
+      console.log("🧪 Validated", value);
       return true;
     }),
 

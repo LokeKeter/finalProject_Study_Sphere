@@ -1,0 +1,6 @@
+[2025-06-06T17:45:45.327Z] INFO: Login attempt: Steve
+[2025-06-06T17:45:45.393Z] INFO: Login success: Steve
+[2025-06-06T17:45:52.669Z] INFO: Login attempt: Stevenite
+[2025-06-06T17:45:52.726Z] INFO: Login success: Stevenite
+[2025-06-06T17:54:22.631Z] INFO: Login attempt: Stevenite
+[2025-06-06T17:54:22.693Z] ERROR: Login failed for Stevenite: ⚠️ תפקיד לא תואם למשתמש

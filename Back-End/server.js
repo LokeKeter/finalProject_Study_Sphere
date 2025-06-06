@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 dotenv.config();
 
@@ -9,17 +11,28 @@ const app = express();
 connectDB();
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL,
+  origin: ["http://localhost:8081", "http://localhost:3000"],
   credentials: true
 }));
-
+app.use(helmet());
 app.use(express.json());
+
+// Rate Limiting Middleware - הגבלת 100 בקשות לכל IP ב־15 דקות
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 דקות
+  max: 100,
+  message: "📛 יותר מדי בקשות – נסה שוב מאוחר יותר",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 
 // ייבוא כל הראוטים
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const meetingRoutes = require('./routes/meetingRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
+const classRoutes = require('./routes/classRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const archiveRoutes = require('./routes/archiveRoutes');
 
@@ -28,6 +41,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/meetings', meetingRoutes);
 app.use('/api/assignments', assignmentRoutes);
+app.use('/api/class', classRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/archives', archiveRoutes);
 

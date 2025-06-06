@@ -20,7 +20,7 @@ const SignupScreen = () => {
 
   const handleSignup = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/users", {
+      const response = await axios.post("http://localhost:5000/api/users/register", {
         name: form.name,
         email: form.email,
         studentName: form.studentName,
