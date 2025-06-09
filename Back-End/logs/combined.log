@@ -6,3 +6,19 @@
 [2025-06-06T17:54:22.693Z] ERROR: Login failed for Stevenite: ⚠️ תפקיד לא תואם למשתמש
 [2025-06-06T17:59:00.766Z] INFO: Login attempt: Stevenite
 [2025-06-06T17:59:00.833Z] INFO: Login success: Stevenite
+[2025-06-07T10:26:38.322Z] INFO: Login attempt: Steve
+[2025-06-07T10:26:38.446Z] INFO: Login success: Steve
+[2025-06-07T10:38:55.151Z] INFO: Login attempt: Steven
+[2025-06-07T10:38:55.207Z] INFO: Login success: Steven
+[2025-06-07T13:40:27.744Z] INFO: Login attempt: Stevenite
+[2025-06-07T13:40:27.803Z] INFO: Login success: Stevenite
+[2025-06-07T13:46:11.934Z] INFO: Login attempt: Stevenite
+[2025-06-07T13:46:11.989Z] INFO: Login success: Stevenite
+[2025-06-07T13:55:53.471Z] INFO: Login attempt: Steven
+[2025-06-07T13:55:53.528Z] INFO: Login success: Steven
+[2025-06-07T14:17:28.585Z] INFO: Login attempt: Stevenite
+[2025-06-07T14:17:28.642Z] INFO: Login success: Stevenite
+[2025-06-07T14:26:51.915Z] INFO: Login attempt: Stevenite
+[2025-06-07T14:26:51.972Z] INFO: Login success: Stevenite
+[2025-06-09T08:27:05.037Z] INFO: Login attempt: 
+[2025-06-09T08:27:05.088Z] ERROR: Login failed for : ❌ משתמש לא נמצא
