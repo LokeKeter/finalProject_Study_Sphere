@@ -12,6 +12,21 @@ export default function AdminUsersPage() {
   const [isAddModalVisible, setAddModalVisible] = useState(false);
   const [newUser, setNewUser] = useState({ name: '', idNumber: '' });
 
+  
+  const isValidSerial = serials.some(s => s.code === user.serialCode && s.role === user.role);
+if (!isValidSerial) {
+  Alert.alert("קוד סריאלי לא תקף", "הקוד לא תואם לתפקיד הנבחר");
+  return;
+}
+
+
+
+  const [serials, setSerials] = useState([
+  { id: '1', code: 'ABC123', role: 'teacher' },
+  { id: '2', code: 'XYZ987', role: 'parent' }
+]);
+
+
   useEffect(() => {
     const fetchUsers = async () => {
       const response = await Promise.resolve([
@@ -73,6 +88,10 @@ export default function AdminUsersPage() {
   );
 
   return (
+
+
+
+    
     <View style={styles.container}>
       <TopSidebar userRole="admin" />
 
@@ -91,8 +110,8 @@ export default function AdminUsersPage() {
 
       <View style={styles.tableContainer}>
         <View style={styles.tableHeader}>
-          <Text style={styles.headerCell}>שם מלא</Text>
-          <Text style={styles.headerCell}>ת.ז</Text>
+          <Text style={styles.headerCell}>שם משתמש</Text>
+          <Text style={styles.headerCell}> סיסמא</Text>
         </View>
 
         <FlatList
@@ -130,8 +149,43 @@ export default function AdminUsersPage() {
             </View>
           </View>
         </View>
+        <TextInput
+  placeholder="מספר סריאלי"
+  value={newSerial.code}
+  onChangeText={(text) => setNewSerial({ ...newSerial, code: text })}
+  style={styles.searchInput}
+/>
+<TouchableOpacity onPress={() => setNewSerial({ ...newSerial, role: 'teacher' })}>
+  <Text>📚 מורה</Text>
+</TouchableOpacity>
+<TouchableOpacity onPress={() => setNewSerial({ ...newSerial, role: 'parent' })}>
+  <Text>👪 הורה</Text>
+</TouchableOpacity>
+
+
+
       </Modal>
+      
+      
     </View>
+    const handleAddSerial = () => {
+  if (!newSerial.code || !newSerial.role) {
+    Alert.alert("שגיאה", "יש למלא סריאל ותפקיד");
+    return;
+  }
+  const newEntry = { id: Date.now().toString(), ...newSerial };
+  setSerials([...serials, newEntry]);
+  setNewSerial({ code: '', role: '' });
+  setModalVisible(false);
+};
+<TextInput
+  placeholder="הזן קוד סריאלי"
+  value={user.serialCode}
+  onChangeText={(text) => setUser({ ...user, serialCode: text })}
+  style={styles.input}
+/>
+
+
   );
 }
 

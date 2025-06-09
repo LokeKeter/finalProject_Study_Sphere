@@ -79,22 +79,54 @@ export default function Dashboard() {
       hour12: false,
     });
   }
+const addTask = async () => {
+  if (!newTask.trim()) return;
+  try {
+    const response = await fetch('http://localhost:5000/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: newTask }),
+    });
+    const data = await response.json();
+    setTasks([...tasks, data]);
+    setNewTask('');
+  } catch (error) {
+    console.error('Error adding task:', error);
+  }
+};
 
-  const addTask = () => {
-    if (!newTask.trim()) return;
-    setTasks([...tasks, { id: String(tasks.length + 1), title: newTask }]);
-    setNewTask("");
-  };
+const removeTask = async (taskId) => {
+  try {
+    const response = await fetch(`http://10.0.2.2:5000/api/tasks/${taskId}`, {
+      method: 'DELETE',
+    });
 
-  const removeTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
-  };
+    if (response.ok) {
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } else {
+      const errorData = await response.json();
+      console.error('❌ Failed to delete task:', errorData.message || 'Unknown error');
+    }
+  } catch (error) {
+    console.error('Error deleting task:', error.message);
+  }
+};
+
+
+
+
   // ✅ Yearly Events Data
-const yearlyEvents = [
+const [yearlyEvents, setYearlyEvents] = useState([
   { id: "1", title: "🎉 פסח", date: "22 באפריל 2024" },
   { id: "2", title: "🚌 טיול שנתי", date: "15 במאי 2024" },
   { id: "3", title: "📅 יום המורה", date: "30 ביוני 2024" },
-];
+]);
+
+
+const [addEventModalVisible, setAddEventModalVisible] = useState(false);
+const [newEventTitle, setNewEventTitle] = useState("");
+const [newEventDate, setNewEventDate] = useState(new Date());
+const [showDatePicker, setShowDatePicker] = useState(false);
 
   return (
     <View style={styles.container}>       
@@ -148,18 +180,19 @@ const yearlyEvents = [
           <Text style={styles.sectionTitle}>📝 משימות למורה
             
           </Text>
-          {tasks.map((task) => (
+{tasks.map((task) => (
   <TouchableOpacity 
-    key={task.id} 
-    style={[styles.task, completedTasks[task.id] && styles.completedTask]} 
-    onPress={() => toggleTaskCompletion(task.id)} // ✅ Mark as completed
+    key={task._id}
+    style={[styles.task, completedTasks[task._id] && styles.completedTask]}
+    onPress={() => toggleTaskCompletion(task._id)}
   >
     <Text style={styles.taskText}>{task.title}</Text>
-    <TouchableOpacity onPress={() => removeTask(task.id)}>
+    <TouchableOpacity onPress={() => removeTask(task._id)}>
       <Text style={styles.deleteIcon}>❌</Text>
     </TouchableOpacity>
   </TouchableOpacity>
 ))}
+
 
 
           <TextInput
@@ -179,6 +212,7 @@ const yearlyEvents = [
           </TouchableOpacity>
         </View>
               {/* 🔹 NEW: YEARLY EVENTS SECTION */}
+{/* 🔹 NEW: YEARLY EVENTS SECTION */}
 <View style={styles.eventsContainer}>
   <Text style={styles.sectionTitle}>📅 אירועים שנתיים</Text>
 
@@ -196,12 +230,22 @@ const yearlyEvents = [
         {event.details && <Text style={styles.eventDetails}>{event.details}</Text>}
       </View>
 
-      {/* 🔹 Edit Button (Right Side) */}
+      {/* 🔹 Edit Button */}
       <TouchableOpacity style={styles.editButton}>
         <Text style={styles.editIcon}>✎</Text>
       </TouchableOpacity>
     </View>
   ))}
+
+  {/* ✅ Add Event Button — מחוץ ללולאה */}
+  <TouchableOpacity
+    style={styles.addEventButton}
+    onPress={() => setAddEventModalVisible(true)}
+  >
+    <Text style={{ fontSize: 16 }}>➕ הוסף אירוע</Text>
+  </TouchableOpacity>
+
+
 </View>
       </ScrollView>
       <Modal transparent={true} visible={popupVisible} animationType="slide">
@@ -239,6 +283,62 @@ const yearlyEvents = [
           </View>
         </View>
       </Modal>
+      <Modal visible={addEventModalVisible} transparent={true} animationType="slide">
+  <View style={styles.popupOverlay}>
+    <View style={styles.popupContainer}>
+      <Text style={styles.popupTitle}>📅 הוספת אירוע שנתי</Text>
+
+      <TextInput
+        placeholder="שם האירוע..."
+        value={newEventTitle}
+        onChangeText={setNewEventTitle}
+        style={styles.input}
+        textAlign="right"
+        placeholderTextColor="#777"
+      />
+
+      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.addTaskButton}>
+        <Text>📆 בחר תאריך: {newEventDate.toLocaleDateString("he-IL")}</Text>
+      </TouchableOpacity>
+
+      {showDatePicker && (
+        <DateTimePicker
+          value={newEventDate}
+          mode="date"
+          display="default"
+          onChange={(event, date) => {
+            setShowDatePicker(false);
+            if (date) setNewEventDate(date);
+          }}
+          locale="he-IL"
+        />
+      )}
+
+      <TouchableOpacity
+        onPress={() => {
+          if (!newEventTitle.trim()) return;
+          const formatted = {
+            id: Date.now().toString(),
+            title: newEventTitle,
+            date: newEventDate.toLocaleDateString("he-IL"),
+          };
+          setYearlyEvents([...yearlyEvents, formatted]);
+          setNewEventTitle("");
+          setNewEventDate(new Date());
+          setAddEventModalVisible(false);
+        }}
+        style={styles.addTaskButton}
+      >
+        <Text>📥 שמור</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => setAddEventModalVisible(false)} style={styles.closeButton}>
+        <Text style={styles.closeButtonText}>❌ ביטול</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
     </View>
     
     

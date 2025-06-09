@@ -11,6 +11,7 @@ const SignupScreen = () => {
     studentID: "",
     username: "",
     password: "",
+    grade:"",
     role: "הורה", // ברירת מחדל
   });
 
@@ -18,24 +19,32 @@ const SignupScreen = () => {
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
 
-  const handleSignup = async () => {
-    try {
-      const response = await axios.post("http://localhost:5000/api/users/register", {
-        name: form.name,
-        email: form.email,
-        studentName: form.studentName,
-        studentId: form.studentID,
-        username: form.username,
-        password: form.password,
-        role: form.role === "מורה" ? "teacher" : "parent",
-      });
+ const handleSignup = async () => {
+  try {
+    const payload = {
+      name: form.name,
+      email: form.email,
+      username: form.username,
+      password: form.password,
+      role: form.role === "מורה" ? "teacher" : "parent",
+    };
 
-      router.push("/"); // מעבר למסך התחברות
-    } catch (error) {
-      console.error("❌ שגיאה בהרשמה:", error.response?.data || error.message);
-      alert(error.response?.data?.error || "שגיאה בהרשמה");
+    // ✅ Add student info ONLY if role is "הורה"
+    if (form.role === "הורה") {
+      payload.studentName = form.studentName;
+      payload.studentId = form.studentID;
     }
-  };
+
+    const response = await axios.post("http://localhost:5000/api/users", payload);
+
+    console.log("✅ נרשמת בהצלחה:", response.data);
+    router.push("/");
+  } catch (error) {
+    console.error("❌ שגיאה בהרשמה:", error.response?.data || error.message);
+    alert(error.response?.data?.error || "שגיאה בהרשמה");
+  }
+};
+
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>
@@ -50,25 +59,67 @@ const SignupScreen = () => {
       <Text style={[styles.title, { color: isDarkMode ? "#fff" : "#000" }]}>הרשמה</Text>
       <Text style={[styles.subtitle, { color: isDarkMode ? "#fff" : "#000" }]}>אנא מלא את הפרטים שלך</Text>
 
-      {/* 🔹 שדות קלט */}
-      {["name", "email", "studentName", "studentID", "username", "password"].map((field, index) => (
+    {/* 🔹 שדות קלט */}
+<TextInput
+  placeholder="Name"
+  value={form.name}
+  onChangeText={(text) => setForm({ ...form, name: text })}
+  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+  placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+/>
+
+<TextInput
+  placeholder="Email"
+  value={form.email}
+  onChangeText={(text) => setForm({ ...form, email: text })}
+  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+  placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+/>
+
+{/* 👇 Only show these if role is "הורה" (parent) */}
+{form.role === "הורה" && (
+  <>
+    <TextInput
+      placeholder="Student Name"
+      value={form.studentName}
+      onChangeText={(text) => setForm({ ...form, studentName: text })}
+      style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+      placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+    />
         <TextInput
-          key={index}
-          placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-          value={form[field]}
-          onChangeText={(text) => setForm({ ...form, [field]: text })}
-          secureTextEntry={field === "password"}
-          style={[
-            styles.input,
-            {
-              backgroundColor: isDarkMode ? "#333" : "#fff",
-              color: isDarkMode ? "#fff" : "#000",
-              borderColor: isDarkMode ? "#fff" : "#000",
-            },
-          ]}
-          placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
-        />
-      ))}
+  placeholder="Grade"
+  value={form.name}
+  onChangeText={(text) => setForm({ ...form, name: text })}
+  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+  placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+/>
+    <TextInput
+      placeholder="Student ID"
+      value={form.studentID}
+      onChangeText={(text) => setForm({ ...form, studentID: text })}
+      style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+      placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+    />
+  </>
+)}
+
+<TextInput
+  placeholder="Username"
+  value={form.username}
+  onChangeText={(text) => setForm({ ...form, username: text })}
+  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+  placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+/>
+
+<TextInput
+  placeholder="Password"
+  value={form.password}
+  onChangeText={(text) => setForm({ ...form, password: text })}
+  secureTextEntry
+  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+  placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+/>
+
 
       {/* 🔹 בחירת תפקיד */}
       <View style={styles.roleContainer}>

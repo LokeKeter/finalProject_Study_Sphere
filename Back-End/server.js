@@ -35,6 +35,8 @@ const assignmentRoutes = require('./routes/assignmentRoutes');
 const classRoutes = require('./routes/classRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const archiveRoutes = require('./routes/archiveRoutes');
+const taskRoutes = require('./routes/taskRoutes');
+const eventRoutes = require('./routes/eventRoutes');
 
 // ראוטים ראשיים
 app.use('/api/users', userRoutes);
@@ -44,6 +46,13 @@ app.use('/api/assignments', assignmentRoutes);
 app.use('/api/class', classRoutes);
 app.use('/api/attendance', attendanceRoutes);
 app.use('/api/archives', archiveRoutes);
+app.use('/api/tasks', taskRoutes);
+app.use('/api/events', eventRoutes);
+
+// ראוט בדיקה ראשי
+app.get("/", (req, res) => {
+  res.send({ message: "✅ API is running" });
+});
 
 // טיפול ב־404 (נתיב שלא קיים)
 app.use((req, res, next) => {
@@ -58,3 +67,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+
+

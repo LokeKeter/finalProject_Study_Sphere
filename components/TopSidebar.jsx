@@ -2,6 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Modal, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 
+
+
+
+const roleDisplayNames = {
+  admin: "מנהל",
+  teacher: "מורה",
+  parent: "הורה",
+};
+
+
 const sidebarLinks = {
   admin: [
       { label: '👥 ניהול משתמשים', route: '/Admin-Users' },
@@ -9,7 +19,7 @@ const sidebarLinks = {
       { label: '🚪 התנתקות', route: '/' },
     ],
     teacher: [
-      { label: '📊 כללי', route: '/dashboard' },
+      { label: '📊 כללי', route: '/Dashboard' },
       { label: '📚 שיעורי בית', route: '/Homework' },
       { label: '🏫 כיתות', route: '/Classes' },
       { label: '👥 אנשי קשר', route: '/Contacts' },
@@ -69,7 +79,8 @@ const TopSidebar = ({ userRole }) => {
             router.push(profileRoute);
             setSidebarVisible(false);
           }}>
-          <Text style={styles.sidebarUser}>👤 {userRole}</Text>
+          <Text style={styles.sidebarUser}>👤 {roleDisplayNames[userRole] || "משתמש"}</Text>
+
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => setSidebarVisible(false)}>
