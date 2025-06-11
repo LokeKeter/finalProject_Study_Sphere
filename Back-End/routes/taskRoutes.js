@@ -1,30 +1,14 @@
-const express = require('express');
+// routes/taskRoutes.js
+const express = require("express");
 const router = express.Router();
-const Task = require('../models/Task');
+const taskController = require("../controllers/taskController");
 
-// Create a new task
-router.post('/', async (req, res) => {
-  try {
-    const { title } = req.body;
-    const newTask = new Task({ title });
-    const savedTask = await newTask.save();
-    res.status(201).json(savedTask);
-  } catch (err) {
-    res.status(500).json({ message: 'Server Error', error: err.message });
-  }
-});
+const authMiddleware = require("../middleware/authMiddleware");
+const authorizeRole = require("../middleware/authorizeRole");
 
-// Delete a task by ID
-router.delete('/:id', async (req, res) => {
-  try {
-    const deletedTask = await Task.findByIdAndDelete(req.params.id);
-    if (!deletedTask) {
-      return res.status(404).json({ message: 'Task not found' });
-    }
-    res.json({ message: 'Task deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: 'Server Error', error: err.message });
-  }
-});
+router.get("/", authMiddleware, authorizeRole('teacher'), taskController.getAll);
+router.post("/", authMiddleware, authorizeRole("teacher"), taskController.create);
+router.patch("/:id/toggle", authMiddleware, authorizeRole("teacher"), taskController.toggle);
+router.delete("/:id", authMiddleware, authorizeRole("teacher"), taskController.remove);
 
 module.exports = router;

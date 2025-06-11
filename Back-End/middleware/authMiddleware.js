@@ -1,11 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 function authMiddleware(req, res, next) {
-
-  console.log("🟠 Checking token:", req.headers.authorization);
-  
   const authHeader = req.headers.authorization;
-
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "⛔ טוקן לא קיים או לא תקין" });
   }

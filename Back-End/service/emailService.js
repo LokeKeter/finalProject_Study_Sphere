@@ -19,6 +19,15 @@ async function sendPasswordResetEmail(to, newPassword) {
   await transporter.sendMail(mailOptions);
 }
 
-module.exports = {
-  sendPasswordResetEmail
-};
+async function sendAIEmail(to, subject, body) {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to,
+    subject,
+    text: body
+  };
+
+  await transporter.sendMail(mailOptions);
+}
+
+module.exports = { sendPasswordResetEmail, sendAIEmail };

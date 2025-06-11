@@ -5,15 +5,6 @@ import { useAuth } from "./_layout";  // ✅ Import authentication hook
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import storage
 import axios from 'axios';
 
-// 🔐 **Valid Users**
-// const validUsers = [
-//   { username: "Steven", password: "12345", role: "מורה" },
-//   { username: "loki1", password: "12345", role: "מורה" },
-//   { username: "Steve", password: "12345", role: "הורה" },
-//   { username: "loki", password: "12345", role: "הורה" },
-//   {username: "Moshe", password:"12345", role: "admin"}
-// ];
-
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");

@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import TopSidebar from '../components/TopSidebar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const stats = [
   { id: "3", title: "אירועים משמעתיים", value: "1", icon: "🔔" },

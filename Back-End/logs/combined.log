@@ -22,3 +22,119 @@
 [2025-06-07T14:26:51.972Z] INFO: Login success: Stevenite
 [2025-06-09T08:27:05.037Z] INFO: Login attempt: 
 [2025-06-09T08:27:05.088Z] ERROR: Login failed for : ❌ משתמש לא נמצא
+[2025-06-09T08:32:37.767Z] INFO: Login attempt: Stevenite
+[2025-06-09T08:32:37.839Z] ERROR: Login failed for Stevenite: ❌ סיסמה שגויה
+[2025-06-09T08:33:12.638Z] INFO: Login attempt: Stevenite
+[2025-06-09T08:33:12.702Z] INFO: Login success: Stevenite
+[2025-06-09T08:39:10.270Z] INFO: Login attempt: Stevenite
+[2025-06-09T08:39:10.329Z] INFO: Login success: Stevenite
+[2025-06-09T08:40:15.988Z] INFO: Login attempt: Stevenite
+[2025-06-09T08:40:16.046Z] INFO: Login success: Stevenite
+[2025-06-09T08:41:47.636Z] INFO: Login attempt: Steve
+[2025-06-09T08:41:47.694Z] INFO: Login success: Steve
+[2025-06-09T08:42:26.243Z] INFO: Login attempt: Steven
+[2025-06-09T08:42:26.301Z] INFO: Login success: Steven
+[2025-06-09T13:43:27.115Z] INFO: Register attempt: nnox
+[2025-06-09T13:43:27.197Z] INFO: Register success: nnox
+[2025-06-09T15:03:38.571Z] INFO: Login attempt: Steve
+[2025-06-09T15:03:38.644Z] INFO: Login success: Steve
+[2025-06-10T09:55:25.001Z] INFO: Login attempt: Steven
+[2025-06-10T09:55:25.173Z] ERROR: Login failed for Steven: ⚠️ תפקיד לא תואם למשתמש
+[2025-06-10T09:55:26.689Z] INFO: Login attempt: Steven
+[2025-06-10T09:55:26.767Z] INFO: Login success: Steven
+[2025-06-10T12:14:43.037Z] INFO: Login attempt: Steven
+[2025-06-10T12:14:43.137Z] INFO: Login success: Steven
+[2025-06-10T12:15:58.309Z] INFO: Login attempt: Steven
+[2025-06-10T12:15:58.365Z] INFO: Login success: Steven
+[2025-06-10T13:06:56.680Z] INFO: Login attempt: Steven
+[2025-06-10T13:06:56.749Z] INFO: Login success: Steven
+[2025-06-10T13:38:56.999Z] INFO: Login attempt: Steven
+[2025-06-10T13:38:57.092Z] INFO: Login success: Steven
+[2025-06-10T13:41:18.668Z] INFO: Login attempt: Steven
+[2025-06-10T13:41:18.734Z] INFO: Login success: Steven
+[2025-06-10T13:45:18.973Z] INFO: Login attempt: Steven
+[2025-06-10T13:45:19.029Z] INFO: Login success: Steven
+[2025-06-10T13:54:53.668Z] INFO: Login attempt: Steve
+[2025-06-10T13:54:53.724Z] INFO: Login success: Steve
+[2025-06-10T15:06:41.628Z] INFO: Login attempt: Steven
+[2025-06-10T15:06:41.690Z] ERROR: Login failed for Steven: ⚠️ תפקיד לא תואם למשתמש
+[2025-06-10T15:06:42.924Z] INFO: Login attempt: Steven
+[2025-06-10T15:06:42.982Z] INFO: Login success: Steven
+[2025-06-10T15:08:56.065Z] INFO: Login attempt: Steven
+[2025-06-10T15:08:56.120Z] ERROR: Login failed for Steven: ⚠️ תפקיד לא תואם למשתמש
+[2025-06-10T15:08:56.953Z] INFO: Login attempt: Steven
+[2025-06-10T15:08:57.009Z] INFO: Login success: Steven
+[2025-06-10T15:22:29.967Z] INFO: Login attempt: Steven
+[2025-06-10T15:22:30.033Z] INFO: Login success: Steven
+[2025-06-10T15:31:09.259Z] INFO: Login attempt: Steven
+[2025-06-10T15:31:09.316Z] INFO: Login success: Steven
+[2025-06-10T15:36:05.634Z] INFO: Login attempt: Steven
+[2025-06-10T15:36:05.699Z] INFO: Login success: Steven
+[2025-06-10T16:40:30.404Z] INFO: Login attempt: Steve
+[2025-06-10T16:40:30.466Z] ERROR: Login failed for Steve: ⚠️ תפקיד לא תואם למשתמש
+[2025-06-10T16:40:32.432Z] INFO: Login attempt: Steven
+[2025-06-10T16:40:32.489Z] INFO: Login success: Steven
+[2025-06-10T16:49:48.285Z] INFO: Login attempt: Steven
+[2025-06-10T16:49:48.340Z] INFO: Login success: Steven
+[2025-06-10T17:05:51.872Z] INFO: Login attempt: Steven
+[2025-06-10T17:05:51.929Z] INFO: Login success: Steven
+[2025-06-10T17:13:04.635Z] INFO: Login attempt: Steven
+[2025-06-10T17:13:04.701Z] INFO: Login success: Steven
+[2025-06-10T17:17:09.716Z] INFO: Login attempt: Steven
+[2025-06-10T17:17:09.781Z] INFO: Login success: Steven
+[2025-06-10T17:21:42.789Z] INFO: Login attempt: Steven
+[2025-06-10T17:21:42.847Z] INFO: Login success: Steven
+[2025-06-10T17:30:23.423Z] INFO: Login attempt: Steven
+[2025-06-10T17:30:23.492Z] INFO: Login success: Steven
+[2025-06-10T17:36:19.449Z] INFO: Login attempt: Steve
+[2025-06-10T17:36:19.506Z] INFO: Login success: Steve
+[2025-06-10T17:46:28.544Z] INFO: Login attempt: Steven
+[2025-06-10T17:46:28.601Z] INFO: Login success: Steven
+[2025-06-10T17:49:37.144Z] INFO: Login attempt: Steven
+[2025-06-10T17:49:37.200Z] INFO: Login success: Steven
+[2025-06-10T17:53:08.356Z] INFO: Login attempt: Steven
+[2025-06-10T17:53:08.413Z] INFO: Login success: Steven
+[2025-06-10T17:54:44.498Z] INFO: Login attempt: Steven
+[2025-06-10T17:54:44.564Z] INFO: Login success: Steven
+[2025-06-10T22:27:06.228Z] INFO: Login attempt: Steven
+[2025-06-10T22:27:06.297Z] INFO: Login success: Steven
+[2025-06-10T22:27:06.335Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-10T22:33:32.994Z] INFO: Login attempt: Steven
+[2025-06-10T22:33:33.060Z] INFO: Login success: Steven
+[2025-06-10T22:33:33.096Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-10T22:43:04.785Z] INFO: Login attempt: Steven
+[2025-06-10T22:43:04.851Z] INFO: Login success: Steven
+[2025-06-10T22:43:04.889Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-10T22:44:13.541Z] INFO: Login attempt: Steven
+[2025-06-10T22:44:13.608Z] INFO: Login success: Steven
+[2025-06-10T22:44:13.643Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-10T22:45:36.355Z] INFO: Login attempt: Steven
+[2025-06-10T22:45:36.412Z] INFO: Login success: Steven
+[2025-06-10T22:45:36.452Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-10T22:47:11.130Z] INFO: Login attempt: Steven
+[2025-06-10T22:47:11.196Z] INFO: Login success: Steven
+[2025-06-10T22:47:11.232Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-10T22:49:00.477Z] INFO: Login attempt: Steven
+[2025-06-10T22:49:00.544Z] INFO: Login success: Steven
+[2025-06-10T22:49:00.582Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T09:57:49.121Z] INFO: Login attempt: Steven
+[2025-06-11T09:57:49.201Z] INFO: Login success: Steven
+[2025-06-11T09:57:49.261Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T09:59:12.502Z] INFO: Login attempt: Steven
+[2025-06-11T09:59:12.572Z] INFO: Login success: Steven
+[2025-06-11T09:59:12.612Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T10:02:48.933Z] INFO: Login attempt: Steven
+[2025-06-11T10:02:49.003Z] INFO: Login success: Steven
+[2025-06-11T10:02:49.043Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T10:05:15.317Z] INFO: Login attempt: Steven
+[2025-06-11T10:05:15.386Z] INFO: Login success: Steven
+[2025-06-11T10:05:15.425Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T10:07:54.735Z] INFO: Login attempt: Steven
+[2025-06-11T10:07:54.804Z] INFO: Login success: Steven
+[2025-06-11T10:07:54.843Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T10:11:17.628Z] INFO: Login attempt: Steven
+[2025-06-11T10:11:17.696Z] INFO: Login success: Steven
+[2025-06-11T10:11:17.734Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T10:13:25.770Z] INFO: Login attempt: Steven
+[2025-06-11T10:13:25.839Z] INFO: Login success: Steven
+[2025-06-11T10:13:25.879Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54

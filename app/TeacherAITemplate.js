@@ -10,8 +10,8 @@ import {
   Clipboard,
   Alert
 } from 'react-native';
-
 import TopSidebar from "../components/TopSidebar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // 🔹 קומפוננטת תבניות AI למורה
 const TeacherAITemplate = () => {
@@ -32,29 +32,31 @@ const TeacherAITemplate = () => {
   };
 
   // 🔸 ייצור של תבניות הודעה על סמך הנתונים שהוזנו
-  const generateTemplates = () => {
-    const { className, studentCount, grade, subject } = form;
+  const generateTemplates = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
 
-    const generatedTemplates = [
-      `שלום, אני מורה בכיתה ${grade} (${className}), עם ${studentCount} תלמידים/ות. אני מחפש/ת דרך לשפר את הוראת מקצוע ה-${subject} באמצעות כלים של בינה מלאכותית. אשמח למידע, תוכן או הצעות לפעילויות חינוכיות חדשניות שיכולות להעשיר את ההוראה ולהעצים את הבנת התלמידים.`,
+      const response = await fetch("http://localhost:5000/api/ai/template", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(form)
+      });
 
-      `שלום! במסגרת ההוראה בכיתה ${grade} (${className}), שבה ${studentCount} תלמידים, נתקלתי באתגרי הוראה בתחום ה-${subject}. אבקש שתציע/י לי:
-- הסברים פשוטים ומובנים לנושאים מרכזיים
-- תרגולים אינטראקטיביים או משחקים לימודיים
-- חומרי הוראה חזותיים/שמיעתיים
-- דרכים לגיוון דרכי ההסבר לפי סגנונות למידה שונים`,
+      const data = await response.json();
 
-      `שלום מערכת AI יקרה, אני מורה למקצוע ה-${subject} בכיתה ${grade} (${className}) שבה ${studentCount} תלמידים. אני מעוניין/ת לבנות מערך שיעור חכם שיתבסס על עקרונות של הוראה מותאמת אישית בעזרת בינה מלאכותית. אשמח אם תציע/י:
-- תכנית שיעור שבועית
-- שאלות דיון
-- פעילויות למידה מגוונות
-- עזרים דיגיטליים
-- תרגולים לפי רמות קושי שונות
-
-תודה מראש 🙏`
-    ];
-
-    setTemplates(generatedTemplates);
+      if (response.ok) {
+        setTemplates(data.templates);
+        Alert.alert("נשלח למייל", "התבניות נוצרו ונשלחו בהצלחה.");
+      } else {
+        Alert.alert("שגיאה", data.error || "אירעה שגיאה.");
+      }
+    } catch (error) {
+      console.error("❌ שגיאה ביצירת תבניות:", error.message);
+      Alert.alert("שגיאה", "לא ניתן להתחבר לשרת.");
+    }
   };
 
   // 🔸 העתקת הודעה לזיכרון

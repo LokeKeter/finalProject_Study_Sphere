@@ -16,8 +16,8 @@ export default function Layout() {
       <View style={{ flex: 1 }}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="index" />
-          <Stack.Screen name="dashboard" />
-          <Stack.Screen name="admin-users" />
+          <Stack.Screen name="Dashboard" />
+          <Stack.Screen name="Admin-Users" />
         </Stack>
       </View>
     </AuthContext.Provider>

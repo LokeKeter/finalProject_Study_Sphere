@@ -14,7 +14,6 @@ const SignupScreen = () => {
     grade:"",
     role: "הורה", // ברירת מחדל
   });
-
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
@@ -35,7 +34,7 @@ const SignupScreen = () => {
       payload.studentId = form.studentID;
     }
 
-    const response = await axios.post("http://localhost:5000/api/users", payload);
+    const response = await axios.post("http://localhost:5000/api/users/register", payload);
 
     console.log("✅ נרשמת בהצלחה:", response.data);
     router.push("/");
@@ -88,8 +87,8 @@ const SignupScreen = () => {
     />
         <TextInput
   placeholder="Grade"
-  value={form.name}
-  onChangeText={(text) => setForm({ ...form, name: text })}
+  value={form.grade}
+  onChangeText={(text) => setForm({ ...form, grade: text })}
   style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
   placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
 />

@@ -28,6 +28,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // ייבוא כל הראוטים
+const aiRoutes = require('./routes/aiRoutes');
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const meetingRoutes = require('./routes/meetingRoutes');
@@ -39,6 +40,7 @@ const taskRoutes = require('./routes/taskRoutes');
 const eventRoutes = require('./routes/eventRoutes');
 
 // ראוטים ראשיים
+app.use('/api/ai', aiRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/meetings', meetingRoutes);
