@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity, Clipboard, Alert } from 'react-native';
 import TopSidebar from "../components/TopSidebar";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const ParentAITemplate = () => {
   const [form, setForm] = useState({
     childName: '',
@@ -15,35 +17,34 @@ const ParentAITemplate = () => {
     setForm(prev => ({ ...prev, [key]: value }));
   };
 
-  const generateTemplates = () => {
-    const { childName, age, grade, subject } = form;
-    const capitalizedName = childName.charAt(0).toUpperCase() + childName.slice(1);
 
-   const generatedTemplates = [
-  `שלום, אני הורה לילד/ה בשם ${capitalizedName}, בגיל ${age}, הלומד/ת בכיתה ${grade}. ברצוני לסייע לו/לה להבין טוב יותר את מקצוע ה-${subject} בו הוא/היא חווה קושי. אשמח לקבל הסבר מפורט על נושאים מרכזיים במקצוע זה ברמת הכיתה, כולל דוגמאות פשוטות, המחשות, ותרגול מותאם. כמו כן, אודה להמלצה על אסטרטגיות למידה מתאימות לפי הגיל ורמת ההבנה.`,
+   const generateTemplates = async () => {
+  try {
+    const token = await AsyncStorage.getItem('token');
 
-  `שלום! אני מחפש/ת עזרה לימודית עבור ${capitalizedName}, בן/בת ${age}, תלמיד/ה בכיתה ${grade}. נושא הלימוד שבו אנו נתקלים בקושי הוא ${subject}. אני זקוק/ה לתוכן לימודי מותאם אישית שיכלול:
-1. הסבר תיאורטי ברור ופשוט
-2. דוגמאות מוחשיות או מצבים מחיי היומיום
-3. תרגילים עם פתרונות לדוגמה
-4. הצעות לשיפור הבנת החומר
-תודה רבה מראש!`,
+    const response = await fetch("http://localhost:5000/api/ai/template", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(form)
+    });
 
-  `שלום מערכת בינה מלאכותית, אנא עזרי לי ליצור תוכנית תמיכה לימודית ב-${subject} עבור ילדי ${capitalizedName}, בן/בת ${age}, בכיתה ${grade}. 
-המטרה: לשפר את ההבנה, הביטחון והיכולות שלו/ה במקצוע זה.
-מבוקש:
-- הסבר עקרונות יסוד לפי רמת הכיתה
-- הדגמות/אנלוגיות חזותיות או שמיעתיות
-- שאלות חזרה ותשובות
-- המלצות למשאבים דיגיטליים חינמיים (כגון סרטונים או משחקים)
-- תכנית תרגול יומית של 10-15 דקות
+    const data = await response.json();
 
-אשמח לכל עזרה, תודה מראש 🙏`
-];
+    if (response.ok) {
+      setTemplates(data.templates);
+      Alert.alert("נשלח למייל", "התבניות נוצרו ונשלחו בהצלחה.");
+    } else {
+      Alert.alert("שגיאה", data.error || "אירעה שגיאה.");
+    }
+  } catch (error) {
+    console.error("❌ שגיאה ביצירת תבניות:", error.message);
+    Alert.alert("שגיאה", "לא ניתן להתחבר לשרת.");
+  }
+};
 
-
-    setTemplates(generatedTemplates);
-  };
 
   const copyToClipboard = (text) => {
     Clipboard.setString(text);

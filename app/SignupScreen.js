@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 const SignupScreen = () => {
   const [form, setForm] = useState({
@@ -14,6 +15,8 @@ const SignupScreen = () => {
     grade:"",
     role: "הורה", // ברירת מחדל
   });
+
+  const [errors, setErrors] = useState({});
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
@@ -32,16 +35,44 @@ const SignupScreen = () => {
     if (form.role === "הורה") {
       payload.studentName = form.studentName;
       payload.studentId = form.studentID;
+      payload.grade = form.grade;
     }
 
     const response = await axios.post("http://localhost:5000/api/users/register", payload);
 
-    console.log("✅ נרשמת בהצלחה:", response.data);
+    Toast.show({
+      type: "success",
+      text1: "נרשמת בהצלחה 🎉",
+    });
+
+    setErrors({});
     router.push("/");
   } catch (error) {
-    console.error("❌ שגיאה בהרשמה:", error.response?.data || error.message);
-    alert(error.response?.data?.error || "שגיאה בהרשמה");
-  }
+      const serverErrors = error.response?.data?.errors;
+
+      if (serverErrors && Array.isArray(serverErrors)) {
+        // הצגת כל השגיאות ב־Toast אחד
+        const combinedMessage = serverErrors.map((err) => `• ${err.msg}`).join("\n");
+
+        Toast.show({
+          type: "error",
+          text2: combinedMessage,
+          autoHide: false, // אפשרי אם אתה רוצה שהשגיאה תישאר עד שהמשתמש יסגור אותה
+        });
+
+        // ניתן עדיין לשמור את השגיאות למקרה שתרצה להציג גם על השדות
+        const formatted = {};
+        for (const err of serverErrors) {
+          formatted[err.param] = err.msg;
+        }
+        setErrors(formatted);
+      } else {
+          Toast.show({
+            type: "error",
+            text2: error.response?.data?.error || "נסה שוב מאוחר יותר",
+          });
+        }
+    }
 };
 
 
@@ -63,7 +94,13 @@ const SignupScreen = () => {
   placeholder="Name"
   value={form.name}
   onChangeText={(text) => setForm({ ...form, name: text })}
-  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+  style={[
+      styles.input,
+      {
+        backgroundColor: isDarkMode ? "#333" : "#fff",
+        color: isDarkMode ? "#fff" : "#000",
+      },
+    ]}
   placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
 />
 
@@ -71,8 +108,14 @@ const SignupScreen = () => {
   placeholder="Email"
   value={form.email}
   onChangeText={(text) => setForm({ ...form, email: text })}
-  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
-  placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+  style={[
+      styles.input,
+      {
+        backgroundColor: isDarkMode ? "#333" : "#fff",
+        color: isDarkMode ? "#fff" : "#000",
+      },
+    ]}
+    placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
 />
 
 {/* 👇 Only show these if role is "הורה" (parent) */}
@@ -85,13 +128,20 @@ const SignupScreen = () => {
       style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
       placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
     />
-        <TextInput
-  placeholder="Grade"
-  value={form.grade}
-  onChangeText={(text) => setForm({ ...form, grade: text })}
-  style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
-  placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
-/>
+    <TextInput
+      placeholder="Grade"
+      value={form.grade}
+      onChangeText={(text) => setForm({ ...form, grade: text })}
+      style={[
+          styles.input,
+          {
+            backgroundColor: isDarkMode ? "#333" : "#fff",
+            color: isDarkMode ? "#fff" : "#000",
+          },
+      ]}
+      placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+    />
+
     <TextInput
       placeholder="Student ID"
       value={form.studentID}
@@ -188,6 +238,14 @@ const styles = StyleSheet.create({
     minWidth: 120,
   },
   signupButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+
+  errorText: {
+  color: "red",
+  fontSize: 12,
+  marginTop: -5,
+  marginBottom: 8,
+  textAlign: "right",
+},
 
   backButton: { marginTop: 10 },
   backButtonText: { fontSize: 14, textDecorationLine: "underline" },

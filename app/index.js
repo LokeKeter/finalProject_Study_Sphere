@@ -4,12 +4,12 @@ import { useRouter } from "expo-router";
 import { useAuth } from "./_layout";  // ✅ Import authentication hook
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import storage
 import axios from 'axios';
+import Toast from 'react-native-toast-message';
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("הורה");  // ✅ Default: הורה
-  const [errorMessage, setErrorMessage] = useState("");
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
@@ -39,11 +39,11 @@ export default function LoginScreen() {
       router.push('/Admin-Users');
     }
   } catch (error) {
-    if (error.response) {
-      setErrorMessage(error.response.data.message);
-    } else {
-      setErrorMessage("⚠️ שגיאה לא צפויה בשרת");
-    }
+    const message = error.response?.data?.error || "⚠️ שגיאה לא צפויה בשרת";
+    Toast.show({
+      type: "error",
+      text1: message,
+    });
   }
 };
 
@@ -94,9 +94,6 @@ export default function LoginScreen() {
           </TouchableOpacity>
         ))}
       </View>
-
-      {/* ⚠️ **Error Message** */}
-      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
 
       {/* 🔘 **Login Button** */}
       <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>

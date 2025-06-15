@@ -138,3 +138,50 @@
 [2025-06-11T10:13:25.770Z] INFO: Login attempt: Steven
 [2025-06-11T10:13:25.839Z] INFO: Login success: Steven
 [2025-06-11T10:13:25.879Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-11T11:41:28.002Z] INFO: Register attempt: muha2000
+[2025-06-11T11:41:28.075Z] INFO: Register success: muha2000
+[2025-06-11T11:41:41.453Z] INFO: Login attempt: muha2000
+[2025-06-11T11:41:41.518Z] INFO: Login success: muha2000
+[2025-06-11T11:42:20.981Z] INFO: Login attempt: muha2000
+[2025-06-11T11:42:21.045Z] INFO: Login success: muha2000
+[2025-06-11T11:42:21.082Z] INFO: 📄 שליפת משימות עבור מורה: 68496b68f77d8bdf0acdc83f
+[2025-06-11T11:52:09.869Z] INFO: Login attempt: Steve
+[2025-06-11T11:52:09.930Z] INFO: Login success: Steve
+[2025-06-11T12:20:07.807Z] INFO: Login attempt: Steven
+[2025-06-11T12:20:07.879Z] INFO: Login success: Steven
+[2025-06-11T12:20:07.917Z] INFO: 📄 שליפת משימות עבור מורה: 68496a7496398dd9e85e58f1
+[2025-06-11T12:39:25.572Z] INFO: Login attempt: Steve
+[2025-06-11T12:39:25.644Z] INFO: Login success: Steve
+[2025-06-12T05:58:20.185Z] INFO: Register attempt: aqswde
+[2025-06-12T05:58:20.259Z] INFO: Register success: aqswde
+[2025-06-12T06:04:23.012Z] INFO: Register attempt: ssss
+[2025-06-12T06:04:23.084Z] INFO: Register success: ssss
+[2025-06-12T11:36:30.457Z] INFO: Register attempt: ccc
+[2025-06-12T11:36:30.535Z] INFO: Register success: ccc
+[2025-06-12T12:03:48.098Z] INFO: Register attempt: ccccc
+[2025-06-12T12:03:48.165Z] ERROR: Register failed for ccccc: User validation failed: name: Path `name` is required.
+[2025-06-12T12:03:56.025Z] INFO: Register attempt: ccccc
+[2025-06-12T12:03:56.089Z] INFO: Register success: ccccc
+[2025-06-12T12:04:16.304Z] INFO: Login attempt: שדגכעיח
+[2025-06-12T12:04:16.307Z] ERROR: Login failed for שדגכעיח: ❌ משתמש לא נמצא
+[2025-06-12T12:04:17.148Z] INFO: Login attempt: שדגכעיח
+[2025-06-12T12:04:17.151Z] ERROR: Login failed for שדגכעיח: ❌ משתמש לא נמצא
+[2025-06-12T12:22:03.580Z] INFO: Login attempt: jjjjjjj
+[2025-06-12T12:22:03.589Z] ERROR: Login failed for jjjjjjj: Cannot read properties of null (reading 'password')
+[2025-06-12T12:22:09.903Z] INFO: Login attempt: jjjjjjj
+[2025-06-12T12:22:09.905Z] ERROR: Login failed for jjjjjjj: Cannot read properties of null (reading 'password')
+[2025-06-12T13:13:05.075Z] INFO: Login attempt: cccccccc
+[2025-06-12T13:13:05.083Z] ERROR: Login failed for cccccccc: Cannot read properties of null (reading 'password')
+[2025-06-12T13:13:15.465Z] INFO: Login attempt: cccccccc
+[2025-06-12T13:13:15.468Z] ERROR: Login failed for cccccccc: Cannot read properties of null (reading 'password')
+[2025-06-12T13:17:59.530Z] INFO: Login attempt: qqqqqqqqqq
+[2025-06-12T13:17:59.540Z] ERROR: Login failed for qqqqqqqqqq: שם משתמש או סיסמא שגויים
+[2025-06-12T13:18:20.152Z] INFO: Login attempt: Steve
+[2025-06-12T13:18:20.219Z] INFO: Login success: Steve
+[2025-06-12T13:24:15.249Z] INFO: Login attempt: Steve
+[2025-06-12T13:24:15.310Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
+[2025-06-12T13:24:21.648Z] INFO: Login attempt: Steven
+[2025-06-12T13:24:21.710Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-12T13:24:24.447Z] INFO: Login attempt: Steven
+[2025-06-12T13:24:24.510Z] INFO: Login success: Steven
+[2025-06-12T13:24:24.538Z] INFO: 📄 שליפת משימות עבור מורה: 68496a7496398dd9e85e58f1

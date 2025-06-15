@@ -1,8 +1,33 @@
 const User = require("../models/User");
+const Class = require("../models/Class");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const emailService = require("./emailService");
+
+async function assignStudentToClass(grade, parentId, studentId) {
+  // שלב 1: מצא את כל הכיתות באותה שכבה (למשל "ט")
+  const classes = await Class.find({ grade }).sort({ classNumber: 1 });
+
+  // שלב 2: חפש כיתה קיימת עם מקום פנוי
+  for (const classObj of classes) {
+    if (classObj.students.length < 25) {
+      classObj.students.push({ parentId, studentId });
+      await classObj.save();
+      return classObj;
+    }
+  }
+
+  // שלב 3: אם אין כיתה פנויה, צור כיתה חדשה
+  const newClassNumber = classes.length + 1;
+  const newClass = new Class({
+    grade,
+    classNumber: newClassNumber,
+    students: [{ parentId, studentId }],
+  });
+  await newClass.save();
+  return newClass;
+}
 
 async function createUser(data) {
   const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -11,6 +36,9 @@ async function createUser(data) {
     password: hashedPassword
   });
   await newUser.save();
+  if (newUser.role === "parent" && data.grade && data.studentId) {
+    await assignStudentToClass(data.grade, newUser._id, data.studentId);
+  }
   return newUser;
 }
 
@@ -37,16 +65,9 @@ async function deleteUser(id) {
 }
 
 async function login({ username, password, role }) {
-  console.log("🟡 UserService.login - start", { username, role });
-  const user = await User.findOne({ username });
-  console.log("🟡 UserService.login - found user?", !!user);
-  if (!user) throw new Error("❌ משתמש לא נמצא");
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error("❌ סיסמה שגויה");
-
-  if (user.role !== role && user.role !== "admin") {
-    throw new Error("⚠️ תפקיד לא תואם למשתמש");
+  const user = await User.findOne({ username }); 
+  if ( !user || !(await bcrypt.compare(password, user.password)) || (user.role !== role && user.role !== "admin") ) {
+    throw new Error("שם משתמש או סיסמא שגויים");
   }
 
   //יוצר TOKEN
@@ -96,5 +117,6 @@ module.exports = {
   updateUser,
   deleteUser,
   login,
-  resetPassword
+  resetPassword,
+  assignStudentToClass
 };

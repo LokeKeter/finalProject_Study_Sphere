@@ -2,6 +2,7 @@ const { generateTemplate } = require("../service/aiService");
 const { sendAIEmail } = require("../service/emailService");
 const sanitize = require("../utils/sanitizeInput");
 const userService = require("../service/userService");
+const logger = require('../utils/logger');
 
 //יצירת מבנה AI למורה/הורה
 exports.generate = async (req, res) => {
@@ -13,11 +14,17 @@ exports.generate = async (req, res) => {
     
     //שליחה למייל
     if (user.email) {
-        await sendAIEmail(user.email, "תבניות AI", templates.join("\n\n"));
+        await sendAIEmail(user.email, "תבנית AI", templates.join("\n\n"));
+    logger.info(`✔️ AI template sent to ${user.email} (userId: ${id})`);
+    } else {
+      logger.warn(`⚠️ User ${id} has no email – skipping email sending`);
     }
-    console.log("1");
     res.status(200).json({ templates });
   } catch (err) {
+    logger.error(`❌ Error generating AI template: ${err.message}`, {
+      userId: req.user?.id || 'unknown',
+      stack: err.stack,
+    });
     res.status(500).json({ error: err.message });
   }
 };

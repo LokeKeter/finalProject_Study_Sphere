@@ -1,9 +1,18 @@
-const userService = require("../service/UserService");
+const userService = require("../service/userService");
 const sanitize = require('../utils/sanitizeInput');
 const logger = require('../utils/logger');
+const { validationResult } = require("express-validator");
 
 const register = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const errorArray = errors.array();
+      logger.warn(`Register validation failed: ${errorArray.map(e => `${e.param}: ${e.msg}`).join(", ")}`);
+      return res.status(400).json({ errors: errorArray });
+    }
+    
+    console.log(req.body);
     logger.info(`Register attempt: ${req.body.username}`);
     const sanitizedBody = sanitize(req.body);
     const result = await userService.createUser(sanitizedBody);

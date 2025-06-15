@@ -1,6 +1,8 @@
 const { body } = require("express-validator");
 const User = require("../models/User");
 
+const allowedGrades = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ז', 'ח', 'ט', 'י', 'יא', 'יב'];
+
 const registerValidation = [
   // ולידציה לשם משתמש
   body("username")
@@ -25,6 +27,13 @@ const registerValidation = [
   body("email")
     .notEmpty().withMessage("יש להזין כתובת מייל")
     .isEmail().withMessage("כתובת המייל אינה תקינה"),
+
+  // 💡 ולידציה ל־grade רק אם role הוא הורה
+  body("grade")
+  .if(body("role").equals("parent"))
+  .notEmpty().withMessage("יש להזין כיתה עבור הורה")
+  .isIn(allowedGrades).withMessage("כיתה לא חוקית – מותר רק מ-א' עד יב'")
+
 ];
 
 module.exports = {

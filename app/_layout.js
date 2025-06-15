@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState } from "react";
 import { View } from "react-native";
 import { Stack } from "expo-router";
+import Toast from "react-native-toast-message"; 
 
 // ✅ Create Authentication Context
 const AuthContext = createContext();
@@ -19,6 +20,7 @@ export default function Layout() {
           <Stack.Screen name="Dashboard" />
           <Stack.Screen name="Admin-Users" />
         </Stack>
+        <Toast />
       </View>
     </AuthContext.Provider>
   );

@@ -5,3 +5,13 @@
 [2025-06-10T15:06:41.690Z] ERROR: Login failed for Steven: ⚠️ תפקיד לא תואם למשתמש
 [2025-06-10T15:08:56.120Z] ERROR: Login failed for Steven: ⚠️ תפקיד לא תואם למשתמש
 [2025-06-10T16:40:30.466Z] ERROR: Login failed for Steve: ⚠️ תפקיד לא תואם למשתמש
+[2025-06-12T12:03:48.165Z] ERROR: Register failed for ccccc: User validation failed: name: Path `name` is required.
+[2025-06-12T12:04:16.307Z] ERROR: Login failed for שדגכעיח: ❌ משתמש לא נמצא
+[2025-06-12T12:04:17.151Z] ERROR: Login failed for שדגכעיח: ❌ משתמש לא נמצא
+[2025-06-12T12:22:03.589Z] ERROR: Login failed for jjjjjjj: Cannot read properties of null (reading 'password')
+[2025-06-12T12:22:09.905Z] ERROR: Login failed for jjjjjjj: Cannot read properties of null (reading 'password')
+[2025-06-12T13:13:05.083Z] ERROR: Login failed for cccccccc: Cannot read properties of null (reading 'password')
+[2025-06-12T13:13:15.468Z] ERROR: Login failed for cccccccc: Cannot read properties of null (reading 'password')
+[2025-06-12T13:17:59.540Z] ERROR: Login failed for qqqqqqqqqq: שם משתמש או סיסמא שגויים
+[2025-06-12T13:24:15.310Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
+[2025-06-12T13:24:21.710Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
