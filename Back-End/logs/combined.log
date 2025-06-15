@@ -138,6 +138,7 @@
 [2025-06-11T10:13:25.770Z] INFO: Login attempt: Steven
 [2025-06-11T10:13:25.839Z] INFO: Login success: Steven
 [2025-06-11T10:13:25.879Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+<<<<<<< Updated upstream
 [2025-06-11T11:41:28.002Z] INFO: Register attempt: muha2000
 [2025-06-11T11:41:28.075Z] INFO: Register success: muha2000
 [2025-06-11T11:41:41.453Z] INFO: Login attempt: muha2000
@@ -185,3 +186,8 @@
 [2025-06-12T13:24:24.447Z] INFO: Login attempt: Steven
 [2025-06-12T13:24:24.510Z] INFO: Login success: Steven
 [2025-06-12T13:24:24.538Z] INFO: 📄 שליפת משימות עבור מורה: 68496a7496398dd9e85e58f1
+=======
+[2025-06-11T10:19:45.090Z] INFO: Login attempt: Steven
+[2025-06-11T10:19:45.155Z] INFO: Login success: Steven
+[2025-06-11T10:19:45.193Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+>>>>>>> Stashed changes
