@@ -14,13 +14,10 @@ const studentSchema = new mongoose.Schema({
 
 const classSchema = new mongoose.Schema({
   grade: {
-    type: String,
-    required: true,
-  },
-  classNumber: {
-    type: Number,
-    required: true,
-  },
+  type: String,
+  required: true,
+  enum: ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "יא", "יב"]
+},
   students: [studentSchema],
 });
 

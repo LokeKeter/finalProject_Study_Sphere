@@ -10,8 +10,6 @@ import {
   Modal,
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
-import { useRouter } from "expo-router";
-import { useNavigation } from "@react-navigation/native";
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 

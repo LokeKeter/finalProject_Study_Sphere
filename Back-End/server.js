@@ -34,10 +34,12 @@ const messageRoutes = require('./routes/messageRoutes');
 const meetingRoutes = require('./routes/meetingRoutes');
 const assignmentRoutes = require('./routes/assignmentRoutes');
 const classRoutes = require('./routes/classRoutes');
-const attendanceRoutes = require('./routes/attendanceRoutes');
 const archiveRoutes = require('./routes/archiveRoutes');
 const taskRoutes = require('./routes/taskRoutes');
 const eventRoutes = require('./routes/eventRoutes');
+const attendanceRoutes = require("./routes/attendanceRoutes");
+const communicationRoutes = require("./routes/communicationRoutes");
+const path = require("path");
 
 // ראוטים ראשיים
 app.use('/api/ai', aiRoutes);
@@ -46,10 +48,12 @@ app.use('/api/messages', messageRoutes);
 app.use('/api/meetings', meetingRoutes);
 app.use('/api/assignments', assignmentRoutes);
 app.use('/api/class', classRoutes);
-app.use('/api/attendance', attendanceRoutes);
 app.use('/api/archives', archiveRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/events', eventRoutes);
+app.use("/api/attendance", attendanceRoutes);
+app.use("/api/communication", communicationRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // ראוט בדיקה ראשי
 app.get("/", (req, res) => {

@@ -191,3 +191,325 @@
 [2025-06-11T10:19:45.155Z] INFO: Login success: Steven
 [2025-06-11T10:19:45.193Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
 >>>>>>> Stashed changes
+[2025-06-16T13:54:12.017Z] INFO: Register attempt: zzzz
+[2025-06-16T13:54:12.106Z] INFO: Register success: zzzz
+[2025-06-16T13:55:53.068Z] INFO: Login attempt: zzzz
+[2025-06-16T13:55:53.132Z] INFO: Login success: zzzz
+[2025-06-16T14:00:04.254Z] INFO: Login attempt: sven
+[2025-06-16T14:00:04.256Z] ERROR: Login failed for sven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:00:34.767Z] INFO: Login attempt: sven
+[2025-06-16T14:00:34.769Z] ERROR: Login failed for sven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:00:58.631Z] INFO: Login attempt: Steven
+[2025-06-16T14:00:58.685Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:01:01.866Z] INFO: Login attempt: Steven
+[2025-06-16T14:01:01.921Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:13.029Z] INFO: Login attempt: Steven
+[2025-06-16T14:04:13.086Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:15.560Z] INFO: Login attempt: Steven
+[2025-06-16T14:04:15.615Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:31.862Z] INFO: Login attempt: Steave
+[2025-06-16T14:04:31.863Z] ERROR: Login failed for Steave: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:37.344Z] INFO: Login attempt: Steave
+[2025-06-16T14:04:37.345Z] ERROR: Login failed for Steave: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:59.027Z] INFO: Password reset requested for: Steven
+[2025-06-16T14:05:00.752Z] INFO: Password reset success for: Steven
+[2025-06-16T14:05:12.571Z] INFO: Login attempt: Steven
+[2025-06-16T14:05:12.631Z] INFO: Login success: Steven
+[2025-06-16T14:05:12.662Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-16T14:10:07.305Z] INFO: Register attempt: aaa
+[2025-06-16T14:10:07.362Z] INFO: Register success: aaa
+[2025-06-16T14:11:23.350Z] INFO: Register attempt: bbb
+[2025-06-16T14:11:23.407Z] INFO: Register success: bbb
+[2025-06-16T14:15:30.820Z] INFO: Login attempt: Steven
+[2025-06-16T14:15:30.875Z] INFO: Login success: Steven
+[2025-06-16T14:15:30.908Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-16T14:33:06.891Z] INFO: Login attempt: Steven
+[2025-06-16T14:33:06.957Z] INFO: Login success: Steven
+[2025-06-16T14:33:06.995Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-16T14:35:21.059Z] INFO: Login attempt: Steven
+[2025-06-16T14:35:21.125Z] INFO: Login success: Steven
+[2025-06-16T14:35:21.166Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-16T14:55:44.079Z] INFO: Login attempt: Steven
+[2025-06-16T14:55:44.144Z] INFO: Login success: Steven
+[2025-06-16T14:55:44.181Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-17T13:06:31.836Z] INFO: Login attempt: Steven
+[2025-06-17T13:06:31.902Z] INFO: Login success: Steven
+[2025-06-17T13:06:31.939Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-17T14:00:36.026Z] INFO: Login attempt: Steven
+[2025-06-17T14:00:36.093Z] INFO: Login success: Steven
+[2025-06-17T14:00:36.132Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-17T14:09:23.781Z] INFO: Login attempt: Steven
+[2025-06-17T14:09:23.838Z] INFO: Login success: Steven
+[2025-06-17T14:09:23.875Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-17T15:07:23.442Z] INFO: Login attempt: Steven
+[2025-06-17T15:07:23.508Z] INFO: Login success: undefined
+[2025-06-17T15:07:23.545Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-17T15:18:00.195Z] INFO: Login attempt: Steven
+[2025-06-17T15:18:00.253Z] INFO: Login success: undefined
+[2025-06-17T15:18:00.288Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-18T14:14:20.061Z] INFO: Login attempt: Steven
+[2025-06-18T14:14:20.186Z] INFO: Login success: undefined
+[2025-06-18T14:14:20.292Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-18T14:15:28.047Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-18T14:18:45.104Z] INFO: Login attempt: Steven
+[2025-06-18T14:18:45.162Z] INFO: Login success: undefined
+[2025-06-18T14:18:45.177Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-18T14:32:25.721Z] INFO: Login attempt: teven
+[2025-06-18T14:32:25.723Z] ERROR: Login failed for teven: שם משתמש או סיסמא שגויים
+[2025-06-18T14:32:32.864Z] INFO: Login attempt: Steven
+[2025-06-18T14:32:32.919Z] INFO: Login success: undefined
+[2025-06-18T14:32:32.953Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-19T12:34:40.386Z] INFO: Login attempt: Steven
+[2025-06-19T12:34:40.510Z] INFO: Login success: undefined
+[2025-06-19T12:34:40.581Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-19T15:07:44.658Z] INFO: Login attempt: Steven
+[2025-06-19T15:07:44.722Z] INFO: Login success: undefined
+[2025-06-19T15:07:44.759Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-19T15:09:26.004Z] INFO: Login attempt: Steven
+[2025-06-19T15:09:26.062Z] INFO: Login success: undefined
+[2025-06-19T15:09:26.080Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-19T15:09:32.981Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-20T09:36:37.302Z] INFO: Register attempt: aaa
+[2025-06-20T09:36:37.384Z] INFO: Register success: aaa
+[2025-06-20T09:37:24.885Z] INFO: Register attempt: bbb
+[2025-06-20T09:37:24.943Z] INFO: Register success: bbb
+[2025-06-20T09:38:05.545Z] INFO: Register attempt: ccc
+[2025-06-20T09:38:05.602Z] INFO: Register success: ccc
+[2025-06-20T10:16:37.311Z] INFO: Register attempt: aaa
+[2025-06-20T10:16:37.375Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:16:48.262Z] INFO: Register attempt: aaa
+[2025-06-20T10:16:48.318Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:16:53.185Z] INFO: Register attempt: aaa
+[2025-06-20T10:16:53.242Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:00.480Z] INFO: Register attempt: aaa
+[2025-06-20T10:17:00.537Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:19.296Z] INFO: Register attempt: aaa
+[2025-06-20T10:17:19.352Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:23.304Z] INFO: Register attempt: aaa
+[2025-06-20T10:17:23.359Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:25.156Z] INFO: Register attempt: aaa
+[2025-06-20T10:17:25.215Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:53.181Z] INFO: Register attempt: aaa
+[2025-06-20T10:17:53.237Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:23:26.595Z] INFO: Register attempt: aaa
+[2025-06-20T10:23:26.650Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:23:57.763Z] INFO: Register attempt: aaa
+[2025-06-20T10:23:57.818Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:25:06.229Z] INFO: Register attempt: aaa
+[2025-06-20T10:25:06.286Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:25:29.089Z] INFO: Register attempt: aaa
+[2025-06-20T10:25:29.145Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:29:20.682Z] INFO: Register attempt: aaa
+[2025-06-20T10:29:20.738Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:31:52.235Z] INFO: Register attempt: aaa
+[2025-06-20T10:31:52.293Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:41:58.011Z] INFO: Register attempt: aaa
+[2025-06-20T10:41:58.067Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:44:05.346Z] INFO: Register attempt: aaa
+[2025-06-20T10:44:05.413Z] ERROR: Register failed for aaa: timetableService.createEmptyTimetable is not a function
+[2025-06-20T10:44:11.005Z] INFO: Register attempt: aaa
+[2025-06-20T10:44:11.076Z] INFO: Register success: aaa
+[2025-06-20T10:44:56.932Z] INFO: Register attempt: bbb
+[2025-06-20T10:44:56.988Z] ERROR: Register failed for bbb: timetableService.createEmptyTimetable is not a function
+[2025-06-20T10:46:13.175Z] INFO: Register attempt: bbb
+[2025-06-20T10:46:13.234Z] INFO: Register success: bbb
+[2025-06-20T11:21:09.257Z] INFO: Register attempt: ccc
+[2025-06-20T11:21:09.315Z] ERROR: Register failed for ccc: timetableService.createEmptyTimetable is not a function
+[2025-06-20T11:23:10.499Z] INFO: Register attempt: ccc
+[2025-06-20T11:23:10.558Z] INFO: Register success: ccc
+[2025-06-20T11:43:10.577Z] INFO: Register attempt: ddd
+[2025-06-20T11:43:10.636Z] ERROR: Register failed for ddd: timetableService.createEmptyTimetable is not a function
+[2025-06-20T11:45:04.290Z] INFO: Register attempt: eee
+[2025-06-20T11:45:04.358Z] ERROR: Register failed for eee: generateEmptySlots is not defined
+[2025-06-20T13:36:00.071Z] INFO: Register attempt: aaa
+[2025-06-20T13:36:00.158Z] INFO: Register success: aaa
+[2025-06-20T13:53:17.548Z] INFO: Register attempt: bbb
+[2025-06-20T13:53:17.611Z] INFO: Register success: bbb
+[2025-06-20T13:53:49.122Z] INFO: Register attempt: ccc
+[2025-06-20T13:53:49.184Z] INFO: Register success: ccc
+[2025-06-20T14:07:23.465Z] INFO: Register attempt: zzz
+[2025-06-20T14:07:23.527Z] INFO: Register success: zzz
+[2025-06-20T14:11:01.166Z] INFO: Register attempt: ddd
+[2025-06-20T14:11:01.246Z] INFO: Register success: ddd
+[2025-06-20T14:12:27.644Z] INFO: Register attempt: yyy
+[2025-06-20T14:12:27.707Z] INFO: Register success: yyy
+[2025-06-20T14:24:12.458Z] INFO: Login attempt: Steven
+[2025-06-20T14:24:12.525Z] INFO: Login success: undefined
+[2025-06-20T14:24:12.588Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-20T18:35:08.409Z] INFO: Register attempt: hhh
+[2025-06-20T18:35:08.488Z] INFO: Register success: hhh
+[2025-06-20T18:36:31.195Z] INFO: Login attempt: Steven
+[2025-06-20T18:36:31.252Z] INFO: Login success: undefined
+[2025-06-20T18:36:31.288Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-20T18:39:35.786Z] INFO: Login attempt: Steven
+[2025-06-20T18:39:35.851Z] INFO: Login success: undefined
+[2025-06-20T18:39:35.913Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-20T18:47:49.755Z] INFO: Login attempt: Steven
+[2025-06-20T18:47:49.824Z] INFO: Login success: undefined
+[2025-06-20T18:47:49.862Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-20T18:49:48.229Z] INFO: Login attempt: Steven
+[2025-06-20T18:49:48.294Z] INFO: Login success: undefined
+[2025-06-20T18:49:48.333Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-21T14:20:48.327Z] INFO: Login attempt: Steven
+[2025-06-21T14:20:48.457Z] INFO: Login success: undefined
+[2025-06-21T14:20:48.511Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-21T14:22:08.933Z] INFO: Register attempt: bzbz
+[2025-06-21T14:22:09.045Z] ERROR: Register failed for bzbz: E11000 duplicate key error collection: StudySphere.users index: email_1 dup key: { email: "hhh@hhh.com" }
+[2025-06-21T14:22:14.322Z] INFO: Register attempt: bzbz
+[2025-06-21T14:22:14.379Z] ERROR: Register failed for bzbz: E11000 duplicate key error collection: StudySphere.users index: email_1 dup key: { email: "hhh@hhh.com" }
+[2025-06-21T14:22:23.542Z] INFO: Register attempt: bzbz
+[2025-06-21T14:22:23.653Z] INFO: Register success: bzbz
+[2025-06-21T15:01:18.873Z] INFO: Login attempt: Steven
+[2025-06-21T15:01:18.932Z] INFO: Login success: undefined
+[2025-06-21T15:01:18.953Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-21T15:24:30.116Z] INFO: Login attempt: Steven
+[2025-06-21T15:24:30.181Z] INFO: Login success: undefined
+[2025-06-21T15:24:30.218Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-21T15:38:54.079Z] INFO: Login attempt: Steven
+[2025-06-21T15:38:54.144Z] INFO: Login success: undefined
+[2025-06-21T15:38:54.182Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-21T15:38:56.052Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-21T15:41:48.836Z] INFO: Login attempt: Steven
+[2025-06-21T15:41:48.902Z] INFO: Login success: undefined
+[2025-06-21T15:41:48.940Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-21T15:47:42.328Z] INFO: Register attempt: aaa
+[2025-06-21T15:47:42.401Z] INFO: Register success: aaa
+[2025-06-21T15:48:37.669Z] INFO: Register attempt: bbb
+[2025-06-21T15:48:37.734Z] INFO: Register success: bbb
+[2025-06-21T15:49:03.430Z] INFO: Login attempt: Steven
+[2025-06-21T15:49:03.489Z] INFO: Login success: undefined
+[2025-06-21T15:49:03.527Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-22T08:48:18.850Z] INFO: Register attempt: alex
+[2025-06-22T08:48:18.986Z] INFO: Register success: alex
+[2025-06-22T08:48:25.261Z] INFO: Login attempt: alex
+[2025-06-22T08:48:25.335Z] INFO: Login success: undefined
+[2025-06-22T08:48:25.369Z] INFO: 📄 שליפת משימות עבור מורה: 6857c352206ead112876ebb3
+[2025-06-22T08:48:28.025Z] INFO: 📄 שליפת משימות עבור מורה: 6857c352206ead112876ebb3
+[2025-06-22T09:25:46.772Z] INFO: Register attempt: sergey
+[2025-06-22T09:25:46.827Z] INFO: Register success: sergey
+[2025-06-22T09:25:55.740Z] INFO: Login attempt: sergey
+[2025-06-22T09:25:55.795Z] INFO: Login success: undefined
+[2025-06-22T09:25:55.816Z] INFO: 📄 שליפת משימות עבור מורה: 6857cc1a206ead112876ebe2
+[2025-06-22T09:27:06.150Z] INFO: Register attempt: yaniv
+[2025-06-22T09:27:06.206Z] INFO: Register success: yaniv
+[2025-06-22T09:27:14.366Z] INFO: Login attempt: yaniv
+[2025-06-22T09:27:14.421Z] INFO: Login success: undefined
+[2025-06-22T09:27:14.450Z] INFO: 📄 שליפת משימות עבור מורה: 6857cc6a206ead112876ec2c
+[2025-06-23T14:08:52.152Z] INFO: 📄 שליפת משימות עבור מורה: 6857cc6a206ead112876ec2c
+[2025-06-24T10:05:23.898Z] INFO: Login attempt: Steven
+[2025-06-24T10:05:24.073Z] INFO: Login success: undefined
+[2025-06-24T10:05:24.161Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-24T10:08:47.325Z] INFO: Login attempt: aaa
+[2025-06-24T10:08:47.381Z] INFO: Login success: undefined
+[2025-06-24T11:49:26.354Z] INFO: Login attempt: Steven
+[2025-06-24T11:49:26.412Z] INFO: Login success: undefined
+[2025-06-24T11:49:26.429Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-24T15:20:23.773Z] INFO: Login attempt: 
+[2025-06-24T15:20:23.787Z] ERROR: Login failed for : שם משתמש או סיסמא שגויים
+[2025-06-24T15:20:27.742Z] INFO: Login attempt: Steven
+[2025-06-24T15:20:27.812Z] INFO: Login success: undefined
+[2025-06-24T15:20:27.853Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T09:30:07.345Z] INFO: Login attempt: Steven
+[2025-06-25T09:30:07.478Z] INFO: Login success: undefined
+[2025-06-25T09:30:07.530Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T10:37:36.103Z] INFO: Login attempt: Steven
+[2025-06-25T10:37:36.171Z] INFO: Login success: undefined
+[2025-06-25T10:37:36.213Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T13:23:02.657Z] INFO: Login attempt: Steven
+[2025-06-25T13:23:02.724Z] INFO: Login success: undefined
+[2025-06-25T13:23:02.761Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T13:47:04.361Z] INFO: Login attempt: Steven
+[2025-06-25T13:47:04.427Z] INFO: Login success: undefined
+[2025-06-25T13:47:04.466Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T14:00:51.023Z] INFO: Login attempt: Steven
+[2025-06-25T14:00:51.089Z] INFO: Login success: undefined
+[2025-06-25T14:00:51.128Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T14:01:52.665Z] INFO: Register attempt: ccc
+[2025-06-25T14:01:52.747Z] INFO: Register success: ccc
+[2025-06-25T14:02:10.808Z] INFO: Login attempt: Steven
+[2025-06-25T14:02:10.865Z] INFO: Login success: undefined
+[2025-06-25T14:02:10.881Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T14:16:34.004Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T14:43:27.493Z] INFO: Login attempt: Steven
+[2025-06-25T14:43:27.558Z] INFO: Login success: undefined
+[2025-06-25T14:43:27.595Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T14:43:53.843Z] INFO: Login attempt: Steven
+[2025-06-25T14:43:53.897Z] INFO: Login success: undefined
+[2025-06-25T14:43:53.921Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T14:53:34.060Z] INFO: Login attempt: Steven
+[2025-06-25T14:53:34.125Z] INFO: Login success: undefined
+[2025-06-25T14:53:34.162Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-25T14:57:46.058Z] INFO: Login attempt: Steven
+[2025-06-25T14:57:46.116Z] INFO: Login success: undefined
+[2025-06-25T14:57:46.143Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T15:29:03.706Z] INFO: Login attempt: Steven
+[2025-06-26T15:29:03.819Z] INFO: Login success: undefined
+[2025-06-26T15:29:03.873Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T15:52:21.201Z] INFO: Login attempt: Steven
+[2025-06-26T15:52:21.260Z] INFO: Login success: undefined
+[2025-06-26T15:52:21.282Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T15:59:48.859Z] INFO: Login attempt: Steven
+[2025-06-26T15:59:48.926Z] INFO: Login success: undefined
+[2025-06-26T15:59:48.965Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T16:01:41.989Z] INFO: Login attempt: Steven
+[2025-06-26T16:01:42.075Z] INFO: Login success: undefined
+[2025-06-26T16:01:42.161Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T16:12:38.938Z] INFO: Login attempt: steven
+[2025-06-26T16:12:38.947Z] ERROR: Login failed for steven: שם משתמש או סיסמא שגויים
+[2025-06-26T16:12:42.625Z] INFO: Login attempt: Steven
+[2025-06-26T16:12:42.695Z] INFO: Login success: undefined
+[2025-06-26T16:12:42.735Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T16:25:56.157Z] INFO: Login attempt: Steven
+[2025-06-26T16:25:56.272Z] INFO: Login success: undefined
+[2025-06-26T16:25:56.320Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T16:51:14.059Z] INFO: Login attempt: Steven
+[2025-06-26T16:51:14.125Z] INFO: Login success: undefined
+[2025-06-26T16:51:14.165Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T17:15:02.933Z] INFO: Login attempt: Steven
+[2025-06-26T17:15:03.000Z] INFO: Login success: undefined
+[2025-06-26T17:15:03.038Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T17:17:29.838Z] INFO: Login attempt: Steven
+[2025-06-26T17:17:29.904Z] INFO: Login success: undefined
+[2025-06-26T17:17:29.942Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T17:34:34.920Z] INFO: Login attempt: Steven
+[2025-06-26T17:34:34.986Z] INFO: Login success: undefined
+[2025-06-26T17:34:35.024Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T17:59:20.408Z] INFO: Login attempt: Steven
+[2025-06-26T17:59:20.473Z] INFO: Login success: undefined
+[2025-06-26T17:59:20.511Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T18:17:52.360Z] INFO: Login attempt: Steven
+[2025-06-26T18:17:52.424Z] INFO: Login success: undefined
+[2025-06-26T18:17:52.462Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T18:24:01.355Z] INFO: Login attempt: Steven
+[2025-06-26T18:24:01.446Z] INFO: Login success: undefined
+[2025-06-26T18:24:01.500Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-26T18:30:03.027Z] INFO: Login attempt: Steven
+[2025-06-26T18:30:03.094Z] INFO: Login success: undefined
+[2025-06-26T18:30:03.131Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T08:51:18.724Z] INFO: Login attempt: Steven
+[2025-06-27T08:51:18.792Z] INFO: Login success: undefined
+[2025-06-27T08:51:18.829Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T09:18:20.575Z] INFO: Login attempt: Steven
+[2025-06-27T09:18:20.643Z] INFO: Login success: undefined
+[2025-06-27T09:18:20.680Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T09:43:47.246Z] INFO: Login attempt: Steven
+[2025-06-27T09:43:47.311Z] INFO: Login success: undefined
+[2025-06-27T09:43:47.348Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T09:45:55.906Z] INFO: Login attempt: Steven
+[2025-06-27T09:45:55.961Z] INFO: Login success: undefined
+[2025-06-27T09:45:55.996Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T09:47:09.251Z] INFO: Login attempt: Steven
+[2025-06-27T09:47:09.319Z] INFO: Login success: undefined
+[2025-06-27T09:47:09.358Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T10:14:23.105Z] INFO: Login attempt: Steven
+[2025-06-27T10:14:23.170Z] INFO: Login success: undefined
+[2025-06-27T10:14:23.207Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T10:38:23.348Z] INFO: Login attempt: Steven
+[2025-06-27T10:38:23.414Z] INFO: Login success: undefined
+[2025-06-27T10:38:23.450Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T10:58:38.630Z] INFO: Login attempt: Steven
+[2025-06-27T10:58:38.696Z] INFO: Login success: undefined
+[2025-06-27T10:58:38.733Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-27T11:07:58.297Z] INFO: Login attempt: Steven
+[2025-06-27T11:07:58.362Z] INFO: Login success: undefined
+[2025-06-27T11:07:58.399Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54

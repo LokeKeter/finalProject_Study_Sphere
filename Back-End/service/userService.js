@@ -4,43 +4,60 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const emailService = require("./emailService");
+const timetableService = require("./timetableService");
 
 async function assignStudentToClass(grade, parentId, studentId) {
-  // שלב 1: מצא את כל הכיתות באותה שכבה (למשל "ט")
-  const classes = await Class.find({ grade }).sort({ classNumber: 1 });
+  // חפש את כיתת השכבה הקיימת הראשונה
+  let classObj = await Class.findOne({ grade });
 
-  // שלב 2: חפש כיתה קיימת עם מקום פנוי
-  for (const classObj of classes) {
-    if (classObj.students.length < 25) {
-      classObj.students.push({ parentId, studentId });
-      await classObj.save();
-      return classObj;
-    }
+  if (!classObj) {
+    // אם לא קיימת כיתה כלל לשכבה הזאת, צור אחת
+    classObj = new Class({
+      grade,
+      students: [],
+    });
   }
 
-  // שלב 3: אם אין כיתה פנויה, צור כיתה חדשה
-  const newClassNumber = classes.length + 1;
-  const newClass = new Class({
-    grade,
-    classNumber: newClassNumber,
-    students: [{ parentId, studentId }],
-  });
-  await newClass.save();
-  return newClass;
+  // הוסף את התלמיד
+  classObj.students.push({ parentId, studentId });
+  await classObj.save();
+
+  return classObj;
 }
+
+
+
+
+const { createTimetable } = require("./timetableService");
 
 async function createUser(data) {
   const hashedPassword = await bcrypt.hash(data.password, 10);
+
+  // ✅ צור כיתה אם אין
+  if (data.grade && !(await Class.findOne({ grade: data.grade }))) {
+    const newClass = new Class({ grade: data.grade, students: [] });
+    await newClass.save();
+
+    // ✅ צור מערכת שעות מלאה עם שיבוץ
+    await createTimetable(data.grade);
+  }
+
   const newUser = new User({
     ...data,
     password: hashedPassword
   });
+
   await newUser.save();
+
   if (newUser.role === "parent" && data.grade && data.studentId) {
     await assignStudentToClass(data.grade, newUser._id, data.studentId);
   }
+
   return newUser;
 }
+
+
+
 
 async function getAllUsers() {
   return await User.find();
@@ -51,12 +68,35 @@ async function getUserById(id) {
   if (!user) throw new Error("User not found");
   return user;
 }
+ //עדכון פרטים
+const updateUser = async (userId, updates) => {
+  const existingUser = await User.findById(userId);
+  if (!existingUser) {
+    throw new Error("User not found");
+  }
 
-async function updateUser(id, data) {
-  const updated = await User.findByIdAndUpdate(id, data, { new: true });
-  if (!updated) throw new Error("User not found");
-  return updated;
-}
+  const oldSubject = existingUser.subject || ""; // אם לא קיים
+  const newSubject = updates.subject || "";
+  console.log(newSubject);
+
+  // בצע עדכון בפועל
+  const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+
+  // אם המורה שינה מקצועות – טפל במערכת שעות
+  if (
+  existingUser.role === "teacher" && oldSubject !== newSubject) {
+  await timetableService.handleSubjectChanges(oldSubject, newSubject, userId);
+  }
+
+  // החזרה רק של שדות חשובים (לא הסיסמה וכו')
+  return {
+    id: updatedUser._id,
+    name: updatedUser.name,
+    email: updatedUser.email,
+    role: updatedUser.role,
+    subject: updatedUser.subject || ""
+  };
+};
 
 async function deleteUser(id) {
   const deleted = await User.findByIdAndDelete(id);
@@ -83,7 +123,8 @@ async function login({ username, password, role }) {
     token,
     user: {
       id: user._id,
-      username: user.username,
+      name: user.name,
+      email: user.email,
       role: user.role
     }
   };

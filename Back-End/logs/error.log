@@ -15,3 +15,36 @@
 [2025-06-12T13:17:59.540Z] ERROR: Login failed for qqqqqqqqqq: שם משתמש או סיסמא שגויים
 [2025-06-12T13:24:15.310Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
 [2025-06-12T13:24:21.710Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:00:04.256Z] ERROR: Login failed for sven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:00:34.769Z] ERROR: Login failed for sven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:00:58.685Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:01:01.921Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:13.086Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:15.615Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:31.863Z] ERROR: Login failed for Steave: שם משתמש או סיסמא שגויים
+[2025-06-16T14:04:37.345Z] ERROR: Login failed for Steave: שם משתמש או סיסמא שגויים
+[2025-06-18T14:32:25.723Z] ERROR: Login failed for teven: שם משתמש או סיסמא שגויים
+[2025-06-20T10:16:37.375Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:16:48.318Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:16:53.242Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:00.537Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:19.352Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:23.359Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:25.215Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:17:53.237Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:23:26.650Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:23:57.818Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:25:06.286Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:25:29.145Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:29:20.738Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:31:52.293Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:41:58.067Z] ERROR: Register failed for aaa: Class validation failed: grade: Path `grade` is required.
+[2025-06-20T10:44:05.413Z] ERROR: Register failed for aaa: timetableService.createEmptyTimetable is not a function
+[2025-06-20T10:44:56.988Z] ERROR: Register failed for bbb: timetableService.createEmptyTimetable is not a function
+[2025-06-20T11:21:09.315Z] ERROR: Register failed for ccc: timetableService.createEmptyTimetable is not a function
+[2025-06-20T11:43:10.636Z] ERROR: Register failed for ddd: timetableService.createEmptyTimetable is not a function
+[2025-06-20T11:45:04.358Z] ERROR: Register failed for eee: generateEmptySlots is not defined
+[2025-06-21T14:22:09.045Z] ERROR: Register failed for bzbz: E11000 duplicate key error collection: StudySphere.users index: email_1 dup key: { email: "hhh@hhh.com" }
+[2025-06-21T14:22:14.379Z] ERROR: Register failed for bzbz: E11000 duplicate key error collection: StudySphere.users index: email_1 dup key: { email: "hhh@hhh.com" }
+[2025-06-24T15:20:23.787Z] ERROR: Login failed for : שם משתמש או סיסמא שגויים
+[2025-06-26T16:12:38.947Z] ERROR: Login failed for steven: שם משתמש או סיסמא שגויים

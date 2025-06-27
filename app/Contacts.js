@@ -11,9 +11,8 @@ import {
 import { useRouter } from "expo-router";
 import React, { useState, useEffect } from "react";
 import TopSidebar from "../components/TopSidebar";
-
-// 🔹 Class Data
-const classesData = ["כיתה א'", "כיתה ב'", "כיתה ג'"];
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as DocumentPicker from "expo-document-picker";
 
 // 🔹 Default Parents Data
 const initialParentsData = [
@@ -27,9 +26,14 @@ const ContactsScreen = () => {
   const router = useRouter();
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
   const [contacts, setContacts] = useState(initialParentsData);
+
+  const [meetingSubject, setMeetingSubject] = useState("");
+  const [meetingDate, setMeetingDate] = useState("");
+
+
+  //הורה נבחר(בשביל ההודעות)
+  const [selectedParentId, setSelectedParentId] = useState(null);
 
   // ✅ Add missing modal states
   const [isLetterModalVisible, setLetterModalVisible] = useState(false);
@@ -46,38 +50,99 @@ const ContactsScreen = () => {
   // ✅ Fix missing selectedFile state
   const [selectedFile, setSelectedFile] = useState(null);
 
-  // ✅ Fix missing parentName state
-  const [parentName, setParentName] = useState("");
-
   // ✅ Fix missing fileDescription state
   const [fileDescription, setFileDescription] = useState("");
 
   // ✅ Fix missing uploadDate state
   const [uploadDate, setUploadDate] = useState(new Date().toLocaleDateString());
 
-  // 🔹 Modal States
-  const [isEditModalVisible, setEditModalVisible] = useState(false);
-  const [isMessageModalVisible, setMessageModalVisible] = useState(false);
-
-  // 🔹 Current Contact in Modals
-  const [currentContact, setCurrentContact] = useState(null);
-
   // 🔹 New Contact Modal
   const [addContactModalVisible, setAddContactModalVisible] = useState(false);
-  const [newContact, setNewContact] = useState({ parentName: "", studentName: "", classId: classesData[selectedClassIndex] });
+  const [newContact, setNewContact] = useState({
+    parentName: "",
+    studentName: "",
+    classId: ""
+  });
+
+  //העלאת קובץ
+  const pickFile = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*",
+        copyToCacheDirectory: true,
+        multiple: false,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const file = result.assets[0];
+        setSelectedFile({
+          uri: file.uri,
+          name: file.name,
+          mimeType: file.mimeType || "application/octet-stream"
+        });
+      }
+    } catch (err) {
+      Alert.alert("שגיאה בבחירת קובץ", err.message);
+    }
+  };
+
+
+  //בחירת כיתה והתלמידים
+  const [userId, setUserId] = useState(null);
+  const [teacherClasses, setTeacherClasses] = useState([]);
 
   // 🔹 Update Time
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const fetchTeacherClasses = async () => {
+    const user = await AsyncStorage.getItem("user");
+    const parsed = JSON.parse(user);
+    const token = await AsyncStorage.getItem("token");
+    setUserId(parsed.id);
+
+    const res = await fetch(`http://localhost:5000/api/attendance/teacher-classes/${parsed.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    setTeacherClasses(data); // ⬅️ מחליף את classesData
+  };
+
+  fetchTeacherClasses();
+}, []);
+
+useEffect(() => {
+  const fetchContacts = async () => {
+    if (!teacherClasses[selectedClassIndex]) return;
+    const token = await AsyncStorage.getItem("token");
+
+    const res = await fetch(
+      `http://localhost:5000/api/attendance/students-by-class/${teacherClasses[selectedClassIndex]}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
+    );
+
+    const data = await res.json();
+
+    console.log("DATA FROM BACKEND:", data);
+    const mapped = data.map((student) => ({
+      id: student.parentId,
+      parentName: student.parentName,
+      studentName: student.studentName,
+      classId: teacherClasses[selectedClassIndex]
+    }));
+
+    setContacts(mapped);
+  };
+
+  fetchContacts();
+}, [teacherClasses, selectedClassIndex]);
+
 
   // 🔹 Change Selected Class
   const handleChangeClass = (direction) => {
     let newIndex = selectedClassIndex + direction;
-    if (newIndex >= 0 && newIndex < classesData.length) {
+    if (newIndex >= 0 && newIndex < teacherClasses.length) {
       setSelectedClassIndex(newIndex);
     }
   };
@@ -85,7 +150,7 @@ const ContactsScreen = () => {
   // 🔹 Filter Contacts by Class & Search
   const filteredContacts = contacts.filter(
     (contact) =>
-      contact.classId === classesData[selectedClassIndex] &&
+      contact.classId === teacherClasses[selectedClassIndex] &&
       (contact.parentName.includes(searchQuery) || contact.studentName.includes(searchQuery))
   );
 
@@ -106,10 +171,137 @@ const ContactsScreen = () => {
 
 
     setContacts([...contacts, newEntry]);
-    setNewContact({ parentName: "", studentName: "", classId: classesData[selectedClassIndex] });
+    setNewContact({ parentName: "", studentName: "", classId: teacherClasses[selectedClassIndex] });
     setAddContactModalVisible(false);
   };
 
+  const sendLetter = async () => {
+    const token = await AsyncStorage.getItem("token");
+    console.log("parentId", selectedParentId);
+    console.log("teacherId", userId);
+    console.log("subject", letterSubject);
+    console.log("content", letterContent);
+    const res = await fetch("http://localhost:5000/api/communication/send-letter", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        parentId: selectedParentId,
+        teacherId: userId,
+        subject: letterSubject,
+        content: letterContent
+      })
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      Alert.alert("✅ הצלחה", "המכתב נשלח להורה");
+      setLetterModalVisible(false);
+      setLetterSubject("");
+      setLetterContent("");
+    } else {
+      Alert.alert("❌ שגיאה", data.message || "שליחה נכשלה");
+    }
+  };
+
+  const sendFile = async () => {
+    if (!selectedFile || !fileDescription) {
+      Alert.alert("❌ שגיאה", "יש למלא תיאור ולהעלות קובץ");
+      return;
+    }
+
+    const token = await AsyncStorage.getItem("token");
+    const formData = new FormData();
+
+    formData.append("file", {
+      uri: selectedFile.uri,
+      name: selectedFile.name,
+      type: selectedFile.mimeType || "application/octet-stream"
+    });
+
+    formData.append("parentId", selectedParentId);
+    formData.append("teacherId", userId);
+    formData.append("type", "signature");
+    formData.append("content", fileDescription);
+    console.log("1");
+    try {
+      const res = await fetch("http://localhost:5000/api/communication/send-file", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData
+      });
+      console.log("2");
+      const data = await res.json();
+      console.log("3");
+      if (res.ok) {
+        console.log("4");
+        Alert.alert("✅ הצלחה", "הקובץ נשלח להורה");
+        setSignatureModalVisible(false);
+        setSelectedFile(null);
+        setFileDescription("");
+      } else {
+        Alert.alert("❌ שגיאה", data.message || "שליחה נכשלה");
+      }
+    } catch (err) {
+      Alert.alert("❌ שגיאה", err.message);
+    }
+  };
+
+  const sendMeeting = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    const res = await fetch("http://localhost:5000/api/communication/send-meeting", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        parentId: selectedParentId,
+        teacherId: userId,
+        type: "meeting",
+        subject: meetingSubject,
+        meetingType: meetingType,
+        meetingDate: meetingDate
+      })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      Alert.alert("✅ פגישה נשלחה", "הפגישה נקבעה בהצלחה");
+      setMeetingModalVisible(false);
+      setMeetingSubject("");
+      setMeetingDate("");
+    } else {
+      Alert.alert("❌ שגיאה", data.message || "שליחה נכשלה");
+    }
+  };
+
+  const cancelMeeting = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    const res = await fetch("http://localhost:5000/api/communication/cancel-meeting", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ parentId: selectedParentId })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      Alert.alert("📅", "הפגישה בוטלה בהצלחה");
+    } else {
+      Alert.alert("❌ שגיאה", data.message || "ביטול נכשל");
+    }
+  };
 
    return (
      <View style={styles.container}>
@@ -124,8 +316,10 @@ const ContactsScreen = () => {
             <Text style={styles.arrow}>⬅️</Text>
           </TouchableOpacity>
         )}
-        <Text style={styles.headerText}>{classesData[selectedClassIndex]}</Text>
-        {selectedClassIndex < classesData.length - 1 && (
+        <Text style={styles.headerText}>
+          {teacherClasses.length > 0 ? teacherClasses[selectedClassIndex] : "אין כיתות"}
+        </Text>
+        {selectedClassIndex < teacherClasses.length - 1 && (
           <TouchableOpacity onPress={() => handleChangeClass(1)}>
             <Text style={styles.arrow}>➡️</Text>
           </TouchableOpacity>
@@ -160,20 +354,30 @@ const ContactsScreen = () => {
 
               {/* 🔹 פעולות */}
               <View style={{ flexDirection: "row"}}>
-              <TouchableOpacity onPress={() => setSignatureModalVisible(true)}>
-                <Text style={styles.actionIcon}>📝</Text> {/* Upload Icon */}
-              </TouchableOpacity>
-
-               <TouchableOpacity onPress={() => setLetterModalVisible(true)}>
-                <Text style={styles.actionIcon}>✉️</Text> {/* You can change the icon */}
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={() => setMeetingModalVisible(true)} // ✅ Open Popup
-                >
-                  <Text style={styles.actionIcon}>📅</Text>
+                <TouchableOpacity onPress={() => {
+                  setSelectedParentId(parent.id); // ⬅️ עדכון מזהה ההורה הנבחר
+                  setSignatureModalVisible(true);
+                }}>
+                  <Text style={styles.actionIcon}>📝</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionButton}>
+               <TouchableOpacity onPress={() => {
+                setSelectedParentId(parent.id);
+                setLetterModalVisible(true);
+              }}>
+                <Text style={styles.actionIcon}>✉️</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                setSelectedParentId(parent.id);
+                setMeetingModalVisible(true);
+              }}>
+                <Text style={styles.actionIcon}>📅</Text>
+              </TouchableOpacity>
+
+                <TouchableOpacity style={styles.actionButton} onPress={() => {
+                  setSelectedParentId(parent.id);
+                  cancelMeeting();
+                }}>
                   <Text style={styles.actionIcon}>❌</Text>
                 </TouchableOpacity>
               </View>
@@ -191,23 +395,33 @@ const ContactsScreen = () => {
       </View>
 
       {/* 🔹 Description Input */}
-      <TextInput style={styles.inputLarge}
+      <TextInput
+        style={styles.inputLarge}
         placeholder="נושא"
-        placeholderTextColor="black"  // ✅ Makes text black
-        textAlign="right"   />
-      
+        placeholderTextColor="black"
+        textAlign="right"
+        value={meetingSubject}
+        onChangeText={setMeetingSubject}
+      />
 
       {/* 🔹 Date Picker */}
-      <TextInput style={styles.input}
-       placeholder="תאריך ושעה"
-       placeholderTextColor="black"  // ✅ Makes text black
-       textAlign="right"   />
+      <TextInput
+        style={styles.input}
+        placeholder="תאריך ושעה"
+        placeholderTextColor="black"
+        textAlign="right"
+        value={meetingDate}
+        onChangeText={setMeetingDate}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="👤 הורה מקבל"
+        value={contacts.find(c => c.id === selectedParentId)?.parentName || ""}
+        editable={false}
+        placeholderTextColor="black"
+        textAlign="right"
+      />
 
-      {/* 🔹 Participants Input */}
-      <TextInput style={styles.input}
-       placeholder="בחר משתתפים"
-       placeholderTextColor="black"  // ✅ Makes text black
-       textAlign="right"   />
 
       <View style={styles.checkboxContainer}>
   <TouchableOpacity 
@@ -231,9 +445,10 @@ const ContactsScreen = () => {
         <TouchableOpacity style={styles.cancelButton} onPress={() => setMeetingModalVisible(false)}>
           <Text style={styles.cancelButtonText}>ביטול</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sendButton}>
+        <TouchableOpacity style={styles.sendButton} onPress={sendMeeting}>
           <Text style={styles.sendButtonText}>שלח</Text>
         </TouchableOpacity>
+
       </View>
     </View>
   </View>
@@ -283,14 +498,7 @@ const ContactsScreen = () => {
         >
           <Text style={styles.cancelButtonText}>ביטול</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sendButton} onPress={() => {
-          if (!letterSubject.trim() || !letterContent.trim()) {
-            Alert.alert("❌ שגיאה", "יש למלא את כל השדות לפני השליחה.");
-            return;
-          }
-          Alert.alert("✅ הצלחה", "המכתב נשלח בהצלחה!");
-          setLetterModalVisible(false);
-        }}>
+        <TouchableOpacity style={styles.sendButton} onPress={sendLetter}>
           <Text style={styles.sendButtonText}>📨 שלח</Text>
         </TouchableOpacity>
       </View>
@@ -325,10 +533,10 @@ const ContactsScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="👤 הורה מקבל"
-        value={parentName}
-        onChangeText={setParentName}
-        placeholderTextColor="black"  // ✅ Makes text black
-        textAlign="right"  
+        value={contacts.find(c => c.id === selectedParentId)?.parentName || ""}
+        editable={false}
+        placeholderTextColor="black"
+        textAlign="right"
       />
 
       {/* 🔹 File Description */}
@@ -365,7 +573,17 @@ const ContactsScreen = () => {
 
 
         {/* 🔹 Add Contact Button */}
-        <TouchableOpacity style={styles.addContactButton} onPress={() => setAddContactModalVisible(true)}>
+        <TouchableOpacity
+          style={styles.addContactButton}
+          onPress={() => {
+            setNewContact({
+              parentName: "",
+              studentName: "",
+              classId: teacherClasses[selectedClassIndex] || ""
+            });
+            setAddContactModalVisible(true);
+          }}
+        >
           <Text style={styles.addContactButtonText}>➕ הוסף איש קשר</Text>
         </TouchableOpacity>
 

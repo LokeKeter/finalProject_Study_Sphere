@@ -6,49 +6,72 @@ import TopSidebar from "../components/TopSidebar";
 
 const UserProfile = () => {
   const router = useRouter();
-  const [user, setUser] = useState({ fullName: "", role: "", email: "", subject: "", description: "" });
+  const [user, setUser] = useState({ name: "", role: "", email: "", subject: "", description: "" });
   const [isEditing, setIsEditing] = useState(false); // ✅ State for edit mode
-  const [sidebarVisible, setSidebarVisible] = useState(false); // ✅ Sidebar state
-  const [currentTime, setCurrentTime] = useState(""); // ✅ Add missing currentTime
 
   // ✅ Fetch User Data from AsyncStorage
   useEffect(() => {
-    const getUserData = async () => {
-      const storedUser = await AsyncStorage.getItem("user");
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    };
-    getUserData();
-  }, []);
+  const getUserData = async () => {
+    const storedUser = await AsyncStorage.getItem("user");
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      setUser({
+        name: parsed.name ?? "",
+        email: parsed.email ?? "",
+        role: parsed.role ?? "",
+        subject: parsed.subject ?? "",
+        description: parsed.description ?? ""
+      });
+    }
+  };
+  getUserData();
+}, []);
 
-  // ✅ Update Current Time Every Second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = new Date();
-      setCurrentTime(
-        now.toLocaleString("he-IL", {
-          weekday: "short",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false,
-        })
-      );
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+
+
 
   // ✅ Save User Data
   const handleSave = async () => {
-    await AsyncStorage.setItem("user", JSON.stringify(user));
-    setIsEditing(false);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      console.log("💾 token", token);
+
+      const storedUser = await AsyncStorage.getItem('user');
+      console.log("💾 user", storedUser);
+
+      const parsedUser = JSON.parse(storedUser);
+      const userId = parsedUser.id || parsedUser._id; // ✅ פתרון גמיש
+      console.log("parsedUser", userId); // תוודא שיש ID
+      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: user.name,
+          email: user.email,
+          subject: user.subject
+        })
+      });
+
+      const updatedUser = await response.json();
+
+      // שמור את המשתמש המעודכן
+      await AsyncStorage.setItem("user", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("שגיאה בעדכון פרטי המשתמש", error);
+    }
   };
+
 
   // ✅ Handle Logout (Clear Storage & Redirect)
   const handleLogout = async () => {
     await AsyncStorage.removeItem("user");
-    router.push("/login");
+    router.push("/");
   };
 
     return (
@@ -60,11 +83,15 @@ const UserProfile = () => {
       {/* 🔹 User Info */}
       <View style={styles.userInfo}>
         <Text style={styles.label}>שם מלא:</Text>
-        {isEditing ? (
-          <TextInput style={styles.input} value={user.fullName} onChangeText={(text) => setUser({ ...user, fullName: text })} />
-        ) : (
-          <Text style={styles.value}>{user.fullName || "לא ידוע"}</Text>
-        )}
+          {isEditing ? (
+            <TextInput
+              style={styles.input}
+              value={user.name}
+              onChangeText={(text) => setUser({ ...user, name: text })}
+            />
+          ) : (
+            <Text style={styles.value}>{user.name || "לא ידוע"}</Text>
+          )}
 
         <Text style={styles.label}>תפקיד:</Text>
         <Text style={styles.value}>{user.role || "לא ידוע"}</Text>
@@ -76,7 +103,7 @@ const UserProfile = () => {
           <Text style={styles.value}>{user.email || "לא הוזן"}</Text>
         )}
 
-        <Text style={styles.label}>📚 מקצוע/כיתה:</Text>
+        <Text style={styles.label}>📚 מקצוע:</Text>
         {isEditing ? (
           <TextInput style={styles.input} value={user.subject} onChangeText={(text) => setUser({ ...user, subject: text })} />
         ) : (

@@ -1,58 +1,78 @@
-const Attendance = require('../models/Attendance');
+const attendanceService = require("../service/attendanceService");
 
-const createAttendance = async (req, res) => {
+const saveAttendance = async (req, res) => {
   try {
-    const attendance = new Attendance(req.body);
-    await attendance.save();
-    res.status(201).json(attendance);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const { date, className, students } = req.body;
+    const result = await attendanceService.saveAttendance({ date, className, students });
+
+    res.status(201).json({ message: "Attendance saved successfully", result });
+  } catch (error) {
+    console.error("❌ Error saving attendance:", error.message);
+    res.status(500).json({ error: error.message || "Server error" });
   }
 };
 
-const getAllAttendance = async (req, res) => {
+const getAttendanceByClassAndDate = async (req, res) => {
   try {
-    const records = await Attendance.find();
-    res.json(records);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const { className, date } = req.params;
+    const result = await attendanceService.getAttendanceByClassAndDate(className, date);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-const getAttendanceById = async (req, res) => {
+const getAttendanceByStudent = async (req, res) => {
   try {
-    const record = await Attendance.findById(req.params.id);
-    if (!record) return res.status(404).json({ error: 'Record not found' });
-    res.json(record);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const { studentId } = req.params;
+    const result = await attendanceService.getAttendanceByStudent(studentId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
   }
 };
 
-const updateAttendance = async (req, res) => {
+// שליפת כיתות שהמורה מלמד
+const getTeacherClasses = async (req, res) => {
   try {
-    const updated = await Attendance.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ error: 'Record not found' });
-    res.json(updated);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const teacherId = req.params.teacherId;
+    const classes = await attendanceService.getTeacherClasses(teacherId);
+    res.json(classes);
+  } catch (error) {
+    console.error("❌ שגיאה בשליפת כיתות:", error);
+    res.status(500).json({ error: "שגיאה בשרת" });
   }
 };
 
-const deleteAttendance = async (req, res) => {
+// שליפת תלמידים לפי כיתה
+const getStudentsByClass = async (req, res) => {
   try {
-    const deleted = await Attendance.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: 'Record not found' });
-    res.json({ message: 'Attendance deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const grade = req.params.grade;
+    const students = await attendanceService.getStudentsByClass(grade);
+    res.json(students);
+  } catch (error) {
+    console.error("❌ שגיאה בשליפת תלמידים:", error);
+    res.status(500).json({ error: "שגיאה בשרת" });
+  }
+};
+
+// שליפת מקצוע של מורה
+const getTeacherSubject = async (req, res) => {
+  try {
+    const teacherId = req.params.teacherId;
+    const subject = await attendanceService.getTeacherSubject(teacherId);
+    res.json({ subject });
+  } catch (error) {
+    console.error("❌ שגיאה בשליפת מקצוע:", error);
+    res.status(500).json({ error: "שגיאה בשרת" });
   }
 };
 
 module.exports = {
-  createAttendance,
-  getAllAttendance,
-  getAttendanceById,
-  updateAttendance,
-  deleteAttendance,
+  saveAttendance,
+  getAttendanceByClassAndDate,
+  getAttendanceByStudent,
+  getTeacherClasses,
+  getStudentsByClass,
+  getTeacherSubject
 };

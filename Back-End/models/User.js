@@ -36,7 +36,12 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
-  }
+  },
+  subject: {
+  type: String,
+  enum: ["מתמטיקה", "אנגלית", "לשון", "היסטוריה", "תנ\"ך", "ספרות", "ביולוגיה", "פיזיקה", "כימיה", "מחשבים", "ספורט", "של\"ח"],
+  default: undefined 
+}
 });
 
 module.exports = mongoose.model('User', userSchema);

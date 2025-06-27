@@ -11,33 +11,46 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import TopSidebar from "../components/TopSidebar";
-
-const initialClassesData = [
-  { id: "1", name: "כיתה א'", subjects: ["מתמטיקה", "אנגלית", "עברית"] },
-  { id: "2", name: "כיתה ב'", subjects: ["מתמטיקה", "מדעים", "היסטוריה"] },
-  { id: "3", name: "כיתה ג'", subjects: ["אנגלית", "מדעים", "גיאוגרפיה"] },
-];
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ClassesScreen = () => {
   const router = useRouter();
-  const [sidebarVisible, setSidebarVisible] = useState(false);
   const [selectedClass, setSelectedClass] = useState(null);
   const [homeworkList, setHomeworkList] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [newHomework, setNewHomework] = useState("");
-  const [currentTime, setCurrentTime] = useState("");
-  const [classes, setClasses] = useState(initialClassesData);
+  const [classes, setClasses] = useState([]);
   const [newClassName, setNewClassName] = useState("");
   const [addClassModalVisible, setAddClassModalVisible] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [messageModalVisible, setMessageModalVisible] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString("he-IL", { hour12: false }));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const fetchTeacherClasses = async () => {
+    const user = await AsyncStorage.getItem("user");
+    const parsed = JSON.parse(user);
+    const token = await AsyncStorage.getItem("token");
+
+    const res = await fetch(`http://localhost:5000/api/attendance/teacher-classes/${parsed.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    // הפוך כל שם כיתה לאובייקט עם id ו-name
+    const mapped = data.map((className, index) => ({
+      id: (index + 1).toString(),
+      name: className,
+      subjects: [], // ניתן להוסיף בהמשך
+    }));
+
+    setClasses(mapped);
+  };
+
+  fetchTeacherClasses();
+}, []);
 
   const handleClassSelect = (classObj) => {
     setSelectedClass(classObj);
@@ -101,7 +114,7 @@ const ClassesScreen = () => {
 
       {selectedClass && (
         <>
-          <Text style={styles.title}>שיעורי בית ל{selectedClass.name}</Text>
+          <Text style={styles.title}>שיעורי בית לכיתה {selectedClass.name}</Text>
           <TextInput
             style={styles.homeworkInput}
             placeholder="📚 הוסף שיעורי בית..."

@@ -5,6 +5,7 @@ const { validationResult } = require("express-validator");
 const authorizeRoles = require("../middleware/authorizeRole");
 const authMiddleware = require("../middleware/authMiddleware");
 const userController = require("../controllers/userController");
+const validateSubject = require("../middleware/validateSubject");
 
 //נתיב הרשמה
 router.post(
@@ -21,7 +22,7 @@ router.post(
 );
 
 router.post("/login", (req, res, next) => {next();}, userController.login);
-
+router.put('/:id', authMiddleware, validateSubject, userController.updateUser);
 router.get("/users", authMiddleware, authorizeRoles(["admin"]), userController.getAllUsers);
 router.delete("/users/:id",authMiddleware,authorizeRoles(["admin"]), userController.deleteUser);
 router.post("/reset-password", userController.resetPassword);

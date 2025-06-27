@@ -15,37 +15,44 @@ export default function LoginScreen() {
   const router = useRouter();
   const { setIsLoggedIn } = useAuth();  // ✅ Authentication Context
 
-  // 🔑 **Handle Login**
-  const handleLogin = async () => {
-  try {
-    console.log("📤 Sending login request", { username, password, role });
-    const response = await axios.post('http://localhost:5000/api/users/login', {
-      username,
-      password,
-      role: role === 'מורה' ? 'teacher' : 'parent', // המרה לעברית->אנגלית
-    });
+    // 🔑 **Handle Login**
+    const handleLogin = async () => {
+    try {
+      console.log("📤 Sending login request", { username, password, role });
+      
+      const response = await axios.post('http://localhost:5000/api/users/login', {
+        username,
+        password,
+        role: role === 'מורה' ? 'teacher' : 'parent',
+      });
 
-    const { token, user } = response.data;
-    await AsyncStorage.setItem('token', token);
-    await AsyncStorage.setItem('user', JSON.stringify(user));
+      // ✅ בדיקה שהתקבל יוזר תקין
+      const { token, user } = response.data;
+      if (!user || !user.id) throw new Error("תקלה בזיהוי המשתמש מהשרת");
 
-    setIsLoggedIn(true);
+      await AsyncStorage.setItem('token', token);
+      await AsyncStorage.setItem('user', JSON.stringify(user));
 
-    if (user.role === 'teacher') {
-      router.push('/Dashboard');
-    } else if (user.role === 'parent') {
-      router.push('/Parent-Dashboard');
-    } else if (user.role === 'admin') {
-      router.push('/Admin-Users');
+      setIsLoggedIn(true);
+
+      if (user.role === 'teacher') {
+        router.push('/Dashboard');
+      } else if (user.role === 'parent') {
+        router.push('/Parent-Dashboard');
+      } else if (user.role === 'admin') {
+        router.push('/Admin-Users');
+      }
+
+    } catch (error) {
+      console.error("❌ שגיאת התחברות:", error);
+      const message = error.response?.data?.error || "⚠️ שגיאה בשרת או במידע שהוזן";
+      Toast.show({
+        type: "error",
+        text1: "שגיאה בהתחברות",
+        text2: message,
+      });
     }
-  } catch (error) {
-    const message = error.response?.data?.error || "⚠️ שגיאה לא צפויה בשרת";
-    Toast.show({
-      type: "error",
-      text1: message,
-    });
-  }
-};
+  };
 
   return (
     <View style={[styles.container, isDarkMode ? styles.darkContainer : styles.lightContainer]}>

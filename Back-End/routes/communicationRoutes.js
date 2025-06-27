@@ -1,0 +1,12 @@
+const express = require("express");
+const router = express.Router();
+const communicationController = require("../controllers/communicationController");
+const upload = require('../middleware/fileUpload');
+
+router.post("/send-letter", communicationController.sendLetter);
+router.post("/signature", upload.single("file"), communicationController.sendSignature);
+router.post("/meeting", communicationController.scheduleMeeting);
+router.post("/cancel-meeting", communicationController.cancelMeeting);
+router.post('/send-file', upload.single('file'), communicationController.sendFile);
+
+module.exports = router;

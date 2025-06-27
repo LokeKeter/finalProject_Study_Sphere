@@ -2,6 +2,7 @@ const userService = require("../service/userService");
 const sanitize = require('../utils/sanitizeInput');
 const logger = require('../utils/logger');
 const { validationResult } = require("express-validator");
+const Timetable = require("../models/Timetable");
 
 const register = async (req, res) => {
   try {
@@ -11,8 +12,6 @@ const register = async (req, res) => {
       logger.warn(`Register validation failed: ${errorArray.map(e => `${e.param}: ${e.msg}`).join(", ")}`);
       return res.status(400).json({ errors: errorArray });
     }
-    
-    console.log(req.body);
     logger.info(`Register attempt: ${req.body.username}`);
     const sanitizedBody = sanitize(req.body);
     const result = await userService.createUser(sanitizedBody);
@@ -59,13 +58,14 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const update = async (req, res) => {
+// ✅ פונקציית עדכון פרטי משתמש
+const updateUser = async (req, res) => {
   try {
-    const sanitizedBody = sanitize(req.body);
-    const updated = await userService.updateUser(req.params.id, sanitizedBody);
-    res.status(200).json(updated);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+    const updatedUser = await userService.updateUser(req.params.id, req.body);
+    res.json(updatedUser);
+  } catch (error) {
+    console.error("שגיאה בעדכון משתמש:", error);
+    res.status(500).json({ error: "Server error during user update" });
   }
 };
 
@@ -78,4 +78,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getAllUsers, update, deleteUser, resetPassword };
+
+
+
+module.exports = { register, login, getAllUsers, updateUser, deleteUser, resetPassword };

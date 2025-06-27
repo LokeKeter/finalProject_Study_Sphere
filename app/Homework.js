@@ -10,31 +10,72 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import TopSidebar from "../components/TopSidebar";
-
-const classesData = ["כיתה א'", "כיתה ב'", "כיתה ג'"];
-const subjectsData = ["מתמטיקה", "אנגלית", "עברית"];
-
-const studentsData = [
-  { id: "1", parentName: "יוסי כהן", studentName: "דנה כהן", classId: "כיתה א'", subject: "מתמטיקה", homework: false, attendance: false },
-  { id: "2", parentName: "רונית לוי", studentName: "איתי לוי", classId: "כיתה ב'", subject: "אנגלית", homework: true, attendance: true },
-  { id: "3", parentName: "משה ישראלי", studentName: "נועה ישראלי", classId: "כיתה א'", subject: "עברית", homework: false, attendance: true },
-  { id: "4", parentName: "שרה דויד", studentName: "עומר דויד", classId: "כיתה ג'", subject: "מתמטיקה", homework: true, attendance: false },
-];
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeworkScreen = () => {
   const router = useRouter();
-  const [students, setStudents] = useState(studentsData);
+  const [students, setStudents] = useState([]);
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
-  const [selectedSubjectIndex, setSelectedSubjectIndex] = useState(0);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+  const [classesData, setClassesData] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [subject, setSubject] = useState("");
 
+  //שליפת מקצוע וכיתות
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const fetchTeacherClasses = async () => {
+    const user = await AsyncStorage.getItem("user");
+    const parsed = JSON.parse(user);
+    const token = await AsyncStorage.getItem("token");
+    setUserId(parsed.id);
+
+    const res = await fetch(`http://localhost:5000/api/attendance/teacher-classes/${parsed.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    const data = await res.json();
+    setClassesData(data);
+
+    // 🔄 שליפת מקצוע מהמורה
+    const resSubject = await fetch(`http://localhost:5000/api/attendance/teacher-subject/${parsed.id}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const subjectData = await resSubject.json();
+    setSubject(subjectData.subject); // 🎯 עדכון ה־state
+  };
+
+  fetchTeacherClasses();
+}, []);
+
+//שליפת תלמידים לפי הכיתה שנבחרה
+useEffect(() => {
+  const fetchStudentsByClass = async () => {
+    if (!classesData[selectedClassIndex]) return;
+    const token = await AsyncStorage.getItem("token");
+
+    const res = await fetch(`http://localhost:5000/api/attendance/students-by-class/${classesData[selectedClassIndex]}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+    const mapped = data.map((student) => ({
+      id: student.studentId,
+      parentName: student.parentName,
+      studentName: student.studentName || "לא ידוע",
+      classId: classesData[selectedClassIndex],
+      subject: subject,
+      homework: false,
+      attendance: false
+    }));
+
+    setStudents(mapped);
+  };
+
+  fetchStudentsByClass();
+}, [classesData, selectedClassIndex, subject]);
+
+
 
   // 🔹 שינוי הכיתה
   const handleChangeClass = (direction) => {
@@ -46,10 +87,8 @@ const HomeworkScreen = () => {
 
   // 🔹 סינון נתונים לפי כיתה ומקצוע
   const filteredStudents = students.filter(
-    (student) =>
-      student.classId === classesData[selectedClassIndex] &&
-      student.subject === subjectsData[selectedSubjectIndex]
-  );
+  (student) => student.classId === classesData[selectedClassIndex]
+);
 
   // 🔹 עדכון ה-Checkbox
   const toggleCheckbox = (id, field) => {
@@ -60,9 +99,34 @@ const HomeworkScreen = () => {
     );
   };
 
-  const handleUpdate = () => {
-    console.log("🔥 נתונים עודכנו!");
+  const handleUpdate = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const today = new Date().toISOString().split("T")[0];
+
+    const payload = {
+      date: today,
+      className: classesData[selectedClassIndex],
+      subject,
+      students: students.map(s => ({
+        studentId: s.id,
+        homework: s.homework,
+        attendance: s.attendance
+      }))
+    };
+
+    const res = await fetch("http://localhost:5000/api/attendance/save", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+    console.log("🎉 נשמר:", result);
   };
+
    return (
      <View style={styles.container}>
 
@@ -77,7 +141,10 @@ const HomeworkScreen = () => {
             <Text style={styles.arrow}>⬅️</Text>
           </TouchableOpacity>
         )}
-        <Text style={styles.headerText}>{classesData[selectedClassIndex]}</Text>
+        <Text style={styles.headerText}>
+          {classesData.length > 0 ? classesData[selectedClassIndex] : "אין כיתות"}
+        </Text>
+
         {selectedClassIndex < classesData.length - 1 && (
           <TouchableOpacity onPress={() => handleChangeClass(1)}>
             <Text style={styles.arrow}>➡️</Text>
@@ -87,17 +154,11 @@ const HomeworkScreen = () => {
 
       {/* 🔹 SUBJECT TABS */}
       <View style={styles.tabContainer}>
-        {subjectsData.map((subject, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.tab, selectedSubjectIndex === index && styles.activeTab]}
-            onPress={() => setSelectedSubjectIndex(index)}
-          >
-            <Text style={[styles.tabText, selectedSubjectIndex === index && styles.activeTabText]}>
-              {subject}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        <TouchableOpacity style={[styles.tab, styles.activeTab]}>
+          <Text style={[styles.tabText, styles.activeTabText]}>
+            {subject}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* 🔹 טבלה */}
