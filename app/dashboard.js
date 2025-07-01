@@ -12,6 +12,7 @@ import {
 import { PieChart } from "react-native-chart-kit";
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from "../config";
 
 const stats = [
   { id: "3", title: "משמעת", value: "1", icon: "🔔", type: "discipline" },
@@ -57,7 +58,7 @@ export default function Dashboard() {
     const toggleTaskCompletion = async (taskId) => {
       try {
         const token = await AsyncStorage.getItem('token');
-        const response = await fetch(`http://localhost:5000/api/tasks/${taskId}/toggle`, {
+        const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}/toggle`, {
           method: 'PATCH',
           headers: {
             'Authorization': `Bearer ${token}`
@@ -86,7 +87,7 @@ export default function Dashboard() {
       const fetchTasks = async () => {
         try {
           const token = await AsyncStorage.getItem('token');
-          const response = await fetch("http://localhost:5000/api/tasks", {
+          const response = await fetch(`${API_BASE_URL}/api/tasks`, {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -107,7 +108,7 @@ const addTask = async () => {
   if (!newTask.trim()) return;
   try {
     const token = await AsyncStorage.getItem('token');
-    const response = await fetch('http://localhost:5000/api/tasks', {
+    const response = await fetch(`${API_BASE_URL}/api/tasks`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -129,7 +130,7 @@ const addTask = async () => {
 const removeTask = async (taskId) => {
   try {
     const token = await AsyncStorage.getItem('token');
-    const response = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`

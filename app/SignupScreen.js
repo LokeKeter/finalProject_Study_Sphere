@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorSch
 import { useRouter } from "expo-router";
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import { API_BASE_URL } from "../config";
 
 const SignupScreen = () => {
   const [form, setForm] = useState({
@@ -38,7 +39,7 @@ const SignupScreen = () => {
       payload.grade = form.grade;
     }
 
-    const response = await axios.post("http://localhost:5000/api/users/register", payload);
+    const response = await axios.post(`${API_BASE_URL}/api/users/register`, payload);
 
     Toast.show({
       type: "success",

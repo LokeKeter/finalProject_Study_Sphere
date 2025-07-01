@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
 import axios from 'axios';
+import { API_BASE_URL } from "../config";
 
 const ForgotPassword = () => {
   const [username, setUsername] = useState("");
@@ -12,7 +13,7 @@ const ForgotPassword = () => {
   //פונקציית איפוס סיסמא
   const handleResetPassword = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/api/users/reset-password', {
+      const response = await axios.post(`${API_BASE_URL}/api/users/reset-password`, {
         username,
       });
       alert(`📧 סיסמה חדשה נשלחה לכתובת`);

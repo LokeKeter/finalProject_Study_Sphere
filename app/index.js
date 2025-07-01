@@ -5,6 +5,7 @@ import { useAuth } from "./_layout";  // ✅ Import authentication hook
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import storage
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import { API_BASE_URL } from "../config";
 
 export default function LoginScreen() {
   const [username, setUsername] = useState("");
@@ -20,7 +21,7 @@ export default function LoginScreen() {
     try {
       console.log("📤 Sending login request", { username, password, role });
       
-      const response = await axios.post('http://localhost:5000/api/users/login', {
+      const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
         username,
         password,
         role: role === 'מורה' ? 'teacher' : 'parent',

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../config";
 
 // 🔹 קומפוננטת תבניות AI למורה
 const TeacherAITemplate = () => {
@@ -36,7 +37,7 @@ const TeacherAITemplate = () => {
     try {
       const token = await AsyncStorage.getItem('token');
 
-      const response = await fetch("http://localhost:5000/api/ai/template", {
+      const response = await fetch(`${API_BASE_URL}/api/ai/template`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

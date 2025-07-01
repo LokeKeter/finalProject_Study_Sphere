@@ -28,6 +28,7 @@ exports.cancelMeeting = async (req, res) => {
 
 exports.sendFile = async (req, res) => {
   try {
+    console.log(req.body);
     const { teacherId, parentId, description } = req.body;
     console.log("1.0 in sendfile", req.body);
     if (!req.file) {

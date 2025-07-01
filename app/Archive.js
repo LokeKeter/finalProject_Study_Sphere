@@ -28,8 +28,6 @@ const ArchiveScreen = () => {
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
 
   useEffect(() => {
     const interval = setInterval(() => {

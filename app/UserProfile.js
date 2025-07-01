@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from "reac
 import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Store user data
 import { useRouter } from "expo-router";
 import TopSidebar from "../components/TopSidebar";
+import { API_BASE_URL } from "../config";
 
 const UserProfile = () => {
   const router = useRouter();
@@ -42,7 +43,7 @@ const UserProfile = () => {
       const parsedUser = JSON.parse(storedUser);
       const userId = parsedUser.id || parsedUser._id; // ✅ פתרון גמיש
       console.log("parsedUser", userId); // תוודא שיש ID
-      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
 
         method: 'PUT',
         headers: {

@@ -13,24 +13,24 @@ import React, { useState, useEffect } from "react";
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { API_BASE_URL } from "../config";
 
-// 🔹 Default Parents Data
-const initialParentsData = [
-  { id: "1", parentName: "יוסי כהן", studentName: "דנה כהן", classId: "כיתה א'" },
-  { id: "2", parentName: "רונית לוי", studentName: "איתי לוי", classId: "כיתה ב'" },
-  { id: "3", parentName: "משה ישראלי", studentName: "נועה ישראלי", classId: "כיתה א'" },
-  { id: "4", parentName: "שרה דויד", studentName: "עומר דויד", classId: "כיתה ג'" },
-];
 
 const ContactsScreen = () => {
   const router = useRouter();
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
-  const [contacts, setContacts] = useState(initialParentsData);
+  const [contacts, setContacts] = useState([]);
+
 
   const [meetingSubject, setMeetingSubject] = useState("");
   const [meetingDate, setMeetingDate] = useState("");
 
+
+  //בחירת תאריך ושעה
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateObject, setDateObject] = useState(new Date());
 
   //הורה נבחר(בשביל ההודעות)
   const [selectedParentId, setSelectedParentId] = useState(null);
@@ -99,7 +99,7 @@ const ContactsScreen = () => {
     const token = await AsyncStorage.getItem("token");
     setUserId(parsed.id);
 
-    const res = await fetch(`http://localhost:5000/api/attendance/teacher-classes/${parsed.id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/attendance/teacher-classes/${parsed.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -116,7 +116,7 @@ useEffect(() => {
     const token = await AsyncStorage.getItem("token");
 
     const res = await fetch(
-      `http://localhost:5000/api/attendance/students-by-class/${teacherClasses[selectedClassIndex]}`,
+      `${API_BASE_URL}/api/attendance/students-by-class/${teacherClasses[selectedClassIndex]}`,
       {
         headers: { Authorization: `Bearer ${token}` }
       }
@@ -181,7 +181,7 @@ useEffect(() => {
     console.log("teacherId", userId);
     console.log("subject", letterSubject);
     console.log("content", letterContent);
-    const res = await fetch("http://localhost:5000/api/communication/send-letter", {
+    const res = await fetch(`${API_BASE_URL}/api/communication/send-letter`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -215,19 +215,17 @@ useEffect(() => {
     const token = await AsyncStorage.getItem("token");
     const formData = new FormData();
 
-    formData.append("file", {
-      uri: selectedFile.uri,
-      name: selectedFile.name,
-      type: selectedFile.mimeType || "application/octet-stream"
-    });
+    const fileBlob = await (await fetch(selectedFile.uri)).blob();
+
+    formData.append("file", fileBlob, selectedFile.name);
+
 
     formData.append("parentId", selectedParentId);
     formData.append("teacherId", userId);
-    formData.append("type", "signature");
     formData.append("content", fileDescription);
     console.log("1");
     try {
-      const res = await fetch("http://localhost:5000/api/communication/send-file", {
+      const res = await fetch(`${API_BASE_URL}/api/communication/send-file`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -254,7 +252,7 @@ useEffect(() => {
   const sendMeeting = async () => {
     const token = await AsyncStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/communication/send-meeting", {
+    const res = await fetch(`${API_BASE_URL}/api/communication/send-meeting`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -285,7 +283,7 @@ useEffect(() => {
   const cancelMeeting = async () => {
     const token = await AsyncStorage.getItem("token");
 
-    const res = await fetch("http://localhost:5000/api/communication/cancel-meeting", {
+    const res = await fetch(`${API_BASE_URL}/api/communication/cancel-meeting`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -405,14 +403,17 @@ useEffect(() => {
       />
 
       {/* 🔹 Date Picker */}
-      <TextInput
-        style={styles.input}
-        placeholder="תאריך ושעה"
-        placeholderTextColor="black"
-        textAlign="right"
-        value={meetingDate}
-        onChangeText={setMeetingDate}
-      />
+      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+        <TextInput
+          style={styles.input}
+          placeholder="תאריך ושעה"
+          placeholderTextColor="black"
+          value={meetingDate}
+          editable={false}
+          textAlign="right"
+        />
+      </TouchableOpacity>
+
       <TextInput
         style={styles.input}
         placeholder="👤 הורה מקבל"
@@ -452,6 +453,27 @@ useEffect(() => {
       </View>
     </View>
   </View>
+  {showDatePicker && (
+    <DateTimePicker
+      value={dateObject}
+      mode="datetime"
+      display="default"
+      onChange={(event, selectedDate) => {
+        setShowDatePicker(false);
+
+        // ✅ הגנה במקרה של ביטול באנדואיד
+        if (event?.type === "dismissed" || !selectedDate) return;
+
+        setDateObject(selectedDate);
+        const formatted = selectedDate.toLocaleString('he-IL', {
+          dateStyle: 'short',
+          timeStyle: 'short'
+        });
+        setMeetingDate(formatted);
+      }}
+    />
+)}
+
 </Modal>
 <Modal visible={isLetterModalVisible} transparent animationType="slide">
   <View style={styles.overlay}>

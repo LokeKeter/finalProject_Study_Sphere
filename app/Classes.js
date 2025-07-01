@@ -12,6 +12,7 @@ import {
 import { useRouter } from "expo-router";
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../config";
 
 const ClassesScreen = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const ClassesScreen = () => {
     const parsed = JSON.parse(user);
     const token = await AsyncStorage.getItem("token");
 
-    const res = await fetch(`http://localhost:5000/api/attendance/teacher-classes/${parsed.id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/attendance/teacher-classes/${parsed.id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

@@ -11,6 +11,7 @@ import {
 import { useRouter } from "expo-router";
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../config";
 
 const HomeworkScreen = () => {
   const router = useRouter();
@@ -28,7 +29,7 @@ const HomeworkScreen = () => {
     const token = await AsyncStorage.getItem("token");
     setUserId(parsed.id);
 
-    const res = await fetch(`http://localhost:5000/api/attendance/teacher-classes/${parsed.id}`, {
+    const res = await fetch(`${API_BASE_URL}/api/attendance/teacher-classes/${parsed.id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -38,7 +39,7 @@ const HomeworkScreen = () => {
     setClassesData(data);
 
     // 🔄 שליפת מקצוע מהמורה
-    const resSubject = await fetch(`http://localhost:5000/api/attendance/teacher-subject/${parsed.id}`, {
+    const resSubject = await fetch(`${API_BASE_URL}/api/attendance/teacher-subject/${parsed.id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     const subjectData = await resSubject.json();
@@ -54,7 +55,7 @@ useEffect(() => {
     if (!classesData[selectedClassIndex]) return;
     const token = await AsyncStorage.getItem("token");
 
-    const res = await fetch(`http://localhost:5000/api/attendance/students-by-class/${classesData[selectedClassIndex]}`, {
+    const res = await fetch(`${API_BASE_URL}/api/attendance/students-by-class/${classesData[selectedClassIndex]}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
@@ -114,7 +115,7 @@ useEffect(() => {
       }))
     };
 
-    const res = await fetch("http://localhost:5000/api/attendance/save", {
+    const res = await fetch(`${API_BASE_URL}/api/attendance/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
