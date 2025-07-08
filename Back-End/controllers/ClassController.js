@@ -1,4 +1,5 @@
 const Class = require('../models/Class');
+const classService = require("../service/classService");
 
 const createClass = async (req, res) => {
   try {
@@ -49,10 +50,21 @@ const deleteClass = async (req, res) => {
   }
 };
 
+const sendClassHomework = async (req, res) => {
+  try {
+    const { classId, teacherId, subject, content } = req.body;
+    const result = await classService.sendHomeworkToClass({ classId, teacherId, subject, content });
+    res.status(201).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "שליחת שיעורי בית נכשלה", error: error.message });
+  }
+};
+
 module.exports = {
   createClass,
   getAllClasses,
   getClassById,
   updateClass,
-  deleteClass
+  deleteClass,
+  sendClassHomework
 };

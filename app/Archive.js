@@ -9,17 +9,9 @@ import {
   Modal,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { useNavigation } from "@react-navigation/native";
 import TopSidebar from "../components/TopSidebar";
-
-const classesData = ["כל המכתבים", "כיתה א'", "כיתה ב'", "כיתה ג'"];
-
-const messagesData = [
-  { id: "1", title: "אסיפת הורים", sender: "יוסי כהן", date: "10-03", classId: "כיתה א'" },
-  { id: "2", title: "תזכורת", sender: "רונית לוי", date: "09-03", classId: "כיתה ב'" },
-  { id: "3", title: "מערכת שעות", sender: "משה ישראלי", date: "08-03", classId: "כיתה א'" },
-  { id: "4", title: "טיול שנתי", sender: "שרה דויד", date: "07-03", classId: "כיתה ג'" },
-];
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API_BASE_URL } from "../config";
 
 const PAGE_SIZE = 20;
 
@@ -28,32 +20,46 @@ const ArchiveScreen = () => {
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString());
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+  const [messages, setMessages] = useState([]);
+  const [classes, setClasses] = useState(["כל המכתבים"]);
 
   const handleChangeClass = (direction) => {
     let newIndex = selectedClassIndex + direction;
-    if (newIndex >= 0 && newIndex < classesData.length) {
+    if (newIndex >= 0 && newIndex < classes.length) {
       setSelectedClassIndex(newIndex);
       setCurrentPage(1);
     }
   };
 
-  const filteredMessages = messagesData.filter(
+  const filteredMessages = messages.filter(
     (msg) =>
-      (classesData[selectedClassIndex] === "כל המכתבים" ||
-        msg.classId === classesData[selectedClassIndex]) &&
+      (classes[selectedClassIndex] === "כל המכתבים" ||
+        msg.className === classes[selectedClassIndex]) &&
       (msg.sender.includes(searchQuery) || msg.title.includes(searchQuery))
   );
 
   const totalPages = Math.ceil(filteredMessages.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const displayedMessages = filteredMessages.slice(startIndex, startIndex + PAGE_SIZE);
+
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const user = await AsyncStorage.getItem("user");
+      const parsed = JSON.parse(user);
+      const parentId = parsed.id;
+
+      const res = await fetch(`${API_BASE_URL}/api/communication/archive/${parentId}`);
+      const data = await res.json();
+
+      setMessages(data);
+
+      const uniqueClasses = Array.from(new Set(data.map(m => m.className))).filter(c => c !== "כיתה כללית");
+      setClasses(["כל המכתבים", ...uniqueClasses]);
+    };
+
+    fetchMessages();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -67,7 +73,7 @@ const ArchiveScreen = () => {
             <Text style={styles.arrow}>⬅️</Text>
           </TouchableOpacity>
         )}
-        <Text style={styles.headerText}>{classesData[selectedClassIndex]}</Text>
+        <Text style={styles.headerText}>{classes[selectedClassIndex]}</Text>
         {selectedClassIndex < classesData.length - 1 && (
           <TouchableOpacity onPress={() => handleChangeClass(1)}>
             <Text style={styles.arrow}>➡️</Text>

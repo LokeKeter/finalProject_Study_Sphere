@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const studentStatusSchema = new mongoose.Schema({
-  studentId: String,
+  parentId: String,
   attendance: Boolean,
   homework: Boolean
 });

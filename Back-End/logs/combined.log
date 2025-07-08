@@ -548,3 +548,147 @@
 [2025-06-29T09:28:19.188Z] INFO: Login attempt: Steven
 [2025-06-29T09:28:19.303Z] INFO: Login success: undefined
 [2025-06-29T09:28:19.608Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-06-29T15:06:22.897Z] INFO: Login attempt: Steven
+[2025-06-29T15:06:23.017Z] INFO: Login success: undefined
+[2025-06-29T15:06:23.354Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-01T14:59:58.145Z] INFO: Login attempt: Steven
+[2025-07-01T14:59:58.281Z] INFO: Login success: undefined
+[2025-07-01T14:59:58.552Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-01T15:05:58.340Z] INFO: Login attempt: Steven
+[2025-07-01T15:05:58.402Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-07-01T15:06:33.099Z] INFO: Login attempt: Steven
+[2025-07-01T15:06:33.157Z] INFO: Login success: undefined
+[2025-07-01T15:06:33.411Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-01T15:13:30.461Z] INFO: Login attempt: Steven
+[2025-07-01T15:13:30.518Z] INFO: Login success: undefined
+[2025-07-01T15:13:30.572Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-02T06:27:32.562Z] INFO: Login attempt: Steven
+[2025-07-02T06:27:32.665Z] INFO: Login success: undefined
+[2025-07-02T06:27:32.712Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-02T09:30:05.135Z] INFO: Login attempt: aaa
+[2025-07-02T09:30:05.201Z] INFO: Login success: undefined
+[2025-07-02T09:37:43.749Z] INFO: Login attempt: Stevenite
+[2025-07-02T09:37:43.803Z] ERROR: Login failed for Stevenite: שם משתמש או סיסמא שגויים
+[2025-07-02T09:37:57.506Z] INFO: Login attempt: Stevenite
+[2025-07-02T09:37:57.561Z] ERROR: Login failed for Stevenite: שם משתמש או סיסמא שגויים
+[2025-07-02T09:38:28.495Z] INFO: Login attempt: Stevenite
+[2025-07-02T09:38:28.551Z] INFO: Login success: undefined
+[2025-07-04T13:28:13.269Z] INFO: Login attempt: Steven
+[2025-07-04T13:28:13.473Z] INFO: Login success: undefined
+[2025-07-04T13:28:13.788Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-04T14:19:26.170Z] INFO: Login attempt: Steven
+[2025-07-04T14:19:26.236Z] INFO: Login success: undefined
+[2025-07-04T14:19:26.539Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-04T14:48:08.291Z] INFO: Login attempt: Steven
+[2025-07-04T14:48:08.360Z] INFO: Login success: undefined
+[2025-07-04T14:48:08.693Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-04T15:10:56.036Z] INFO: Login attempt: Steven
+[2025-07-04T15:10:56.102Z] INFO: Login success: undefined
+[2025-07-04T15:10:56.455Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-04T15:20:25.580Z] INFO: Login attempt: Steven
+[2025-07-04T15:20:25.645Z] INFO: Login success: undefined
+[2025-07-04T15:20:25.960Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-05T08:22:49.313Z] INFO: Login attempt: Steven
+[2025-07-05T08:22:49.380Z] INFO: Login success: undefined
+[2025-07-05T08:22:49.588Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-05T13:27:11.422Z] INFO: Login attempt: Steven
+[2025-07-05T13:27:11.493Z] INFO: Login success: undefined
+[2025-07-05T13:27:11.771Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-05T13:37:32.848Z] INFO: Login attempt: Steven
+[2025-07-05T13:37:32.913Z] INFO: Login success: undefined
+[2025-07-05T13:37:33.222Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-05T14:07:04.092Z] INFO: Login attempt: Steven
+[2025-07-05T14:07:04.157Z] INFO: Login success: undefined
+[2025-07-05T14:07:04.447Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-05T17:44:43.661Z] INFO: Login attempt: Steven
+[2025-07-05T17:44:43.724Z] INFO: Login success: undefined
+[2025-07-05T17:44:43.767Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-05T18:12:17.443Z] INFO: Login attempt: Steven
+[2025-07-05T18:12:17.510Z] INFO: Login success: undefined
+[2025-07-05T18:12:17.909Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:50:23.771Z] INFO: Login attempt: Steven
+[2025-07-07T17:50:23.911Z] INFO: Login success: undefined
+[2025-07-07T17:50:23.963Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:50:36.650Z] INFO:  החלפת סטטוס משימה 68486c48cf44be7eadfd0d3b
+[2025-07-07T17:50:37.253Z] INFO:  החלפת סטטוס משימה 68486c48cf44be7eadfd0d3b
+[2025-07-07T17:50:37.844Z] INFO:  החלפת סטטוס משימה 68486c48cf44be7eadfd0d3b
+[2025-07-07T17:50:38.222Z] INFO:  החלפת סטטוס משימה 68486c48cf44be7eadfd0d3b
+[2025-07-07T17:56:23.048Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.130Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.152Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.207Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.220Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.279Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.292Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.348Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.363Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.419Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.452Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.508Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.520Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.576Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.591Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.647Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.661Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.717Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.730Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.785Z] INFO: Login success: undefined
+[2025-07-07T17:56:23.796Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:23.850Z] INFO: Login success: undefined
+[2025-07-07T17:56:24.008Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.026Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.041Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.054Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.067Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.428Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.443Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.454Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.468Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.483Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:24.595Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:56:56.460Z] INFO: Login attempt: Steven
+[2025-07-07T17:56:56.515Z] INFO: Login success: undefined
+[2025-07-07T17:56:56.554Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-07T17:58:49.843Z] INFO: Login attempt: Steven
+[2025-07-07T17:58:49.913Z] INFO: Login success: undefined
+[2025-07-07T17:58:49.954Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T09:41:26.035Z] INFO: Login attempt: Steven
+[2025-07-08T09:41:26.163Z] INFO: Login success: undefined
+[2025-07-08T09:41:26.424Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T09:46:27.403Z] INFO: Login attempt: Steven
+[2025-07-08T09:46:27.468Z] INFO: Login success: undefined
+[2025-07-08T09:46:27.541Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T10:02:27.516Z] INFO: Login attempt: Steven
+[2025-07-08T10:02:27.581Z] INFO: Login success: undefined
+[2025-07-08T10:02:27.619Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T10:06:36.834Z] INFO: Login attempt: Steven
+[2025-07-08T10:06:36.899Z] INFO: Login success: undefined
+[2025-07-08T10:06:36.937Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T10:13:40.656Z] INFO: Login attempt: Steven
+[2025-07-08T10:13:40.723Z] INFO: Login success: undefined
+[2025-07-08T10:13:41.027Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T12:06:29.737Z] INFO: Login attempt: Steven
+[2025-07-08T12:06:29.803Z] INFO: Login success: undefined
+[2025-07-08T12:06:29.843Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T12:10:22.808Z] INFO: Login attempt: Steven
+[2025-07-08T12:10:22.873Z] INFO: Login success: undefined
+[2025-07-08T12:10:22.911Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T12:14:01.040Z] INFO: Login attempt: Steven
+[2025-07-08T12:14:01.108Z] INFO: Login success: undefined
+[2025-07-08T12:14:01.147Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T12:21:48.736Z] INFO: Login attempt: Steven
+[2025-07-08T12:21:48.801Z] INFO: Login success: undefined
+[2025-07-08T12:21:48.843Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T13:43:26.671Z] INFO: Login attempt: Steven
+[2025-07-08T13:43:26.743Z] INFO: Login success: undefined
+[2025-07-08T13:43:26.783Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T13:45:01.787Z] INFO:  יצירת משימה חדשה עבור משתמש: 684416b2833b7f134585ae54
+[2025-07-08T13:45:01.797Z] INFO:  משימה נוצרה בהצלחה: asdfgh
+[2025-07-08T13:45:06.682Z] INFO:  החלפת סטטוס משימה 686d20ddf2615812e847af63
+[2025-07-08T13:45:07.777Z] INFO:  החלפת סטטוס משימה 68486c48cf44be7eadfd0d3b
+[2025-07-08T13:53:33.627Z] INFO: Login attempt: Steven
+[2025-07-08T13:53:33.696Z] INFO: Login success: undefined
+[2025-07-08T13:53:33.733Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-08T13:57:26.056Z] INFO: Login attempt: Steven
+[2025-07-08T13:57:26.121Z] INFO: Login success: undefined
+[2025-07-08T13:57:26.159Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54

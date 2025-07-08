@@ -21,10 +21,20 @@ const ClassesScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [newHomework, setNewHomework] = useState("");
   const [classes, setClasses] = useState([]);
-  const [newClassName, setNewClassName] = useState("");
-  const [addClassModalVisible, setAddClassModalVisible] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [messageModalVisible, setMessageModalVisible] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [userSubject, setUserSubject] = useState("");
+
+  useEffect(() => {
+    const fetchUserId = async () => {
+      const user = await AsyncStorage.getItem("user");
+      const parsed = JSON.parse(user);
+      setUserId(parsed.id);
+      setUserSubject(parsed.subject);
+    };
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
   const fetchTeacherClasses = async () => {
@@ -58,31 +68,75 @@ const ClassesScreen = () => {
     setHomeworkList([]);
   };
 
-  const addClass = () => {
-    if (!newClassName.trim()) {
-      Alert.alert("שגיאה", "שם הכיתה לא יכול להיות ריק!");
-      return;
+const addHomework = async () => {
+  if (!newHomework.trim()) return;
+
+  try {
+    const token = await AsyncStorage.getItem("token");
+
+    const res = await fetch(`${API_BASE_URL}/api/class/homework/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        classId: selectedClass.name,
+        teacherId: userId,
+        subject: "שיעורי בית",
+        content: newHomework,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      Alert.alert("✅ הצלחה", "שיעורי הבית נשלחו להורים");
+      setHomeworkList([...homeworkList, { id: Date.now().toString(), text: newHomework, completed: false }]);
+      setNewHomework("");
+    } else {
+      Alert.alert("❌ שגיאה", data.message || "שליחה נכשלה");
     }
-    const newClass = { id: Date.now().toString(), name: newClassName, subjects: [] };
-    setClasses([...classes, newClass]);
-    setNewClassName("");
-    setAddClassModalVisible(false);
-  };
+  } catch (error) {
+    Alert.alert("❌ שגיאה", error.message);
+  }
+};
 
-  const addHomework = () => {
-    if (!newHomework.trim()) return;
-    setHomeworkList([...homeworkList, { id: Date.now().toString(), text: newHomework, completed: false }]);
-    setNewHomework("");
-  };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if (!messageText.trim()) {
       Alert.alert("שגיאה", "לא ניתן לשלוח הודעה ריקה.");
       return;
     }
-    Alert.alert("📢 הודעה נשלחה!", `הודעה נשלחה לכיתה ${selectedClass?.name}: \n\n"${messageText}"`);
-    setMessageText("");
-    setMessageModalVisible(false);
+
+    try {
+      const token = await AsyncStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/api/communication/send-class-message`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          classId: selectedClass.name, // לפי מה שאתה שולף ב־Frontend
+          senderId: userId,
+          content: messageText,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        Alert.alert("✅ הודעה נשלחה", "ההודעה נשלחה לכל ההורים בכיתה");
+        setMessageText("");
+        setMessageModalVisible(false);
+      } else {
+        Alert.alert("❌ שגיאה", data.message || "שליחה נכשלה");
+      }
+    } catch (error) {
+      Alert.alert("❌ שגיאה", error.message);
+    }
   };
 
   return (
@@ -133,32 +187,6 @@ const ClassesScreen = () => {
           </TouchableOpacity>
         </>
       )}
-
-      <TouchableOpacity style={styles.addClassButton} onPress={() => setAddClassModalVisible(true)}>
-        <Text style={styles.addClassButtonText}>➕ הוסף כיתה</Text>
-      </TouchableOpacity>
-
-      <Modal visible={addClassModalVisible} animationType="slide" transparent>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>🏫 הוספת כיתה חדשה</Text>
-            <TextInput
-              style={styles.classInput}
-              placeholder="שם הכיתה"
-              value={newClassName}
-              onChangeText={setNewClassName}
-            />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.sendButton} onPress={addClass}>
-                <Text style={styles.sendButtonText}> הוסף</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.cancelButton} onPress={() => setAddClassModalVisible(false)}>
-                <Text style={styles.cancelButtonText}> בטל</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
 
       <Modal visible={messageModalVisible} animationType="slide" transparent>
         <View style={styles.modalContainer}>
@@ -413,29 +441,6 @@ const styles = StyleSheet.create({
     textAlign: "center", 
     fontWeight: "bold" 
   },
-
-  // ✅ Add Class Button
-  addClassButton: {
-    backgroundColor: "black",
-    padding: 15,
-    borderRadius: 5,
-    marginTop: 15,
-    alignItems: "center",
-    justifyContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-    elevation: 5, // Adds shadow on Android
-    
-  },
-  addClassButtonText: {
-    color: "white",
-    fontSize: 15,
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-
 });
 
 

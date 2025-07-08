@@ -48,3 +48,6 @@
 [2025-06-21T14:22:14.379Z] ERROR: Register failed for bzbz: E11000 duplicate key error collection: StudySphere.users index: email_1 dup key: { email: "hhh@hhh.com" }
 [2025-06-24T15:20:23.787Z] ERROR: Login failed for : שם משתמש או סיסמא שגויים
 [2025-06-26T16:12:38.947Z] ERROR: Login failed for steven: שם משתמש או סיסמא שגויים
+[2025-07-01T15:05:58.402Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-07-02T09:37:43.803Z] ERROR: Login failed for Stevenite: שם משתמש או סיסמא שגויים
+[2025-07-02T09:37:57.561Z] ERROR: Login failed for Stevenite: שם משתמש או סיסמא שגויים

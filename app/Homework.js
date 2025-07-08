@@ -61,7 +61,7 @@ useEffect(() => {
 
     const data = await res.json();
     const mapped = data.map((student) => ({
-      id: student.studentId,
+      parentId: student.parentId,
       parentName: student.parentName,
       studentName: student.studentName || "לא ידוע",
       classId: classesData[selectedClassIndex],
@@ -69,6 +69,7 @@ useEffect(() => {
       homework: false,
       attendance: false
     }));
+    console.log("students:", mapped);
 
     setStudents(mapped);
   };
@@ -92,10 +93,10 @@ useEffect(() => {
 );
 
   // 🔹 עדכון ה-Checkbox
-  const toggleCheckbox = (id, field) => {
+  const toggleCheckbox = (parentId, field) => {
     setStudents((prevStudents) =>
       prevStudents.map((student) =>
-        student.id === id ? { ...student, [field]: !student[field] } : student
+        student.parentId === parentId ? { ...student, [field]: !student[field] } : student
       )
     );
   };
@@ -109,7 +110,7 @@ useEffect(() => {
       className: classesData[selectedClassIndex],
       subject,
       students: students.map(s => ({
-        studentId: s.id,
+        parentId: s.parentId,
         homework: s.homework,
         attendance: s.attendance
       }))
@@ -173,21 +174,21 @@ useEffect(() => {
           </View>
 
           {filteredStudents.map((student) => (
-            <View key={student.id} style={styles.tableRow}>
+            <View key={student.parentId} style={styles.tableRow}>
               <Text style={styles.cell}>{student.parentName}</Text>
               <Text style={styles.cell}>{student.studentName}</Text>
               
               <View style={styles.switchContainer}>
                 <Switch
                   value={student.homework}
-                  onValueChange={() => toggleCheckbox(student.id, "homework")}
+                  onValueChange={() => toggleCheckbox(student.parentId, "homework")}
                 />
               </View>
 
               <View style={styles.switchContainer}>
                 <Switch
                   value={student.attendance}
-                  onValueChange={() => toggleCheckbox(student.id, "attendance")}
+                  onValueChange={() => toggleCheckbox(student.parentId, "attendance")}
                 />
               </View>
             </View>

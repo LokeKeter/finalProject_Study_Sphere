@@ -13,8 +13,8 @@ import React, { useState, useEffect } from "react";
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { API_BASE_URL } from "../config";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 
 const ContactsScreen = () => {
@@ -23,13 +23,14 @@ const ContactsScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [contacts, setContacts] = useState([]);
 
+  //בחירת תאריך
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const [meetingSubject, setMeetingSubject] = useState("");
   const [meetingDate, setMeetingDate] = useState("");
 
 
   //בחירת תאריך ושעה
-  const [showDatePicker, setShowDatePicker] = useState(false);
   const [dateObject, setDateObject] = useState(new Date());
 
   //הורה נבחר(בשביל ההודעות)
@@ -86,6 +87,7 @@ const ContactsScreen = () => {
     }
   };
 
+  
 
   //בחירת כיתה והתלמידים
   const [userId, setUserId] = useState(null);
@@ -177,10 +179,6 @@ useEffect(() => {
 
   const sendLetter = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log("parentId", selectedParentId);
-    console.log("teacherId", userId);
-    console.log("subject", letterSubject);
-    console.log("content", letterContent);
     const res = await fetch(`${API_BASE_URL}/api/communication/send-letter`, {
       method: "POST",
       headers: {
@@ -188,8 +186,8 @@ useEffect(() => {
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
-        parentId: selectedParentId,
-        teacherId: userId,
+        receiverId: selectedParentId,
+        senderId: userId,
         subject: letterSubject,
         content: letterContent
       })
@@ -215,15 +213,17 @@ useEffect(() => {
     const token = await AsyncStorage.getItem("token");
     const formData = new FormData();
 
-    const fileBlob = await (await fetch(selectedFile.uri)).blob();
+    formData.append("file", {
+      uri: selectedFile.uri,
+      name: selectedFile.name,
+      type: selectedFile.mimeType || "application/octet-stream"
+    });
 
-    formData.append("file", fileBlob, selectedFile.name);
-
-
-    formData.append("parentId", selectedParentId);
-    formData.append("teacherId", userId);
+    formData.append("receiverId", selectedParentId);
+    formData.append("senderId", userId);
     formData.append("content", fileDescription);
     console.log("1");
+    console.log("Selected file:", selectedFile);
     try {
       const res = await fetch(`${API_BASE_URL}/api/communication/send-file`, {
         method: "POST",
@@ -259,8 +259,8 @@ useEffect(() => {
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
-        parentId: selectedParentId,
-        teacherId: userId,
+        receiverId: selectedParentId,
+        senderId: userId,
         type: "meeting",
         subject: meetingSubject,
         meetingType: meetingType,
@@ -282,14 +282,13 @@ useEffect(() => {
 
   const cancelMeeting = async () => {
     const token = await AsyncStorage.getItem("token");
-
     const res = await fetch(`${API_BASE_URL}/api/communication/cancel-meeting`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ parentId: selectedParentId })
+      body: JSON.stringify({ receiverId: selectedParentId, senderId: userId })
     });
 
     const data = await res.json();
@@ -403,7 +402,7 @@ useEffect(() => {
       />
 
       {/* 🔹 Date Picker */}
-      <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+      <TouchableOpacity onPress={() => setDatePickerVisibility(true)}>
         <TextInput
           style={styles.input}
           placeholder="תאריך ושעה"
@@ -453,26 +452,24 @@ useEffect(() => {
       </View>
     </View>
   </View>
-  {showDatePicker && (
-    <DateTimePicker
-      value={dateObject}
-      mode="datetime"
-      display="default"
-      onChange={(event, selectedDate) => {
-        setShowDatePicker(false);
+    <DateTimePickerModal
+    isVisible={isDatePickerVisible}
+    mode="datetime"
+    minimumDate={new Date(Date.now() + 24 * 60 * 60 * 1000)} // ממחר ומעלה
+    onConfirm={(selectedDate) => {
+      setDatePickerVisibility(false);
+      setDateObject(selectedDate);
+      const formatted = selectedDate.toLocaleString("he-IL", {
+        dateStyle: "short",
+        timeStyle: "short",
+      });
+      setMeetingDate(formatted);
+    }}
+    onCancel={() => setDatePickerVisibility(false)}
+    locale="he-IL"
+  />
 
-        // ✅ הגנה במקרה של ביטול באנדואיד
-        if (event?.type === "dismissed" || !selectedDate) return;
 
-        setDateObject(selectedDate);
-        const formatted = selectedDate.toLocaleString('he-IL', {
-          dateStyle: 'short',
-          timeStyle: 'short'
-        });
-        setMeetingDate(formatted);
-      }}
-    />
-)}
 
 </Modal>
 <Modal visible={isLetterModalVisible} transparent animationType="slide">
