@@ -30,6 +30,7 @@ const ClassesScreen = () => {
     const fetchUserId = async () => {
       const user = await AsyncStorage.getItem("user");
       const parsed = JSON.parse(user);
+      console.log("User Loaded:", parsed);
       setUserId(parsed.id);
       setUserSubject(parsed.subject);
     };
@@ -69,11 +70,12 @@ const ClassesScreen = () => {
   };
 
 const addHomework = async () => {
-  if (!newHomework.trim()) return;
-
+  if (!newHomework.trim()) {
+    Alert.alert("שגיאה", "לא הוגדר מקצוע למורה או ששיעורי הבית ריקים.");
+    return;
+  }
   try {
     const token = await AsyncStorage.getItem("token");
-
     const res = await fetch(`${API_BASE_URL}/api/class/homework/send`, {
       method: "POST",
       headers: {
@@ -83,7 +85,6 @@ const addHomework = async () => {
       body: JSON.stringify({
         classId: selectedClass.name,
         teacherId: userId,
-        subject: "שיעורי בית",
         content: newHomework,
       }),
     });

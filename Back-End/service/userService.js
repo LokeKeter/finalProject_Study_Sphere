@@ -82,12 +82,6 @@ const updateUser = async (userId, updates) => {
   // בצע עדכון בפועל
   const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
 
-  // אם המורה שינה מקצועות – טפל במערכת שעות
-  if (
-  existingUser.role === "teacher" && oldSubject !== newSubject) {
-  await timetableService.handleSubjectChanges(oldSubject, newSubject, userId);
-  }
-
   // החזרה רק של שדות חשובים (לא הסיסמה וכו')
   return {
     id: updatedUser._id,
@@ -125,7 +119,8 @@ async function login({ username, password, role }) {
       id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role
+      role: user.role,
+      subject: user.subject || ""
     }
   };
 

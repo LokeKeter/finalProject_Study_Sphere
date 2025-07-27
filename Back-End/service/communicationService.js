@@ -79,40 +79,31 @@ exports.createFileUpload = async (senderId, receiverId, description, fileUrl) =>
 
 exports.getUserArchive = async (userId) => {
   const messages = await Communication.find({
-    $or: [
-      { senderId: userId },
-      { receiverId: userId }
-    ]
+    $or: [{ receiverId: userId }]
   })
     .sort({ createdAt: -1 })
-    .populate("senderId", "fullName name")
+    .populate("senderId", "name")
     .lean();
 
-  return messages.map(msg => ({
-    id: msg._id,
-    title: msg.subject || "ללא נושא",
-    sender: msg.senderId?.fullName || msg.senderId?.name || "שולח לא ידוע",
-    date: new Date(msg.createdAt).toLocaleDateString("he-IL"),
-    classId: msg.classId || "כיתה כללית"
-  }));
-};
+    const allClasses = await Class.find().lean();
 
-exports.getUserArchive = async (userId) => {
-  const messages = await Communication.find({
-    $or: [{ senderId: userId }, { receiverId: userId }]
-  })
-    .sort({ createdAt: -1 })
-    .populate("senderId", "fullName name")
-    .populate("classId", "name") // ✅ מוסיף את שם הכיתה
-    .lean();
+  return messages.map(msg => {
+    const classDoc = allClasses.find(cls =>
+      cls.students.some(s => s.parentId.toString() === msg.receiverId?.toString())
+    );
 
-  return messages.map(msg => ({
-    id: msg._id,
-    title: msg.subject || "ללא נושא",
-    sender: msg.senderId?.fullName || msg.senderId?.name || "שולח לא ידוע",
-    date: new Date(msg.createdAt).toLocaleDateString("he-IL"),
-    className: msg.classId?.name || "כיתה כללית"
-  }));
+    return {
+      id: msg._id,
+      type: msg.type,
+      title: msg.subject || "ללא נושא",
+      sender: msg.senderId?.name || "שולח לא ידוע",
+      receiver: msg.receiverId?.name || "מקבל לא ידוע",
+      date: new Date(msg.createdAt).toLocaleDateString("he-IL"),
+      className: classDoc?.grade || "כיתה כללית",
+      content: msg.content || "",
+      fileUrl: msg.fileUrl || ""
+    };
+  });
 };
 
 exports.sendClassMessage = async ({ classId, senderId, content }) => {

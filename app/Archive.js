@@ -12,6 +12,8 @@ import { useRouter } from "expo-router";
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL } from "../config";
+import * as Linking from 'expo-linking';
+import * as FileSystem from 'expo-file-system';
 
 const PAGE_SIZE = 20;
 
@@ -22,6 +24,8 @@ const ArchiveScreen = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [messages, setMessages] = useState([]);
   const [classes, setClasses] = useState(["כל המכתבים"]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalData, setModalData] = useState(null);
 
   const handleChangeClass = (direction) => {
     let newIndex = selectedClassIndex + direction;
@@ -31,12 +35,31 @@ const ArchiveScreen = () => {
     }
   };
 
-  const filteredMessages = messages.filter(
-    (msg) =>
-      (classes[selectedClassIndex] === "כל המכתבים" ||
-        msg.className === classes[selectedClassIndex]) &&
-      (msg.sender.includes(searchQuery) || msg.title.includes(searchQuery))
-  );
+  const downloadFile = async (url, filename = 'downloaded_file') => {
+    try {
+      const downloadResumable = FileSystem.createDownloadResumable(
+        url,
+        FileSystem.documentDirectory + filename
+      );
+
+      const { uri } = await downloadResumable.downloadAsync();
+      console.log('✅ הורדה הושלמה:', uri);
+      alert('הקובץ הורד בהצלחה ל-' + uri);
+    } catch (e) {
+      console.error('❌ שגיאה בהורדה:', e);
+      alert('אירעה שגיאה בהורדת הקובץ');
+    }
+  };
+
+  const filteredMessages = Array.isArray(messages)
+  ? messages.filter(
+      (msg) =>
+        (classes[selectedClassIndex] === "כל המכתבים" ||
+          msg.className === classes[selectedClassIndex]) &&
+        (msg.sender.includes(searchQuery) || msg.title.includes(searchQuery))
+    )
+  : [];
+
 
   const totalPages = Math.ceil(filteredMessages.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
@@ -45,17 +68,25 @@ const ArchiveScreen = () => {
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const user = await AsyncStorage.getItem("user");
-      const parsed = JSON.parse(user);
-      const parentId = parsed.id;
+      try {
+        const user = await AsyncStorage.getItem("user");
+        const parsed = JSON.parse(user);
+        const parentId = parsed.id;
 
-      const res = await fetch(`${API_BASE_URL}/api/communication/archive/${parentId}`);
-      const data = await res.json();
+        const res = await fetch(`${API_BASE_URL}/api/communication/archive/${parentId}`);
+        const data = await res.json();
 
-      setMessages(data);
+        const safeData = Array.isArray(data) ? data : [];
+        setMessages(safeData);
 
-      const uniqueClasses = Array.from(new Set(data.map(m => m.className))).filter(c => c !== "כיתה כללית");
-      setClasses(["כל המכתבים", ...uniqueClasses]);
+        const uniqueClasses = Array.from(
+          new Set(safeData.map(m => m.className))
+        ).filter(c => c !== "כיתה כללית");
+        setClasses(["כל המכתבים", ...uniqueClasses]);
+      } catch (err) {
+        console.error("❌ שגיאה בעת שליפת הודעות:", err);
+        setMessages([]); // שים הודעות ריקות במקרה של שגיאה
+      }
     };
 
     fetchMessages();
@@ -74,7 +105,7 @@ const ArchiveScreen = () => {
           </TouchableOpacity>
         )}
         <Text style={styles.headerText}>{classes[selectedClassIndex]}</Text>
-        {selectedClassIndex < classesData.length - 1 && (
+        {selectedClassIndex < classes.length - 1 && (
           <TouchableOpacity onPress={() => handleChangeClass(1)}>
             <Text style={styles.arrow}>➡️</Text>
           </TouchableOpacity>
@@ -95,22 +126,73 @@ const ArchiveScreen = () => {
 
       <ScrollView>
         <View style={styles.tableContainer}>
-          <View style={styles.tableHeader}>
-            <Text style={styles.headerCell}>כותרת</Text>
-            <Text style={styles.headerCell}>שם שולח</Text>
-            <Text style={styles.headerCell}>תאריך</Text>
-          </View>
 
-          {displayedMessages.map((msg) => (
-            <View key={msg.id} style={styles.tableRow}>
-              <Text style={styles.cell}>{msg.title}</Text>
-              <Text style={styles.cell}>{msg.sender}</Text>
-              <Text style={styles.cell}>{msg.date}</Text>
-            </View>
-          ))}
+          {displayedMessages.length === 0 ? (
+            <Text style={{ textAlign: "center", marginTop: 20 }}>אין הודעות להצגה</Text>
+            ) : (
+              displayedMessages.map((msg) => (
+                <TouchableOpacity
+                  key={msg.id}
+                  style={styles.entry}
+                  onPress={() => { setModalData(msg); setModalVisible(true); }}
+                >
+                  <View style={styles.entryHeader}>
+                    <Text style={styles.entryTitle}>
+                      {msg.type === 'signature' ? "אישור לחתימה" : msg.title}
+                    </Text>
+                  </View>
+                  <View style={styles.entryMeta}>
+                    <Text>{msg.sender}</Text>
+                    <Text>{msg.date}</Text>
+                  </View>
+                  <Text style={styles.entryPreview}>
+                    {msg.content ? msg.content.slice(0, 40) + "..." : "אין תוכן"}
+                  </Text>
+                </TouchableOpacity>
+              ))
+            )}
+
         </View>
       </ScrollView>
+      <Modal visible={modalVisible} transparent animationType="slide">
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalOverlay}
+          onPress={() => setModalVisible(false)}
+        >
+          <TouchableOpacity
+            activeOpacity={1}
+            style={styles.modalContent}
+            onPress={() => setModalVisible(false)}
+          >
+            <Text style={styles.modalTitle}>
+              {modalData?.type === 'signature' ? "אישור לחתימה" : modalData?.title}
+            </Text>
+            <Text style={styles.modalSender}>שולח: {modalData?.sender}</Text>
+            <Text style={styles.modalDate}>תאריך: {modalData?.date}</Text>
+            <Text style={styles.modalFullContent}>{modalData?.content}</Text>
 
+            {modalData?.fileUrl && (
+              <TouchableOpacity
+                onPress={() => {
+                  const url = `${API_BASE_URL}/${modalData.fileUrl}`;
+                  downloadFile(url, 'downloaded_file.pdf'); // אפשר לשנות את שם הקובץ
+                }}
+              >
+                <Text style={{ color: "blue", marginTop: 10, textAlign: "center" }}>
+                  📎 הורד קובץ
+                </Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>❌ סגור</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
       {totalPages > 1 && (
         <View style={styles.pagination}>
           {currentPage > 1 && (
@@ -244,6 +326,72 @@ const styles = StyleSheet.create({
   pageButtonText: { 
     color: "white", 
     fontSize: 16 
+  },
+  entry: {
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  entryHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
+  },
+  entryTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  entrySender: {
+    fontSize: 14,
+  },
+  entryDate: {
+    fontSize: 14,
+  },
+  entryPreview: {
+    fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: "80%",
+    maxHeight: "80%",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  modalSender: {
+    fontSize: 16,
+  },
+  modalDate: {
+    fontSize: 14,
+  },
+  modalFullContent: {
+    fontSize: 14,
+    marginTop: 10,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "red",
+    textAlign: "center",
+    marginTop: 15,
+  },
+    entryMeta: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 5,
   },
 });
 

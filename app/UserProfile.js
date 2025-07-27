@@ -28,23 +28,14 @@ const UserProfile = () => {
   getUserData();
 }, []);
 
-
-
-
   // ✅ Save User Data
   const handleSave = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      console.log("💾 token", token);
-
       const storedUser = await AsyncStorage.getItem('user');
-      console.log("💾 user", storedUser);
-
       const parsedUser = JSON.parse(storedUser);
-      const userId = parsedUser.id || parsedUser._id; // ✅ פתרון גמיש
-      console.log("parsedUser", userId); // תוודא שיש ID
+      const userId = parsedUser.id || parsedUser._id;
       const response = await fetch(`${API_BASE_URL}/api/users/${userId}`, {
-
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -60,7 +51,7 @@ const UserProfile = () => {
       const updatedUser = await response.json();
 
       // שמור את המשתמש המעודכן
-      await AsyncStorage.setItem("user", JSON.stringify(updatedUser));
+      await AsyncStorage.setItem("user", JSON.stringify({ ...updatedUser, token }));
       setUser(updatedUser);
       setIsEditing(false);
     } catch (error) {

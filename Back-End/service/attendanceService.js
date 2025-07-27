@@ -2,8 +2,9 @@ const Timetable = require("../models/Timetable");
 const Class = require("../models/Class");
 const User = require("../models/User");
 const Attendance = require("../models/Attendance");
+const Communication = require("../models/Communication");
 
-const saveAttendance = async ({ date, className, students }) => {
+const saveAttendance = async ({ date, className, subject, students, teacherId }) => {
   if (!date || !className || !students) {
     throw new Error("Missing required fields");
   }
@@ -14,8 +15,28 @@ const saveAttendance = async ({ date, className, students }) => {
     students
   });
 
-  return await newAttendance.save();
+  const savedAttendance = await newAttendance.save();
+
+  const homeworkMissed = students.filter(s => s.homework === false);
+  console.log("תלמידים שלא עשו שיעורי בית:", homeworkMissed);
+
+  if (homeworkMissed.length > 0) {
+    const letters = homeworkMissed.map(s => ({
+      type: "letter",
+      senderId: teacherId, // כאן מזהה המורה
+      receiverId: s.parentId,
+      subject: "לא עשה שיעורי בית",
+      content: `התלמיד לא עשה שיעורי בית במקצוע "${subject}".`,
+      createdAt: new Date()
+    }));
+
+    await Communication.insertMany(letters);
+    console.log("✅ נשלחו מכתבים להורים:", letters);
+  }
+
+  return savedAttendance;
 };
+
 
 //שליפת מקצוע של המורה
 const getTeacherSubject = async (teacherId) => {
