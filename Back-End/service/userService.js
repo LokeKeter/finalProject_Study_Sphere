@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Class = require("../models/Class");
+const Student = require("../models/Student");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -31,26 +32,63 @@ async function assignStudentToClass(grade, parentId, studentId) {
 const { createTimetable } = require("./timetableService");
 
 async function createUser(data) {
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+  console.log('🔧 Creating user with data:', {
+    username: data.username,
+    email: data.email,
+    role: data.role,
+    name: data.name
+  });
+  
+  // נקה רווחים נוספים מהנתונים החשובים
+  const cleanData = {
+    ...data,
+    username: data.username?.trim(),
+    email: data.email?.trim(),
+    name: data.name?.trim(),
+  };
+  
+  const hashedPassword = await bcrypt.hash(cleanData.password, 10);
+  console.log('🔐 Password hashed successfully');
 
   // ✅ צור כיתה אם אין
-  if (data.grade && !(await Class.findOne({ grade: data.grade }))) {
-    const newClass = new Class({ grade: data.grade, students: [] });
+  if (cleanData.grade && !(await Class.findOne({ grade: cleanData.grade }))) {
+    const newClass = new Class({ grade: cleanData.grade, students: [] });
     await newClass.save();
 
     // ✅ צור מערכת שעות מלאה עם שיבוץ
-    await createTimetable(data.grade);
+    await createTimetable(cleanData.grade);
   }
 
   const newUser = new User({
-    ...data,
+    ...cleanData,
     password: hashedPassword
   });
 
   await newUser.save();
+  console.log('✅ User created successfully:', {
+    id: newUser._id,
+    username: newUser.username,
+    role: newUser.role
+  });
 
-  if (newUser.role === "parent" && data.grade && data.studentId) {
-    await assignStudentToClass(data.grade, newUser._id, data.studentId);
+  // ✅ אם זה הורה - צור גם אובייקט תלמיד
+  if (newUser.role === "parent" && cleanData.studentName && cleanData.studentId) {
+    console.log('👶 יוצר אובייקט תלמיד להורה');
+    try {
+      await createStudent({
+        studentName: cleanData.studentName,
+        studentId: cleanData.studentId,
+        grade: cleanData.grade
+      }, newUser._id);
+      
+      // שיוך התלמיד לכיתה אם יש כיתה
+      if (cleanData.grade) {
+        await assignStudentToClass(cleanData.grade, newUser._id, cleanData.studentId);
+      }
+    } catch (error) {
+      console.error('❌ שגיאה ביצירת תלמיד:', error);
+      // אל תעצור את התהליך - ההורה נוצר בהצלחה
+    }
   }
 
   return newUser;
@@ -99,8 +137,32 @@ async function deleteUser(id) {
 }
 
 async function login({ username, password, role }) {
-  const user = await User.findOne({ username }); 
-  if ( !user || !(await bcrypt.compare(password, user.password)) || (user.role !== role && user.role !== "admin") ) {
+  console.log(`🔍 Login attempt - Username: "${username}", Role: "${role}"`);
+  console.log(`📏 Username length: ${username.length}, Password length: ${password.length}`);
+  
+  // נקה רווחים נוספים
+  const cleanUsername = username.trim();
+  
+  const user = await User.findOne({ username: cleanUsername }); 
+  console.log(`👤 User found: ${user ? `Yes (role: "${user.role}")` : 'No'}`);
+  
+  if (!user) {
+    console.log('❌ User not found');
+    console.log('💡 Available usernames in DB:');
+    const allUsers = await User.find({}, 'username role');
+    allUsers.forEach(u => console.log(`   - "${u.username}" (${u.role})`));
+    throw new Error("שם משתמש או סיסמא שגויים");
+  }
+  
+  const passwordMatch = await bcrypt.compare(password, user.password);
+  console.log(`🔐 Password match: ${passwordMatch}`);
+  
+  const roleMatch = (user.role === role);
+
+  console.log(`🎭 Role match: ${roleMatch} (user role: "${user.role}", requested: "${role}")`);
+  
+  if (!passwordMatch || !roleMatch) {
+    console.log('❌ Password or role mismatch');
     throw new Error("שם משתמש או סיסמא שגויים");
   }
 
@@ -111,6 +173,7 @@ async function login({ username, password, role }) {
     { expiresIn: "7d" }
   );
 
+  console.log('✅ Login successful');
   //מחבר את המשתמש
   return {
     message: "התחברות הצליחה",
@@ -146,13 +209,109 @@ async function resetPassword({ username }) {
   return { message: "סיסמה נשלחה למייל בהצלחה" };
 }
 
+// ✅ חדש - שיוך מורה לכיתה
+async function assignTeacherToClass(teacherId, className) {
+  const teacher = await User.findById(teacherId);
+  if (!teacher) throw new Error("מורה לא נמצא");
+  if (teacher.role !== 'teacher') throw new Error("המשתמש אינו מורה");
+
+  // בדוק אם המורה כבר משויך לכיתה
+  if (teacher.assignedClasses.includes(className)) {
+    throw new Error("המורה כבר משויך לכיתה זו");
+  }
+
+  teacher.assignedClasses.push(className);
+  await teacher.save();
+
+  return { message: `המורה ${teacher.name} שויך לכיתה ${className} בהצלחה` };
+}
+
+// ✅ חדש - הסרת מורה מכיתה
+async function removeTeacherFromClass(teacherId, className) {
+  const teacher = await User.findById(teacherId);
+  if (!teacher) throw new Error("מורה לא נמצא");
+
+  teacher.assignedClasses = teacher.assignedClasses.filter(c => c !== className);
+  await teacher.save();
+
+  return { message: `המורה ${teacher.name} הוסר מכיתה ${className} בהצלחה` };
+}
+
+// ✅ חדש - קבלת כל המורים
+async function getAllTeachers() {
+  return await User.find({ role: 'teacher' }).select('-password');
+}
+
+// ✅ חדש - קבלת כל ההורים
+async function getAllParents() {
+  return await User.find({ role: 'parent' }).select('-password');
+}
+
+// ✅ חדש - יצירת אובייקט תלמיד
+async function createStudent(studentData, parentId) {
+  try {
+    console.log('👶 יוצר תלמיד חדש:', studentData);
+    
+    // בדיקה אם התלמיד כבר קיים
+    const existingStudent = await Student.findOne({ studentId: studentData.studentId });
+    if (existingStudent) {
+      console.log('⚠️ תלמיד כבר קיים:', existingStudent.name);
+      // אם התלמיד קיים, רק נוסיף את ההורה לרשימת ההורים
+      if (!existingStudent.parentIds.includes(parentId)) {
+        existingStudent.parentIds.push(parentId);
+        await existingStudent.save();
+        console.log('✅ הורה נוסף לתלמיד קיים');
+      }
+      return existingStudent;
+    }
+
+    // יצירת תלמיד חדש
+    const newStudent = new Student({
+      name: studentData.studentName,
+      studentId: studentData.studentId,
+      grade: studentData.grade || null, // יכול להיות ללא כיתה בהתחלה
+      parentIds: [parentId]
+    });
+
+    const savedStudent = await newStudent.save();
+    console.log('✅ תלמיד נוצר בהצלחה:', savedStudent.name);
+    
+    return savedStudent;
+  } catch (error) {
+    console.error('❌ שגיאה ביצירת תלמיד:', error);
+    throw new Error('לא ניתן ליצור אובייקט תלמיד: ' + error.message);
+  }
+}
+
+// ✅ חדש - קבלת כל התלמידים
+async function getAllStudents() {
+  try {
+    return await Student.find().populate('parentIds', 'name email').populate('classId', 'grade');
+  } catch (error) {
+    throw new Error('לא ניתן לשלוף תלמידים: ' + error.message);
+  }
+}
+async function findById(id) {
+  return await User.findById(id);
+}
+
 module.exports = {
   createUser,
-  getAllUsers,
-  getUserById,
+  login,
   updateUser,
   deleteUser,
-  login,
+  getAllUsers,
   resetPassword,
-  assignStudentToClass
+  assignStudentToClass,
+  assignTeacherToClass,
+  removeTeacherFromClass,
+  getAllTeachers,
+  getAllParents,
+  createStudent,
+  findById,
+  getAllStudents
 };
+
+
+
+  

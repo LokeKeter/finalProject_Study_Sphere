@@ -15,6 +15,7 @@ const roleDisplayNames = {
 const sidebarLinks = {
   admin: [
       { label: '👥 ניהול משתמשים', route: '/Admin-Users' },
+      { label: '🏫 ניהול כיתות', route: '/Admin-Classes' },
       { label: '📅 אירועים שנתיים', route: '/Admin-Calendar' },
       { label: '🚪 התנתקות', route: '/' },
     ],
@@ -120,6 +121,8 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         paddingHorizontal: 15,
         paddingTop: 30,
+        zIndex: 1000, // הוספת z-index גבוה
+        elevation: 1000, // עבור אנדרואיד
       },
     
       sidebarHeader: {

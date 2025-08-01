@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const authMiddleware = require('../middleware/authMiddleware');
+const authorizeRoles = require('../middleware/authorizeRole');
 
 const {
   createClass,
@@ -7,14 +9,22 @@ const {
   getClassById,
   updateClass,
   deleteClass,
-  sendClassHomework
+  sendClassHomework,
+  addStudentToClass,
+  removeStudentFromClass,
+  getUnassignedStudents
 } = require('../controllers/classController');
 
-router.post('/', createClass);
-router.get('/', getAllClasses);
-router.get('/:id', getClassById);
-router.put('/:id', updateClass);
-router.delete('/:id', deleteClass);
-router.post("/homework/send", sendClassHomework);
+router.post('/', authMiddleware, authorizeRoles(["admin"]), createClass);
+router.get('/', authMiddleware, getAllClasses);
+router.get('/:id', authMiddleware, getClassById);
+router.put('/:id', authMiddleware, authorizeRoles(["admin"]), updateClass);
+router.delete('/:id', authMiddleware, authorizeRoles(["admin"]), deleteClass);
+router.post("/homework/send", authMiddleware, sendClassHomework);
+
+// ✅ נתיבים חדשים לניהול תלמידים בכיתות
+router.post('/students/add', authMiddleware, authorizeRoles(["admin"]), addStudentToClass);
+router.post('/students/remove', authMiddleware, authorizeRoles(["admin"]), removeStudentFromClass);
+router.get('/students/unassigned', authMiddleware, authorizeRoles(["admin"]), getUnassignedStudents);
 
 module.exports = router;

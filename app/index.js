@@ -21,10 +21,17 @@ export default function LoginScreen() {
     try {
       console.log("📤 Sending login request", { username, password, role });
       
+      // ✅ תיקון מיפוי התפקידים
+      let roleToSend;
+      if (role === 'מורה') roleToSend = 'teacher';
+      else if (role === 'הורה') roleToSend = 'parent';
+      else if (role === 'מנהל') roleToSend = 'admin';
+      else roleToSend = 'parent'; // default
+      
       const response = await axios.post(`${API_BASE_URL}/api/users/login`, {
         username,
         password,
-        role: role === 'מורה' ? 'teacher' : 'parent',
+        role: roleToSend,
       });
 
       // ✅ בדיקה שהתקבל יוזר תקין
@@ -87,7 +94,7 @@ export default function LoginScreen() {
 
       {/* 🏷️ **Role Selection** */}
       <View style={styles.roleContainer}>
-        {["הורה", "מורה"].map((roleOption) => (
+        {["הורה", "מורה", "מנהל"].map((roleOption) => (
           <TouchableOpacity
             key={roleOption}
             onPress={() => setRole(roleOption)}

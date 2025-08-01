@@ -10,7 +10,7 @@ const SignupScreen = () => {
     name: "",
     email: "",
     studentName: "",
-    studentID: "",
+    studentId: "",
     username: "",
     password: "",
     grade:"",
@@ -24,6 +24,8 @@ const SignupScreen = () => {
 
  const handleSignup = async () => {
   try {
+    console.log('🔍 Current form state:', form);
+    
     const payload = {
       name: form.name,
       email: form.email,
@@ -33,13 +35,26 @@ const SignupScreen = () => {
     };
 
     // ✅ Add student info ONLY if role is "הורה"
+    console.log('🔍 Checking parent condition:', {
+      formRole: form.role,
+      isParent: form.role === "הורה",
+      studentName: form.studentName,
+      studentId: form.studentId,
+      grade: form.grade
+    });
+    
     if (form.role === "הורה") {
       payload.studentName = form.studentName;
-      payload.studentId = form.studentID;
+      payload.studentId = form.studentId;
       payload.grade = form.grade;
+      console.log('✅ Added student data to payload');
+    } else {
+      console.log('❌ Parent condition not met, student data not added');
     }
 
+    console.log('📤 Sending registration payload:', payload);
     const response = await axios.post(`${API_BASE_URL}/api/users/register`, payload);
+    console.log('✅ Registration response:', response.data);
 
     Toast.show({
       type: "success",
@@ -49,6 +64,9 @@ const SignupScreen = () => {
     setErrors({});
     router.push("/");
   } catch (error) {
+      console.error('❌ Registration error:', error);
+      console.error('❌ Error response:', error.response?.data);
+      console.error('❌ Error status:', error.response?.status);
       const serverErrors = error.response?.data?.errors;
 
       if (serverErrors && Array.isArray(serverErrors)) {
@@ -145,8 +163,8 @@ const SignupScreen = () => {
 
     <TextInput
       placeholder="Student ID"
-      value={form.studentID}
-      onChangeText={(text) => setForm({ ...form, studentID: text })}
+      value={form.studentId}
+      onChangeText={(text) => setForm({ ...form, studentId: text })}
       style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
       placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
     />
@@ -190,6 +208,61 @@ const SignupScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
+
+    {/* 🔹 שדות תלמיד - רק אם נבחר הורה */}
+    {form.role === "הורה" && (
+      <View style={[
+        styles.studentFieldsContainer,
+        { 
+          backgroundColor: isDarkMode ? "#333" : "#fff",
+          borderColor: isDarkMode ? "#fff" : "#000"
+        }
+      ]}>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? "#fff" : "#000" }]}>פרטי התלמיד</Text>
+        
+        <TextInput
+          placeholder="שם התלמיד"
+          value={form.studentName}
+          onChangeText={(text) => setForm({ ...form, studentName: text })}
+          style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+          placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+        />
+        
+        <TextInput
+          placeholder="תעודת זהות של התלמיד"
+          value={form.studentId}
+          onChangeText={(text) => setForm({ ...form, studentId: text })}
+          style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
+          placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
+          keyboardType="numeric"
+        />
+        
+        <Text style={[styles.label, { color: isDarkMode ? "#fff" : "#000" }]}>בחר שכבה:</Text>
+        <View style={styles.gradeContainer}>
+          {["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "יא", "יב"].map((gradeOption) => (
+            <TouchableOpacity
+              key={gradeOption}
+              onPress={() => setForm({ ...form, grade: gradeOption })}
+              style={[
+                styles.gradeButton,
+                { 
+                  backgroundColor: form.grade === gradeOption ? (isDarkMode ? "#fff" : "black") : "transparent",
+                  borderColor: isDarkMode ? "#fff" : "#000"
+                }
+              ]}
+            >
+              <Text style={{ 
+                color: form.grade === gradeOption ? (isDarkMode ? "#000" : "#fff") : (isDarkMode ? "#fff" : "#000"),
+                fontSize: 14,
+                fontWeight: form.grade === gradeOption ? "bold" : "normal"
+              }}>
+                {gradeOption}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    )}
 
       {/* 🔹 כפתור הרשמה */}
       <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>
@@ -250,6 +323,41 @@ const styles = StyleSheet.create({
 
   backButton: { marginTop: 10 },
   backButtonText: { fontSize: 14, textDecorationLine: "underline" },
+
+  // New styles for student fields
+  studentFieldsContainer: {
+    width: "85%",
+    maxWidth: 400,
+    marginTop: 20,
+    padding: 15,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  gradeContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginTop: 5,
+  },
+  gradeButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginHorizontal: 5,
+    marginVertical: 5,
+  },
 });
 
 export default SignupScreen;

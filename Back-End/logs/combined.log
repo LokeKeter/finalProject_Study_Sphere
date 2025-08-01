@@ -814,3 +814,209 @@
 [2025-07-27T14:28:59.533Z] INFO: Login success: undefined
 [2025-07-27T14:28:59.611Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
 [2025-07-27T14:29:14.579Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-29T10:21:35.626Z] INFO: Login attempt: admin
+[2025-07-29T10:21:35.692Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
+[2025-07-29T10:21:38.312Z] INFO: Login attempt: admin
+[2025-07-29T10:21:38.364Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
+[2025-07-29T10:21:48.572Z] INFO: Login attempt: noam
+[2025-07-29T10:21:48.626Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:22:19.281Z] INFO: Register attempt: qqq
+[2025-07-29T10:22:19.340Z] INFO: Register success: qqq
+[2025-07-29T10:22:52.358Z] INFO: Login attempt: kkkk
+[2025-07-29T10:22:52.361Z] ERROR: Login failed for kkkk: שם משתמש או סיסמא שגויים
+[2025-07-29T10:22:53.450Z] INFO: Login attempt: kkkk
+[2025-07-29T10:22:53.452Z] ERROR: Login failed for kkkk: שם משתמש או סיסמא שגויים
+[2025-07-29T10:53:24.466Z] INFO: Login attempt: admin
+[2025-07-29T10:53:24.518Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
+[2025-07-29T10:53:34.822Z] INFO: Login attempt: admin
+[2025-07-29T10:53:34.875Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
+[2025-07-29T10:53:38.909Z] INFO: Login attempt: admin
+[2025-07-29T10:53:38.961Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
+[2025-07-29T10:53:55.516Z] INFO: Login attempt: noam
+[2025-07-29T10:53:55.567Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:54:01.104Z] INFO: Login attempt: noam
+[2025-07-29T10:54:01.155Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:54:34.057Z] INFO: Register attempt: lok
+[2025-07-29T10:54:34.111Z] INFO: Register success: lok
+[2025-07-29T10:54:42.594Z] INFO: Login attempt: noam
+[2025-07-29T10:54:42.645Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:54:44.611Z] INFO: Login attempt: noam
+[2025-07-29T10:54:44.662Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:54:57.904Z] INFO: Login attempt: noam
+[2025-07-29T10:54:57.955Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:55:04.269Z] INFO: Login attempt: noam
+[2025-07-29T10:55:04.320Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:55:39.997Z] INFO: Login attempt: noam
+[2025-07-29T10:55:40.048Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:56:47.769Z] INFO: Register attempt: kkk
+[2025-07-29T10:56:47.820Z] INFO: Register success: kkk
+[2025-07-29T10:56:55.766Z] INFO: Login attempt: noam
+[2025-07-29T10:56:55.818Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:59:20.433Z] INFO: Login attempt: noam
+[2025-07-29T10:59:20.501Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:59:25.333Z] INFO: Login attempt: noam
+[2025-07-29T10:59:25.391Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:59:26.462Z] INFO: Login attempt: noam
+[2025-07-29T10:59:26.516Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T10:59:27.278Z] INFO: Login attempt: noam
+[2025-07-29T10:59:27.332Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-29T11:00:36.954Z] INFO: Register attempt: asd
+[2025-07-29T11:00:37.019Z] INFO: Register success: asd
+[2025-07-29T11:00:51.781Z] INFO: Login attempt: noam
+[2025-07-29T11:00:51.839Z] INFO: Login success: undefined
+[2025-07-29T11:00:51.884Z] INFO: 📄 שליפת משימות עבור מורה: 686a91f5b693ea067cfbc423
+[2025-07-29T11:01:12.948Z] INFO: Login attempt: admin
+[2025-07-29T11:01:13.000Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
+[2025-07-29T11:01:21.089Z] INFO: Login attempt: admin
+[2025-07-29T11:01:21.146Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
+[2025-07-29T11:02:21.382Z] INFO: Register attempt: more
+[2025-07-29T11:02:21.436Z] INFO: Register success: more
+[2025-07-29T11:02:29.744Z] INFO: Login attempt: more
+[2025-07-29T11:02:29.796Z] INFO: Login success: undefined
+[2025-07-29T11:02:29.821Z] INFO: 📄 שליפת משימות עבור מורה: 6888aa3d39ba58681f83981b
+[2025-07-29T11:03:16.836Z] INFO: Register attempt: KK
+[2025-07-29T11:03:16.898Z] INFO: Register success: KK
+[2025-07-29T11:03:24.879Z] INFO: Login attempt: HORE
+[2025-07-29T11:03:24.884Z] ERROR: Login failed for HORE: שם משתמש או סיסמא שגויים
+[2025-07-29T11:03:40.674Z] INFO: Login attempt: hore
+[2025-07-29T11:03:40.677Z] ERROR: Login failed for hore: שם משתמש או סיסמא שגויים
+[2025-07-29T11:03:51.931Z] INFO: Login attempt: hore
+[2025-07-29T11:03:51.935Z] ERROR: Login failed for hore: שם משתמש או סיסמא שגויים
+[2025-07-29T11:03:57.816Z] INFO: Login attempt: hore
+[2025-07-29T11:03:57.819Z] ERROR: Login failed for hore: שם משתמש או סיסמא שגויים
+[2025-07-29T11:04:49.918Z] INFO: Register attempt: hore
+[2025-07-29T11:04:49.973Z] INFO: Register success: hore
+[2025-07-29T11:05:01.099Z] INFO: Login attempt: hore
+[2025-07-29T11:05:01.155Z] INFO: Login success: undefined
+[2025-07-29T11:10:00.230Z] INFO: Login attempt: admin
+[2025-07-29T11:10:00.295Z] INFO: Login success: undefined
+[2025-07-29T11:10:53.611Z] INFO: Login attempt: admin
+[2025-07-29T11:10:53.664Z] INFO: Login success: undefined
+[2025-07-29T11:15:42.061Z] INFO: Login attempt: admin
+[2025-07-29T11:15:42.114Z] INFO: Login success: undefined
+[2025-07-29T11:20:56.133Z] INFO: Login attempt: admin
+[2025-07-29T11:20:56.186Z] INFO: Login success: undefined
+[2025-07-29T16:47:08.940Z] INFO: Login attempt: 
+[2025-07-29T16:47:08.945Z] ERROR: Login failed for : שם משתמש או סיסמא שגויים
+[2025-07-29T16:47:55.595Z] INFO: Login attempt: admin
+[2025-07-29T16:47:55.674Z] INFO: Login success: undefined
+[2025-07-29T16:49:53.274Z] INFO: Register attempt: keter1
+[2025-07-29T16:49:53.332Z] INFO: Register success: keter1
+[2025-07-29T16:50:03.702Z] INFO: Login attempt: keter1
+[2025-07-29T16:50:03.778Z] INFO: Login success: undefined
+[2025-07-29T16:50:03.829Z] INFO: 📄 שליפת משימות עבור מורה: 6888fbb1edfb0c556023d0d5
+[2025-07-29T16:51:53.341Z] INFO: Login attempt: admin
+[2025-07-29T16:51:53.394Z] INFO: Login success: undefined
+[2025-07-29T19:04:29.592Z] INFO: Register attempt: lol
+[2025-07-29T19:04:29.654Z] INFO: Register success: lol
+[2025-07-29T19:04:52.358Z] INFO: Login attempt: lol
+[2025-07-29T19:04:52.411Z] INFO: Login success: undefined
+[2025-07-29T19:10:30.583Z] INFO: Login attempt: admin
+[2025-07-29T19:10:30.659Z] INFO: Login success: undefined
+[2025-07-29T19:12:27.590Z] INFO: Register attempt: lol3
+[2025-07-29T19:12:27.647Z] INFO: Register success: lol3
+[2025-07-29T19:55:06.129Z] INFO: Login attempt: admin
+[2025-07-29T19:55:06.183Z] INFO: Login success: undefined
+[2025-07-29T19:58:54.580Z] INFO: Register attempt: momomo
+[2025-07-29T19:58:54.635Z] INFO: Register success: momomo
+[2025-07-29T20:35:05.275Z] INFO: Register attempt: zod123
+[2025-07-29T20:35:05.363Z] INFO: Register success: zod123
+[2025-07-29T20:39:55.890Z] INFO: Register attempt: loklok
+[2025-07-29T20:39:55.948Z] INFO: Register success: loklok
+[2025-07-29T20:43:37.226Z] INFO: Register attempt: zodzod
+[2025-07-29T20:43:37.315Z] INFO: Register success: zodzod
+[2025-07-29T20:44:54.052Z] INFO: Login attempt: admin
+[2025-07-29T20:44:54.110Z] INFO: Login success: undefined
+[2025-07-29T20:54:06.283Z] INFO: Register attempt: noam1
+[2025-07-29T20:54:06.340Z] ERROR: Register failed for noam1: User validation failed: subject: `` is not a valid enum value for path `subject`.
+[2025-07-29T20:54:36.460Z] INFO: Register attempt: noam1
+[2025-07-29T20:54:36.544Z] ERROR: Register failed for noam1: User validation failed: subject: `` is not a valid enum value for path `subject`.
+[2025-07-29T20:57:59.479Z] INFO: Login attempt: admin
+[2025-07-29T20:57:59.546Z] INFO: Login success: undefined
+[2025-07-29T20:58:31.460Z] INFO: Register attempt: koko
+[2025-07-29T20:58:31.527Z] INFO: Register success: koko
+[2025-07-30T08:32:46.481Z] INFO: Login attempt: admin
+[2025-07-30T08:32:46.547Z] INFO: Login success: undefined
+[2025-07-30T08:33:55.971Z] INFO: Register attempt: nono
+[2025-07-30T08:33:56.042Z] INFO: Register success: nono
+[2025-07-30T10:56:05.154Z] INFO: Login attempt: admin
+[2025-07-30T10:56:05.218Z] INFO: Login success: undefined
+[2025-07-30T11:11:09.793Z] INFO: Login attempt: more
+[2025-07-30T11:11:09.850Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-30T11:11:21.212Z] INFO: Login attempt: more
+[2025-07-30T11:11:21.270Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-30T11:11:48.881Z] INFO: Register attempt: popo
+[2025-07-30T11:11:48.940Z] INFO: Register success: popo
+[2025-07-30T11:11:58.082Z] INFO: Login attempt: popo
+[2025-07-30T11:11:58.142Z] INFO: Login success: undefined
+[2025-07-30T11:11:58.172Z] INFO: 📄 שליפת משימות עבור מורה: 6889fdf4926aee82bb7f8da9
+[2025-07-30T11:12:58.311Z] INFO: Login attempt: admin
+[2025-07-30T11:12:58.372Z] INFO: Login success: undefined
+[2025-07-30T11:13:39.950Z] INFO: Login attempt: popo
+[2025-07-30T11:13:40.009Z] INFO: Login success: undefined
+[2025-07-30T11:13:40.040Z] INFO: 📄 שליפת משימות עבור מורה: 6889fdf4926aee82bb7f8da9
+[2025-07-31T14:27:47.477Z] INFO: Login attempt: admin
+[2025-07-31T14:27:47.549Z] INFO: Login success: undefined
+[2025-07-31T15:45:40.711Z] INFO: Login attempt: more
+[2025-07-31T15:45:40.773Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:45:52.097Z] INFO: Login attempt: more
+[2025-07-31T15:45:52.149Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:45:59.773Z] INFO: Login attempt: more
+[2025-07-31T15:45:59.826Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:46:13.470Z] INFO: Login attempt: more
+[2025-07-31T15:46:13.528Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:46:24.248Z] INFO: Login attempt: admin
+[2025-07-31T15:46:24.305Z] INFO: Login success: undefined
+[2025-07-31T15:46:44.013Z] INFO: Login attempt: more
+[2025-07-31T15:46:44.068Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:46:51.915Z] INFO: Login attempt: more
+[2025-07-31T15:46:51.969Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:47:03.592Z] INFO: Password reset requested for: more
+[2025-07-31T15:47:05.611Z] INFO: Password reset success for: more
+[2025-07-31T15:47:19.622Z] INFO: Login attempt: more
+[2025-07-31T15:47:19.676Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:47:37.603Z] INFO: Register attempt: noam
+[2025-07-31T15:47:37.661Z] INFO: Register success: noam
+[2025-07-31T15:47:46.099Z] INFO: Login attempt: noam
+[2025-07-31T15:47:46.152Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-31T15:53:35.535Z] INFO: Login attempt: noam
+[2025-07-31T15:53:35.600Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-31T15:53:37.863Z] INFO: Login attempt: noam
+[2025-07-31T15:53:37.919Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-31T15:53:55.499Z] INFO: Login attempt: popo
+[2025-07-31T15:53:55.560Z] INFO: Login success: undefined
+[2025-07-31T15:53:55.596Z] INFO: 📄 שליפת משימות עבור מורה: 6889fdf4926aee82bb7f8da9
+[2025-07-31T15:54:19.214Z] INFO: Login attempt: 
+[2025-07-31T15:54:19.220Z] ERROR: Login failed for : שם משתמש או סיסמא שגויים
+[2025-07-31T15:54:27.031Z] INFO: Login attempt: more
+[2025-07-31T15:54:27.086Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:54:36.085Z] INFO: Login attempt: more
+[2025-07-31T15:54:36.141Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T15:54:59.775Z] INFO: Register attempt: moreT
+[2025-07-31T15:54:59.839Z] INFO: Register success: moreT
+[2025-07-31T15:55:07.788Z] INFO: Login attempt: moreT
+[2025-07-31T15:55:07.848Z] INFO: Login success: undefined
+[2025-07-31T15:55:07.880Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T15:55:19.962Z] INFO: Login attempt: admin
+[2025-07-31T15:55:20.021Z] INFO: Login success: undefined
+[2025-07-31T15:56:11.764Z] INFO: Login attempt: moreT
+[2025-07-31T15:56:11.818Z] ERROR: Login failed for moreT: שם משתמש או סיסמא שגויים
+[2025-07-31T15:56:20.974Z] INFO: Login attempt: moreT
+[2025-07-31T15:56:21.029Z] INFO: Login success: undefined
+[2025-07-31T15:56:21.063Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T15:56:38.291Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T16:45:17.833Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T17:05:14.617Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T17:05:37.061Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T17:05:46.158Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T17:05:50.451Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T17:10:33.757Z] INFO: Login attempt: more
+[2025-07-31T17:10:33.766Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-07-31T17:10:39.730Z] INFO: Login attempt: noam
+[2025-07-31T17:10:39.733Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
+[2025-07-31T17:10:45.486Z] INFO: Login attempt: popo
+[2025-07-31T17:10:45.490Z] ERROR: Login failed for popo: שם משתמש או סיסמא שגויים
+[2025-07-31T17:11:00.239Z] INFO: Login attempt: moreT
+[2025-07-31T17:11:00.297Z] INFO: Login success: undefined
+[2025-07-31T17:11:00.337Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-07-31T17:11:15.756Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2

@@ -30,9 +30,22 @@ const registerValidation = [
 
   // 💡 ולידציה ל־grade רק אם role הוא הורה
   body("grade")
-  .if(body("role").equals("parent"))
-  .notEmpty().withMessage("יש להזין כיתה עבור הורה")
-  .isIn(allowedGrades).withMessage("כיתה לא חוקית – מותר רק מ-א' עד יב'")
+    .if(body("role").equals("parent"))
+    .optional()
+    .isIn(allowedGrades).withMessage("כיתה לא חוקית – מותר רק מ-א' עד יב'"),
+
+  // 💡 ולידציה לשם התלמיד רק אם role הוא הורה
+  body("studentName")
+    .if(body("role").equals("parent"))
+    .optional()
+    .isLength({ min: 2 }).withMessage("שם התלמיד חייב להכיל לפחות 2 תווים"),
+
+  // 💡 ולידציה לתעודת זהות התלמיד רק אם role הוא הורה  
+  body("studentId")
+    .if(body("role").equals("parent"))
+    .optional()
+    .isLength({ min: 9, max: 9 }).withMessage("תעודת זהות חייבת להיות בת 9 ספרות")
+    .isNumeric().withMessage("תעודת זהות חייבת להכיל רק ספרות")
 
 ];
 

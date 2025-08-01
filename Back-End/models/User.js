@@ -30,18 +30,22 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ['teacher', 'parent'],
+    enum: ['teacher', 'parent', 'admin'],
     required: true
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
   },
   subject: {
   type: String,
   enum: ["מתמטיקה", "אנגלית", "לשון", "היסטוריה", "תנ\"ך", "ספרות", "ביולוגיה", "פיזיקה", "כימיה", "מחשבים", "ספורט", "של\"ח"],
   default: undefined 
-}
+},
+  // חדש - לשמירת הכיתות שהמורה מלמד
+  assignedClasses: [{
+    type: String  // שמות כיתות כמו "ז1", "ח2"
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 module.exports = mongoose.model('User', userSchema);
