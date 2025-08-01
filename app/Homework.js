@@ -112,7 +112,8 @@ useEffect(() => {
       students: students.map(s => ({
         parentId: s.parentId,
         homework: s.homework,
-        attendance: s.attendance
+        attendance: s.attendance,
+        teacherId: userId
       }))
     };
 

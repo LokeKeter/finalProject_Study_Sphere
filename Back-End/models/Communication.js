@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const communicationSchema = new mongoose.Schema({
-  type: {type: String, enum: ["letter", "signature", "meeting", "cancel"], required: true },
+  type: {type: String, enum: ["letter", "signature", "meeting", "cancel", "attend"], required: true },
   senderId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   subject: String, // למכתב או פגישה

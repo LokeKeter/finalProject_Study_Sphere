@@ -58,6 +58,7 @@
 [2025-07-27T13:16:54.095Z] ERROR: Login failed for stevenite: שם משתמש או סיסמא שגויים
 [2025-07-27T13:17:06.495Z] ERROR: Login failed for stevenite: שם משתמש או סיסמא שגויים
 [2025-07-27T13:18:42.249Z] ERROR: Login failed for stevenite: שם משתמש או סיסמא שגויים
+<<<<<<< Updated upstream
 [2025-07-29T10:21:35.692Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
 [2025-07-29T10:21:38.364Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
 [2025-07-29T10:21:48.626Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
@@ -106,3 +107,8 @@
 [2025-07-31T17:10:33.766Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
 [2025-07-31T17:10:39.733Z] ERROR: Login failed for noam: שם משתמש או סיסמא שגויים
 [2025-07-31T17:10:45.490Z] ERROR: Login failed for popo: שם משתמש או סיסמא שגויים
+=======
+[2025-07-28T19:04:14.153Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-07-29T10:44:48.751Z] ERROR: Login failed for Steven: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[2025-07-30T14:16:11.550Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+>>>>>>> Stashed changes

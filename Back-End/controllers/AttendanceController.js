@@ -2,8 +2,9 @@ const attendanceService = require("../service/attendanceService");
 
 const saveAttendance = async (req, res) => {
   try {
-    const { date, className, students } = req.body;
-    const result = await attendanceService.saveAttendance({ date, className, students });
+    const { date, className, students, subject } = req.body;
+    const teacherId = req.user.id;
+    const result = await attendanceService.saveAttendance({ date, className, students, teacherId, subject });
 
     res.status(201).json({ message: "Attendance saved successfully", result });
   } catch (error) {

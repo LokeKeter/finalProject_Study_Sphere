@@ -814,6 +814,7 @@
 [2025-07-27T14:28:59.533Z] INFO: Login success: undefined
 [2025-07-27T14:28:59.611Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
 [2025-07-27T14:29:14.579Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+<<<<<<< Updated upstream
 [2025-07-29T10:21:35.626Z] INFO: Login attempt: admin
 [2025-07-29T10:21:35.692Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
 [2025-07-29T10:21:38.312Z] INFO: Login attempt: admin
@@ -1020,3 +1021,54 @@
 [2025-07-31T17:11:00.297Z] INFO: Login success: undefined
 [2025-07-31T17:11:00.337Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
 [2025-07-31T17:11:15.756Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+=======
+[2025-07-27T14:41:00.401Z] INFO: Login attempt: Steven
+[2025-07-27T14:41:00.467Z] INFO: Login success: undefined
+[2025-07-27T14:41:00.540Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-27T14:42:02.459Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-28T18:39:53.936Z] INFO: Login attempt: Steven
+[2025-07-28T18:39:54.058Z] INFO: Login success: undefined
+[2025-07-28T18:39:54.162Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-28T18:59:44.430Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-28T19:04:14.099Z] INFO: Login attempt: Steven
+[2025-07-28T19:04:14.153Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-07-28T19:04:31.032Z] INFO: Login attempt: Steven
+[2025-07-28T19:04:31.086Z] INFO: Login success: undefined
+[2025-07-28T19:04:31.393Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-28T19:06:15.930Z] INFO:  יצירת משימה חדשה עבור משתמש: 684416b2833b7f134585ae54
+[2025-07-28T19:06:15.959Z] INFO:  משימה נוצרה בהצלחה: Vdybvv
+[2025-07-29T10:44:18.595Z] INFO: Login attempt: Steven
+[2025-07-29T10:44:48.751Z] ERROR: Login failed for Steven: connect ECONNREFUSED ::1:27017, connect ECONNREFUSED 127.0.0.1:27017
+[2025-07-30T11:22:28.694Z] INFO: Login attempt: Steven
+[2025-07-30T11:22:28.771Z] INFO: Login success: undefined
+[2025-07-30T11:22:28.861Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T13:40:54.025Z] INFO: Login attempt: Steven
+[2025-07-30T13:40:54.092Z] INFO: Login success: undefined
+[2025-07-30T13:40:54.169Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T13:49:48.849Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:03:31.143Z] INFO: Login attempt: Steven
+[2025-07-30T14:03:31.212Z] INFO: Login success: undefined
+[2025-07-30T14:03:31.286Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:16:11.483Z] INFO: Login attempt: Steven
+[2025-07-30T14:16:11.550Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-07-30T14:16:12.535Z] INFO: Login attempt: Steven
+[2025-07-30T14:16:12.594Z] INFO: Login success: undefined
+[2025-07-30T14:16:12.669Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:41:29.958Z] INFO: Login attempt: Steven
+[2025-07-30T14:41:30.027Z] INFO: Login success: undefined
+[2025-07-30T14:41:30.098Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:44:00.666Z] INFO: Login attempt: Steven
+[2025-07-30T14:44:00.733Z] INFO: Login success: undefined
+[2025-07-30T14:44:00.814Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:49:01.455Z] INFO: Login attempt: Steven
+[2025-07-30T14:49:01.524Z] INFO: Login success: undefined
+[2025-07-30T14:49:01.602Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:51:09.753Z] INFO: Login attempt: Steven
+[2025-07-30T14:51:09.821Z] INFO: Login success: undefined
+[2025-07-30T14:51:09.915Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:56:54.712Z] INFO: Login attempt: Steven
+[2025-07-30T14:56:54.779Z] INFO: Login success: undefined
+[2025-07-30T14:56:54.855Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T14:57:37.347Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-07-30T15:00:16.819Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+>>>>>>> Stashed changes

@@ -2,16 +2,25 @@ const Timetable = require("../models/Timetable");
 const Class = require("../models/Class");
 const User = require("../models/User");
 const Attendance = require("../models/Attendance");
+const HomeworkClass   = require("../models/HomeworkClass");
 const Communication = require("../models/Communication");
 
 const saveAttendance = async ({ date, className, subject, students, teacherId }) => {
-  if (!date || !className || !students) {
+  console.log("date: ", date);
+  console.log("className: ", className);
+  console.log("students: ", students);
+  console.log("teacherId: ", teacherId);
+  console.log("subject: ", subject);
+
+  if (!date || !className || !students || !teacherId || !subject) {
     throw new Error("Missing required fields");
   }
 
   const newAttendance = new Attendance({
     date,
     className,
+    teacherId,
+    subject,
     students
   });
 
@@ -20,9 +29,20 @@ const saveAttendance = async ({ date, className, subject, students, teacherId })
   const homeworkMissed = students.filter(s => s.homework === false);
   console.log("תלמידים שלא עשו שיעורי בית:", homeworkMissed);
 
+  await HomeworkClass.updateMany(
+    {
+      classId  : className,
+      teacherId: teacherId,
+      subject  : subject,
+      teacherId,
+      isCurrent: true          // <- רק המשימה הנוכחית
+    },
+    { $set: { isCurrent: false } }
+  );
+
   if (homeworkMissed.length > 0) {
     const letters = homeworkMissed.map(s => ({
-      type: "letter",
+      type: "attend",
       senderId: teacherId, // כאן מזהה המורה
       receiverId: s.parentId,
       subject: "לא עשה שיעורי בית",
@@ -33,6 +53,19 @@ const saveAttendance = async ({ date, className, subject, students, teacherId })
     await Communication.insertMany(letters);
     console.log("✅ נשלחו מכתבים להורים:", letters);
   }
+  const absents = students.filter(s => s.attendance === false);
+  if (absents.length > 0) {
+    const absentLetters = absents.map(s => ({
+      type: "attend",
+      senderId: teacherId,
+      receiverId: s.parentId,
+      subject: `לא נכח - ${subject}`,
+      content: `התלמיד לא נכח בשיעור "${subject}".`,
+      createdAt: new Date()
+    }));
+    await Communication.insertMany(absentLetters);
+  }
+
 
   return savedAttendance;
 };
