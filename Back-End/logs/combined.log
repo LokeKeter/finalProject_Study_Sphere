@@ -1020,3 +1020,33 @@
 [2025-07-31T17:11:00.297Z] INFO: Login success: undefined
 [2025-07-31T17:11:00.337Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
 [2025-07-31T17:11:15.756Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-08-01T07:35:11.486Z] INFO: Login attempt: admin
+[2025-08-01T07:35:11.552Z] INFO: Login success: undefined
+[2025-08-01T07:57:39.461Z] INFO: Login attempt: admin
+[2025-08-01T07:57:39.514Z] INFO: Login success: undefined
+[2025-08-01T08:03:30.775Z] INFO: Login attempt: admin
+[2025-08-01T08:03:30.839Z] INFO: Login success: undefined
+[2025-08-01T08:07:33.192Z] INFO: Login attempt: admin
+[2025-08-01T08:07:33.245Z] INFO: Login success: undefined
+[2025-08-01T08:18:28.102Z] INFO: Login attempt: admin
+[2025-08-01T08:18:28.162Z] INFO: Login success: undefined
+[2025-08-01T09:42:13.979Z] INFO: Login attempt: admin
+[2025-08-01T09:42:14.042Z] INFO: Login success: undefined
+[2025-08-01T09:45:26.169Z] INFO: Login attempt: Admin
+[2025-08-01T09:45:26.172Z] ERROR: Login failed for Admin: שם משתמש או סיסמא שגויים
+[2025-08-01T09:45:32.736Z] INFO: Login attempt: admin
+[2025-08-01T09:45:32.793Z] INFO: Login success: undefined
+[2025-08-01T09:54:24.588Z] INFO: Login attempt: admin
+[2025-08-01T09:54:24.645Z] INFO: Login success: undefined
+[2025-08-01T10:03:13.942Z] INFO: Login attempt: admin
+[2025-08-01T10:03:14.000Z] INFO: Login success: undefined
+[2025-08-01T10:05:26.441Z] INFO: Login attempt: admin
+[2025-08-01T10:05:26.498Z] INFO: Login success: undefined
+[2025-08-01T10:19:58.310Z] INFO: Login attempt: admin
+[2025-08-01T10:19:58.365Z] INFO: Login success: undefined
+[2025-08-01T10:24:53.650Z] INFO: Login attempt: admin
+[2025-08-01T10:24:53.708Z] INFO: Login success: undefined
+[2025-08-01T10:48:13.437Z] INFO: Login attempt: admin
+[2025-08-01T10:48:13.495Z] INFO: Login success: undefined
+[2025-08-01T12:16:20.097Z] INFO: Login attempt: admin
+[2025-08-01T12:16:20.158Z] INFO: Login success: undefined

@@ -72,7 +72,7 @@ export default function LoginScreen() {
         resizeMode="contain"
       />
 
-      <Text style={[styles.title, { color: isDarkMode ? "#fff" : "#000" }]}>Welcome Back !!</Text>
+      <Text style={[styles.title, { color: isDarkMode ? "#fff" : "#000" }]}>Study_Sphere </Text>
 
       {/* 📝 **Input Fields** */}
       <TextInput
