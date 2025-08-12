@@ -7,15 +7,23 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Clipboard,
   Alert
 } from 'react-native';
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { API_BASE_URL } from "../config";
 
+
 // 🔹 קומפוננטת תבניות AI למורה
 const TeacherAITemplate = () => {
+
+  // 🔹 סטייט לצ'אט AI
+const [aiMessages, setAiMessages] = useState([
+  { role: 'system', content: 'את/ה עוזר/ת הוראה. ענה/י בעברית קצרה ומכבדת.' }
+]);
+const [aiInput, setAiInput] = useState('');
+const [aiSending, setAiSending] = useState(false);
+
   // 🔸 סטייט לטופס הקלט מהמורה
   const [form, setForm] = useState({
     className: '',
@@ -59,6 +67,56 @@ const TeacherAITemplate = () => {
       Alert.alert("שגיאה", "לא ניתן להתחבר לשרת.");
     }
   };
+
+  const sendAiMessage = async () => {
+    const text = aiInput.trim();
+    if (!text || aiSending) return;
+  
+    // מוסיפים את הודעת המשתמש ל־UI
+    const userMsg = { role: 'user', content: text };
+    setAiMessages(prev => [...prev, userMsg]);
+    setAiInput('');
+    setAiSending(true);
+  
+    try {
+      const token = await AsyncStorage.getItem('token');
+  
+      // אפשר להעביר הקשר מהטופס כדי שה-AI ינסח ממוקד יותר
+      const context = {
+        className: form.className,
+        studentCount: form.studentCount,
+        grade: form.grade,
+        subject: form.subject,
+      };
+  
+      const res = await fetch(`${API_BASE_URL}/api/ai/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          // שולחים קצת הקשר והודעת המשתמש
+          context,
+          lastParentMessage: text, // או סתם השאלה שהמורה כתב
+          // אם יש לך היסטוריה, אפשר לשלוח גם אותה (לא חובה)
+        }),
+      });
+  
+      const data = await res.json();
+      if (res.ok) {
+        const assistantMsg = { role: 'assistant', content: data.draft || data.reply || '...' };
+        setAiMessages(prev => [...prev, assistantMsg]);
+      } else {
+        setAiMessages(prev => [...prev, { role: 'assistant', content: '🤖 אירעה תקלה בשירות ה-AI.' }]);
+      }
+    } catch (e) {
+      setAiMessages(prev => [...prev, { role: 'assistant', content: '🤖 שגיאת רשת.' }]);
+    } finally {
+      setAiSending(false);
+    }
+  };
+  
 
   // 🔸 העתקת הודעה לזיכרון
   const copyToClipboard = (text) => {
@@ -124,6 +182,43 @@ const TeacherAITemplate = () => {
           ))}
         </View>
       )}
+
+
+
+
+
+    {/* 🔹 צ'אט AI נפרד */}
+<View style={styles.aiChatSection}>
+  <Text style={styles.sectionTitle}>🤖 צ'אט עם ה-AI (למורה בלבד)</Text>
+
+  {aiMessages.filter(m => m.role !== 'system').map((m, i) => (
+    <View
+      key={`${i}-${m.content.slice(0, 10)}`}
+      style={[styles.aiBubble, m.role === 'user' ? styles.aiBubbleUser : styles.aiBubbleBot]}
+    >
+      <Text style={styles.aiBubbleText}>{m.content}</Text>
+    </View>
+  ))}
+
+  <View style={styles.aiInputRow}>
+    <TextInput
+      style={styles.aiInput}
+      placeholder="כתבו שאלה או בקשת ניסוח..."
+      placeholderTextColor="#555"
+      value={aiInput}
+      onChangeText={setAiInput}
+      editable={!aiSending}
+    />
+    <TouchableOpacity
+      style={[styles.aiSendBtn, aiSending && { opacity: 0.6 }]}
+      onPress={sendAiMessage}
+      disabled={aiSending}
+    >
+      <Text style={styles.aiSendText}>{aiSending ? '...' : 'שלח'}</Text>
+    </TouchableOpacity>
+  </View>
+</View>
+      
     </ScrollView>
   );
 };
@@ -192,7 +287,58 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 16,
-  }
+  },
+
+  aiChatSection: {
+    marginTop: 28,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+    paddingTop: 16,
+  },
+  aiBubble: {
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 8,
+    maxWidth: '85%',
+  },
+  aiBubbleUser: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#dbeafe',
+  },
+  aiBubbleBot: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#f3f4f6',
+  },
+  aiBubbleText: {
+    color: '#111',
+    fontSize: 15,
+    lineHeight: 21,
+  },
+  aiInputRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+  },
+  aiInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    color: '#000',
+  },
+  aiSendBtn: {
+    backgroundColor: 'black',
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    justifyContent: 'center',
+  },
+  aiSendText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  
 });
 
 export default TeacherAITemplate;

@@ -1,0 +1,12 @@
+const mongoose = require("mongoose");
+
+const homeworkClassSchema = new mongoose.Schema({
+  classId: String,
+  teacherId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  subject: String,
+  content: String,
+  isCurrent: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model("HomeworkClass", homeworkClassSchema);

@@ -5,6 +5,20 @@ const aiController = require("../controllers/aiController");
 const authMiddleware = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/authorizeRole");
 
-router.post("/template", authMiddleware, authorizeRoles(["teacher", "parent"]), aiController.generate);
+// תבניות AI קיימות
+router.post(
+  "/template",
+  authMiddleware,
+  authorizeRoles(["teacher", "parent"]),
+  aiController.generate
+);
+
+// צ'אט AI חדש
+router.post(
+  "/chat",
+  authMiddleware,
+  authorizeRoles(["teacher", "parent"]), // רק למורה
+  aiController.chat // פונקציה חדשה ב־controllers/aiController.js
+);
 
 module.exports = router;
