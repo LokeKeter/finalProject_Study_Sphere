@@ -26,11 +26,6 @@ async function assignStudentToClass(grade, parentId, studentId) {
   return classObj;
 }
 
-
-
-
-const { createTimetable } = require("./timetableService");
-
 async function createUser(data) {
   console.log('🔧 Creating user with data:', {
     username: data.username,
@@ -49,15 +44,6 @@ async function createUser(data) {
   
   const hashedPassword = await bcrypt.hash(cleanData.password, 10);
   console.log('🔐 Password hashed successfully');
-
-  // ✅ צור כיתה אם אין
-  if (cleanData.grade && !(await Class.findOne({ grade: cleanData.grade }))) {
-    const newClass = new Class({ grade: cleanData.grade, students: [] });
-    await newClass.save();
-
-    // ✅ צור מערכת שעות מלאה עם שיבוץ
-    await createTimetable(cleanData.grade);
-  }
 
   const newUser = new User({
     ...cleanData,
@@ -81,10 +67,6 @@ async function createUser(data) {
         grade: cleanData.grade
       }, newUser._id);
       
-      // שיוך התלמיד לכיתה אם יש כיתה
-      if (cleanData.grade) {
-        await assignStudentToClass(cleanData.grade, newUser._id, cleanData.studentId);
-      }
     } catch (error) {
       console.error('❌ שגיאה ביצירת תלמיד:', error);
       // אל תעצור את התהליך - ההורה נוצר בהצלחה

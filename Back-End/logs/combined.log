@@ -1201,3 +1201,40 @@
 [2025-08-12T12:27:14.986Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
 [2025-08-12T12:27:42.871Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
 >>>>>>> ddb4de07870124d12772fe5a2e568b17fab5fe79
+[2025-08-12T14:03:41.040Z] INFO: Login attempt: Steven
+[2025-08-12T14:03:41.109Z] INFO: Login success: undefined
+[2025-08-12T14:03:41.188Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-12T14:03:55.449Z] ERROR: ❌ AI chat failed (Gemini)
+[2025-08-12T14:04:06.095Z] ERROR: ❌ AI chat failed (Gemini)
+[2025-08-12T14:17:44.656Z] INFO: Login attempt: Steven
+[2025-08-12T14:17:44.724Z] INFO: Login success: undefined
+[2025-08-12T14:17:44.802Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-12T14:17:53.219Z] ERROR: ❌ AI chat failed (Gemini)
+[2025-08-12T14:27:33.346Z] INFO: Login attempt: Stevenite
+[2025-08-12T14:27:33.410Z] ERROR: Login failed for Stevenite: שם משתמש או סיסמא שגויים
+[2025-08-12T14:27:40.018Z] INFO: Login attempt: Stevenite
+[2025-08-12T14:27:40.074Z] INFO: Login success: undefined
+[2025-08-12T14:42:28.892Z] INFO: Login attempt: Stevenite
+[2025-08-12T14:42:28.959Z] INFO: Login success: undefined
+[2025-08-12T15:11:12.177Z] INFO: Login attempt: Stevenite
+[2025-08-12T15:11:12.243Z] INFO: Login success: undefined
+[2025-08-12T16:17:43.296Z] INFO: Login attempt: Stevenite
+[2025-08-12T16:17:43.367Z] INFO: Login success: undefined
+[2025-08-12T16:20:39.874Z] INFO: Login attempt: Stevenite
+[2025-08-12T16:20:39.940Z] INFO: Login success: undefined
+[2025-08-12T16:32:44.440Z] INFO: Login attempt: Stevenite
+[2025-08-12T16:32:44.507Z] INFO: Login success: undefined
+[2025-08-12T16:33:42.458Z] INFO: Register attempt: a1
+[2025-08-12T16:33:42.539Z] INFO: Register success: a1
+[2025-08-12T16:33:59.324Z] INFO: Login attempt: Stevenite
+[2025-08-12T16:33:59.381Z] INFO: Login success: undefined
+[2025-08-12T16:39:08.186Z] INFO: Register attempt: b1
+[2025-08-12T16:39:08.264Z] INFO: Register success: b1
+[2025-08-12T16:39:16.235Z] INFO: Login attempt: Stevenite
+[2025-08-12T16:39:16.296Z] INFO: Login success: undefined
+[2025-08-12T16:46:08.180Z] INFO: Register attempt: d1
+[2025-08-12T16:46:08.252Z] INFO: Register success: d1
+[2025-08-12T16:46:15.633Z] INFO: Login attempt: Stevenite
+[2025-08-12T16:46:15.693Z] INFO: Login success: undefined
+[2025-08-12T17:08:21.793Z] INFO: Login attempt: Stevenite
+[2025-08-12T17:08:21.860Z] INFO: Login success: undefined

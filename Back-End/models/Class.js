@@ -16,9 +16,11 @@ const classSchema = new mongoose.Schema({
   grade: {
   type: String,
   required: true,
-  enum: ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "יא", "יב"]
 },
   students: [studentSchema],
 });
+
+classSchema.index({ grade: 1 }, { unique: true });
+
 
 module.exports = mongoose.model("Class", classSchema);

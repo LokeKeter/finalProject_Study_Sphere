@@ -16,6 +16,10 @@ export default function AdminClassesPage() {
   const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
   const [studentToRemove, setStudentToRemove] = useState(null);
 
+  const [candidateStudents, setCandidateStudents] = useState([]);
+
+  const baseOf = (g) => String(g || '').replace(/\d+$/, ''); // "ג1" -> "ג", "יב10" -> "יב"
+
   // טעינת נתונים מהשרת
   useEffect(() => {
     fetchAllData();
@@ -67,7 +71,7 @@ export default function AdminClassesPage() {
 
     try {
       const token = await AsyncStorage.getItem('token');
-      const student = unassignedStudents.find(s => s._id === selectedStudent);
+      const student = candidateStudents.find(s => s._id === selectedStudent);
       
       console.log('=== ADDING STUDENT TO CLASS ===');
       console.log('Student object:', student);
@@ -218,6 +222,15 @@ export default function AdminClassesPage() {
           console.log('=== ADD STUDENT BUTTON PRESSED ===');
           console.log('Selected class:', item);
           setSelectedClass(item);
+
+          // בסיס שכבה לכיתה (למשל "ג1" -> "ג")
+          const base = baseOf(item.grade);
+
+          // unassignedStudents מגיעים עם student.grade מהשרת (מודל Student)
+          const filtered = unassignedStudents.filter(s => s.grade === base);
+
+          setCandidateStudents(filtered);
+          setSelectedStudent('');
           setStudentModalVisible(true);
         }}
       >
@@ -249,7 +262,7 @@ export default function AdminClassesPage() {
             <Text style={styles.unassignedTitle}>⚠️ תלמידים ללא כיתה:</Text>
             {unassignedStudents.map(student => (
               <View key={student._id} style={styles.unassignedStudent}>
-                <Text>{student.studentName} (מספר: {student.studentId})</Text>
+                <Text>{student.studentName || student.name} (מספר: {student.studentId})</Text>
               </View>
             ))}
           </View>
@@ -307,7 +320,7 @@ export default function AdminClassesPage() {
             
             <Text style={styles.label}>בחר תלמיד:</Text>
             <ScrollView style={styles.dropdown}>
-              {unassignedStudents.map(student => (
+              {candidateStudents.map(student => (
                 <TouchableOpacity 
                   key={student._id}
                   style={[styles.dropdownItem, selectedStudent === student._id && styles.selected]}
@@ -317,12 +330,12 @@ export default function AdminClassesPage() {
                     setSelectedStudent(student._id);
                   }}
                 >
-                  <Text>{student.studentName} - מספר: {student.studentId}</Text>
+                  <Text>{(student.studentName || student.name) } - מספר: {student.studentId}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
 
-            {unassignedStudents.length === 0 && (
+            {candidateStudents.length === 0 && (
               <Text style={styles.noStudentsText}>כל התלמידים כבר משויכים לכיתות</Text>
             )}
 
@@ -334,6 +347,7 @@ export default function AdminClassesPage() {
                   setStudentModalVisible(false);
                   setSelectedStudent('');
                   setSelectedClass(null);
+                  setCandidateStudents([]);
                 }}
               >
                 <Text>❌ ביטול</Text>
