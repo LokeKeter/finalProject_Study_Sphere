@@ -80,3 +80,16 @@ exports.sendClassMessage = async (req, res) => {
     res.status(500).json({ message: "שליחת הודעה נכשלה", error: error.message });
   }
 };
+
+exports.getRecentDiscipline = async (req, res) => {
+  try {
+    const days = Number(req.query.days || 2);
+    const teacherId = req.user.id;
+
+    const items = await communicationService.listRecentDiscipline({ teacherId, days });
+    res.json(items);
+  } catch (err) {
+    console.error("❌ getRecentDiscipline error:", err);
+    res.status(500).json({ error: "שגיאה בשליפת אירועי משמעת" });
+  }
+};

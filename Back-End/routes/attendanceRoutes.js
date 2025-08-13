@@ -20,6 +20,6 @@ router.get("/teacher-classes/:teacherId", authMiddleware, authorizeRoles(["teach
 router.get("/teacher-subject/:teacherId", attendanceController.getTeacherSubject);
 
 //כל התלמידים שהמורה מלמד
-router.get("/students-by-class/:grade", attendanceController.getStudentsByClass);
+router.get("/students-by-class/:grade", authMiddleware, authorizeRoles(["teacher"]), attendanceController.getStudentsByClass);
 
 module.exports = router;

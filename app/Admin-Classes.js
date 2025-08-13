@@ -71,7 +71,7 @@ export default function AdminClassesPage() {
 
     try {
       const token = await AsyncStorage.getItem('token');
-      const student = candidateStudents.find(s => s._id === selectedStudent);
+      const student = candidateStudents.find(s => String(s._id) === String(selectedStudent));
       
       console.log('=== ADDING STUDENT TO CLASS ===');
       console.log('Student object:', student);
@@ -79,9 +79,7 @@ export default function AdminClassesPage() {
       
       const requestBody = {
         classId: selectedClass._id,
-        parentId: student._id,
-        studentId: student.studentId,
-        studentName: student.studentName
+        studentId: student._id,
       };
       
       console.log('Request body for adding student:', requestBody);

@@ -4,6 +4,7 @@ const User = require("../models/User");
 const Attendance = require("../models/Attendance");
 const HomeworkClass   = require("../models/HomeworkClass");
 const Communication = require("../models/Communication");
+const Student = require("../models/Student");
 
 const saveAttendance = async ({ date, className, subject, students, teacherId }) => {
   console.log("date: ", date);
@@ -26,36 +27,46 @@ const saveAttendance = async ({ date, className, subject, students, teacherId })
 
   const savedAttendance = await newAttendance.save();
 
+  // 1) מי שלא עשה שיעורי בית
   const homeworkMissed = students.filter(s => s.homework === false);
   console.log("תלמידים שלא עשו שיעורי בית:", homeworkMissed);
 
+  // (קוסמטיקה קלה) אין צורך לשים teacherId פעמיים באובייקט החיפוש
   await HomeworkClass.updateMany(
     {
       classId  : className,
       teacherId: teacherId,
       subject  : subject,
-      teacherId,
-      isCurrent: true          // <- רק המשימה הנוכחית
+      isCurrent: true
     },
     { $set: { isCurrent: false } }
   );
 
-  if (homeworkMissed.length > 0) {
-    const letters = homeworkMissed.map(s => ({
+  // 🔁 מחליף את הבלוק הישן: מסנן בלי parentId
+  const letters = homeworkMissed
+    .filter(s => !!s.parentId) // רק אם יש parentId
+    .map(s => ({
       type: "attend",
-      senderId: teacherId, // כאן מזהה המורה
+      senderId: teacherId,
       receiverId: s.parentId,
       subject: "לא עשה שיעורי בית",
       content: `התלמיד לא עשה שיעורי בית במקצוע "${subject}".`,
       createdAt: new Date()
     }));
-
+  if (letters.length) {
     await Communication.insertMany(letters);
-    console.log("✅ נשלחו מכתבים להורים:", letters);
+    console.log('✅ נשלחו מכתבים להורים (ש"ב):', letters.length);
+  } else {
+    console.log("ℹ️ אין למי לשלוח מכתבי ש\"ב (חסר parentId).");
   }
+
+  // 2) נעדרים
   const absents = students.filter(s => s.attendance === false);
-  if (absents.length > 0) {
-    const absentLetters = absents.map(s => ({
+
+  // 🔁 מחליף את הבלוק הישן: מסנן בלי parentId
+  const absentLetters = absents
+    .filter(s => !!s.parentId) // רק אם יש parentId
+    .map(s => ({
       type: "attend",
       senderId: teacherId,
       receiverId: s.parentId,
@@ -63,13 +74,15 @@ const saveAttendance = async ({ date, className, subject, students, teacherId })
       content: `התלמיד לא נכח בשיעור "${subject}".`,
       createdAt: new Date()
     }));
+  if (absentLetters.length) {
     await Communication.insertMany(absentLetters);
+    console.log("✅ נשלחו מכתבי היעדרות:", absentLetters.length);
+  } else {
+    console.log("ℹ️ אין למי לשלוח מכתבי היעדרות (חסר parentId).");
   }
-
 
   return savedAttendance;
 };
-
 
 //שליפת מקצוע של המורה
 const getTeacherSubject = async (teacherId) => {
@@ -79,25 +92,36 @@ const getTeacherSubject = async (teacherId) => {
 
 // שליפת כיתות לפי מורה
 const getTeacherClasses = async (teacherId) => {
-  const timetables = await Timetable.find({ "lessons.teacherId": teacherId });
-  const classNames = timetables.map(t => t.className);
-  return [...new Set(classNames)];
+  const teacher = await User.findById(teacherId).select("assignedClasses").lean();
+  if (!teacher || !Array.isArray(teacher.assignedClasses)) return [];
+  return [...new Set(teacher.assignedClasses.map(String))];
 };
 
-const getStudentsByClass = async (grade) => {
-  const classDoc = await Class.findOne({ grade }).populate("students.parentId", "name");
+// attendanceService.js
+const getStudentsByClass = async ({ teacherId, grade }) => {
+  // מאשר שהמורה אכן מלמד את הכיתה הזו
+  const teacher = await User.findById(teacherId).select('assignedClasses').lean();
+  if (!teacher?.assignedClasses?.includes(grade)) return [];
+
+  // שליפת הכיתה+הורה
+  const classDoc = await Class
+    .findOne({ grade })
+    .populate('students.parentId', 'name') // << כאן נקבל את שם ההורה
+    .lean();
+
   if (!classDoc) return [];
-  const results = await Promise.all(
-    classDoc.students.map(async (s) => {
-      const student = await User.findOne(s.parentId?._id );
-      return {
-        parentId: s.parentId?._id,
-        parentName: s.parentId?.name || "לא ידוע",
-        studentName: student?.studentName || "תלמיד לא נמצא"
-      };
-    })
-  );
-  return results;
+
+  // שמות תלמידים מה-Student (לפי studentId = ת"ז)
+  const ids = (classDoc.students || []).map(s => String(s.studentId)).filter(Boolean);
+  const studentsDocs = await Student.find({ studentId: { $in: ids } })
+                                    .select('studentId name').lean();
+  const nameByNationalId = new Map(studentsDocs.map(s => [String(s.studentId), s.name]));
+
+  return (classDoc.students || []).map(s => ({
+    parentId: s.parentId?._id || null,
+    parentName: s.parentId?.name || 'לא ידוע',
+    studentName: nameByNationalId.get(String(s.studentId)) || 'לא ידוע',
+  }));
 };
 
 const getClassesForTeacher = async (teacherId) => {

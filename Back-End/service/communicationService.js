@@ -122,3 +122,42 @@ exports.sendClassMessage = async ({ classId, senderId, content }) => {
 
   await Communication.insertMany(messages);
 };
+
+exports.getRecentDiscipline = async ({ teacherId, days = 2 }) => {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  const events = await Communication.find({
+    type: "attend",
+    senderId: teacherId,
+    receiverId: { $ne: null },
+    createdAt: { $gte: since }
+  })
+  .populate({ path: "receiverId", select: "name studentName" })
+  .sort({ createdAt: -1 })
+  .lean();
+
+  return events;
+};
+
+exports.listRecentDiscipline = async ({ teacherId, days = 2 }) => {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  // שאילתת DB + populate
+  const events = await Communication.find({
+    type: "attend",
+    senderId: teacherId,
+    createdAt: { $gte: since }
+  })
+  .populate({ path: "receiverId", select: "name studentName" })
+  .sort({ createdAt: -1 })
+  .lean();
+
+  // מיפוי לפורמט שהפרונט רוצה לראות בחלון "משמעת"
+  return events.map(ev => ({
+    id: String(ev._id),
+    title: ev.subject,
+    parentName: ev.receiverId?.name || "",
+    studentName: ev.receiverId?.studentName || "",
+    date: ev.createdAt
+  }));
+};

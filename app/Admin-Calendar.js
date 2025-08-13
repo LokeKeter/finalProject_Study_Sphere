@@ -12,14 +12,26 @@ import {
 } from 'react-native';
 import TopSidebar from '@/components/TopSidebar';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '@/config';
+
+const API_BASE = `${API_BASE_URL}/api/yearlyevents`;
+
+const toYYYYMMDD = (d) => {
+  if (!d) return '';
+  if (typeof d === 'string') {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(d)) return d;
+    const only = d.split('T')[0];
+    if (/^\d{4}-\d{2}-\d{2}$/.test(only)) return only;
+  }
+  const dt = d instanceof Date ? d : new Date(d);
+  return isNaN(dt) ? '' : dt.toISOString().split('T')[0];
+};
+
 
 export default function AdminCalendar() {
-  const API_BASE = 'https://your-backend.example.com/api/yearlyevents'; // <<< החלף ל-URL של ה-backend שלך
 
-  const [events, setEvents] = useState([
-    { id: '1', title: 'מסיבת סיום', date: '2025-06-15', details: 'אירוע סוף שנה חגיגי' },
-    { id: '2', title: 'יום הורים', date: '2025-05-30', details: 'פגישות אישיות עם מורים' },
-  ]);
+  const [events, setEvents] = useState([]);
   const [search, setSearch] = useState('');
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -29,12 +41,20 @@ export default function AdminCalendar() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch(API_BASE);
+        const token = await AsyncStorage.getItem('token');
+        const res = await fetch(API_BASE, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
         if (!res.ok) throw new Error('Failed to fetch events');
         const data = await res.json();
-        setEvents(data.map((ev) => ({ ...ev, id: ev._id || ev.id })));
+        setEvents(
+          Array.isArray(data)
+            ? data.map(ev => ({ ...ev, id: ev._id || ev.id, date: toYYYYMMDD(ev.date) }))
+            : []
+        );
       } catch (e) {
         console.warn('Fetch events error', e);
+        setEvents([]);
       }
     };
     fetchEvents();
@@ -68,50 +88,61 @@ export default function AdminCalendar() {
   const handleAddEvent = async () => {
     if (!selectedEvent?.title || !selectedEvent?.date) return;
     try {
+      const token = await AsyncStorage.getItem('token');
       const res = await fetch(API_BASE, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
           title: selectedEvent.title,
-          date: selectedEvent.date,
+          date: toYYYYMMDD(selectedEvent.date),
           details: selectedEvent.details || '',
         }),
       });
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || 'Failed to create');
       }
+
       const saved = await res.json();
-      setEvents((prev) => [...prev, { ...saved, id: saved._id || saved.id }]);
+      setEvents(prev => [...prev, { ...saved, id: saved._id || saved.id }]);
       setModalVisible(false);
     } catch (e) {
       console.warn('Add event failed', e);
-      Alert.alert('שגיאה', 'לא ניתן ליצור את האירוע. נסו שוב.'); 
+      Alert.alert('שגיאה', 'לא ניתן ליצור את האירוע. נסו שוב.');
     }
   };
 
   const handleSaveEdit = async () => {
     if (!selectedEvent?.title || !selectedEvent?.date) return;
     try {
+      const token = await AsyncStorage.getItem('token');
       const id = selectedEvent.id || selectedEvent._id;
       const res = await fetch(`${API_BASE}/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
         body: JSON.stringify({
           title: selectedEvent.title,
-          date: selectedEvent.date,
+          date: toYYYYMMDD(selectedEvent.date),
           details: selectedEvent.details || '',
         }),
       });
+
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.message || 'Failed to update');
       }
+
       const updated = await res.json();
-      setEvents((prev) =>
-        prev.map((ev) =>
-          ev.id === (updated._id || updated.id) ? { ...updated, id: updated._id || updated.id } : ev
-        )
+      const updatedId = updated._id || updated.id;
+      setEvents(prev =>
+        prev.map(ev => (ev.id === updatedId ? { ...updated, id: updatedId } : ev))
       );
       setModalVisible(false);
     } catch (e) {
@@ -123,14 +154,18 @@ export default function AdminCalendar() {
   const handleDelete = async () => {
     if (!selectedEvent) return;
     try {
+      const token = await AsyncStorage.getItem('token');
       const id = selectedEvent.id || selectedEvent._id;
       const res = await fetch(`${API_BASE}/${id}`, {
         method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
       });
+
       if (!res.ok) {
         throw new Error('Failed to delete');
       }
-      setEvents((prev) => prev.filter((ev) => ev.id !== (selectedEvent.id || selectedEvent._id)));
+
+      setEvents(prev => prev.filter(ev => ev.id !== (selectedEvent.id || selectedEvent._id)));
       setModalVisible(false);
     } catch (e) {
       console.warn('Delete failed', e);
@@ -142,7 +177,7 @@ export default function AdminCalendar() {
     <TouchableOpacity
       style={styles.tableRow}
       onPress={() => {
-        setSelectedEvent(item);
+        setSelectedEvent({ ...item, date: toYYYYMMDD(item.date) });
         setIsNewEvent(false);
         setModalVisible(true);
         setShowDatePicker(false);

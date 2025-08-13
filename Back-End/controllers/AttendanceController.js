@@ -49,11 +49,19 @@ const getTeacherClasses = async (req, res) => {
 const getStudentsByClass = async (req, res) => {
   try {
     const grade = req.params.grade;
-    const students = await attendanceService.getStudentsByClass(grade);
-    res.json(students);
+    const teacherId = req.user?.id || req.user?._id;
+    if (!teacherId) {
+      return res.status(401).json({ error: 'לא מאומת' });
+    }
+
+    // השירות מעודכן לקבל { teacherId, grade } ולוודא שהכיתה ב-assignedClasses של המורה
+    const students = await attendanceService.getStudentsByClass({ teacherId, grade });
+
+    // אם השירות בוחר להחזיר [] כשאין הרשאה, פשוט נחזיר []
+    return res.json(students);
   } catch (error) {
     console.error("❌ שגיאה בשליפת תלמידים:", error);
-    res.status(500).json({ error: "שגיאה בשרת" });
+    return res.status(500).json({ error: "שגיאה בשרת" });
   }
 };
 

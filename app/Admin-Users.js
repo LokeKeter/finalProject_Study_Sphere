@@ -1075,146 +1075,131 @@ export default function AdminUsers() {
     <View style={styles.container}>
       <TopSidebar userRole="admin" />
       
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.contentContainer}>
-          <Text style={styles.title}>ניהול משתמשים</Text>
+      <FlatList
+        data={filteredUsers}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[
+              styles.tableRow,
+              item.role === 'admin' && styles.adminRow,
+              currentScreenWidth > 768 && styles.tableRowTablet
+            ]}
+            onPress={() => fetchUserDetails(item._id)}
+          >
+            <Text style={[
+              styles.cell,
+              item.role === 'admin' && styles.adminText,
+              currentScreenWidth > 768 && styles.cellTablet
+            ]}>
+              {item.role === 'admin' && ' '}
+              {item.name}
+            </Text>
+            <Text style={[
+              styles.cell,
+              item.role === 'admin' && styles.adminText,
+              currentScreenWidth > 768 && styles.cellTablet
+            ]}>
+              {item.email}
+            </Text>
+            <Text style={[
+              styles.cell,
+              item.role === 'admin' && styles.adminText,
+              currentScreenWidth > 768 && styles.cellTablet
+            ]}>
+              {item.role === 'teacher' ? ' מורה' : item.role === 'parent' ? ' הורה' : ' מנהל'}
+            </Text>
+            <TouchableOpacity
+              onPress={(e) => {
+                e.stopPropagation();
+                confirmDelete(item._id);
+              }}
+              disabled={item.role === 'admin' && item.username === 'admin'}
+              style={[
+                styles.deleteButton,
+                currentScreenWidth > 768 && styles.deleteButtonTablet
+              ]}
+            >
+              <Text style={{
+                color: item.role === 'admin' && item.username === 'admin' ? '#ccc' : 'red',
+                fontWeight: 'bold',
+                fontSize: currentScreenWidth > 768 ? 20 : 16
+              }}>
+                {item.role === 'admin' && item.username === 'admin' ? '' : '🗑️'}
+              </Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        )}
 
-          {/* סטטיסטיקות עם InfoCards רספונסיביות */}
-          <View style={[
-            styles.infoCardsContainer,
-            currentScreenWidth > 768 && styles.infoCardsContainerTablet,
-            currentScreenWidth > 1024 && styles.infoCardsContainerLarge
-          ]}>
-            <InfoCard
-              title="מנהלים"
-              count={users.filter(u => u.role === 'admin').length}
-              
-              color="#FF6B6B"
-              screenWidth={currentScreenWidth}
-            />
-            <InfoCard
-              title="מורים"
-              count={teachers.length}
-             
-              color="#4ECDC4"
-              screenWidth={currentScreenWidth}
-            />
-            <InfoCard
-              title="הורים"
-              count={parents.length}
-            
-              color="#45B7D1"
-              screenWidth={currentScreenWidth}
-            />
-          </View>
+        /* כל מה שהיה לפני הרשימה עובר לכאן */
+        ListHeaderComponent={
+          <View style={styles.contentContainer}>
+            <Text style={styles.title}>ניהול משתמשים</Text>
 
-          <View style={[
-            styles.searchWrapper,
-            currentScreenWidth > 768 && styles.searchWrapperTablet
-          ]}>
-            <TextInput
-              placeholder="חפש משתמש..."
-              style={styles.searchInput}
-              value={search}
-              onChangeText={setSearch}
-            />
-          </View>
+            {/* סטטיסטיקות */}
+            <View style={[
+              styles.infoCardsContainer,
+              currentScreenWidth > 768 && styles.infoCardsContainerTablet,
+              currentScreenWidth > 1024 && styles.infoCardsContainerLarge
+            ]}>
+              <InfoCard
+                title="מנהלים"
+                count={users.filter(u => u.role === 'admin').length}
+                color="#FF6B6B"
+                screenWidth={currentScreenWidth}
+              />
+              <InfoCard
+                title="מורים"
+                count={teachers.length}
+                color="#4ECDC4"
+                screenWidth={currentScreenWidth}
+              />
+              <InfoCard
+                title="הורים"
+                count={parents.length}
+                color="#45B7D1"
+                screenWidth={currentScreenWidth}
+              />
+            </View>
 
-          {/* טבלת משתמשים רספונסיבית */}
-          <View style={[
-            styles.tableContainer,
-            currentScreenWidth > 768 && styles.tableContainerTablet
-          ]}>
+            <View style={[
+              styles.searchWrapper,
+              currentScreenWidth > 768 && styles.searchWrapperTablet
+            ]}>
+              <TextInput
+                placeholder="חפש משתמש..."
+                style={styles.searchInput}
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
+
+            {/* כותרת הטבלה */}
             <View style={[
               styles.tableHeader,
               currentScreenWidth > 768 && styles.tableHeaderTablet
             ]}>
-              <Text style={[
-                styles.headerText,
-                currentScreenWidth > 768 && styles.headerTextTablet
-              ]}>שם</Text>
-              <Text style={[
-                styles.headerText,
-                currentScreenWidth > 768 && styles.headerTextTablet
-              ]}>אימייל</Text>
-              <Text style={[
-                styles.headerText,
-                currentScreenWidth > 768 && styles.headerTextTablet
-              ]}>תפקיד</Text>
-              <Text style={[
-                styles.headerText,
-                currentScreenWidth > 768 && styles.headerTextTablet
-              ]}>פעולות</Text>
+              <Text style={[styles.headerText, currentScreenWidth > 768 && styles.headerTextTablet]}>שם</Text>
+              <Text style={[styles.headerText, currentScreenWidth > 768 && styles.headerTextTablet]}>אימייל</Text>
+              <Text style={[styles.headerText, currentScreenWidth > 768 && styles.headerTextTablet]}>תפקיד</Text>
+              <Text style={[styles.headerText, currentScreenWidth > 768 && styles.headerTextTablet]}>פעולות</Text>
             </View>
-
-            <FlatList
-              data={filteredUsers}
-              renderItem={({ item }) => (
-                <TouchableOpacity 
-                  style={[
-                    styles.tableRow, 
-                    item.role === 'admin' && styles.adminRow,
-                    currentScreenWidth > 768 && styles.tableRowTablet
-                  ]}
-                  onPress={() => fetchUserDetails(item._id)}
-                >
-                  <Text style={[
-                    styles.cell, 
-                    item.role === 'admin' && styles.adminText,
-                    currentScreenWidth > 768 && styles.cellTablet
-                  ]}>
-                    {item.role === 'admin' && ' '}
-                    {item.name}
-                  </Text>
-                  <Text style={[
-                    styles.cell, 
-                    item.role === 'admin' && styles.adminText,
-                    currentScreenWidth > 768 && styles.cellTablet
-                  ]}>{item.email}</Text>
-                  <Text style={[
-                    styles.cell, 
-                    item.role === 'admin' && styles.adminText,
-                    currentScreenWidth > 768 && styles.cellTablet
-                  ]}>
-                    {item.role === 'teacher' ? ' מורה' : item.role === 'parent' ? ' הורה' : ' מנהל'}
-                  </Text>
-                  <TouchableOpacity 
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      confirmDelete(item._id);
-                    }}
-                    disabled={item.role === 'admin' && item.username === 'admin'}
-                    style={[
-                      styles.deleteButton,
-                      currentScreenWidth > 768 && styles.deleteButtonTablet
-                    ]}
-                  >
-                    <Text style={{ 
-                      color: item.role === 'admin' && item.username === 'admin' ? '#ccc' : 'red', 
-                      fontWeight: 'bold',
-                      fontSize: currentScreenWidth > 768 ? 20 : 16
-                    }}>
-                      {item.role === 'admin' && item.username === 'admin' ? '' : '🗑️'}
-                    </Text>
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              )}
-              keyExtractor={item => item._id}
-            />
           </View>
+        }
 
-          {/* כפתורי פעולה רספונסיביים */}
+        /* מה שהיה אחרי הרשימה עובר לכאן */
+        ListFooterComponent={
           <View style={[
             styles.buttonContainer,
             currentScreenWidth > 768 && styles.buttonContainerTablet,
             currentScreenWidth > 1024 && styles.buttonContainerLarge
           ]}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.actionButton, 
+                styles.actionButton,
                 styles.addButton,
                 currentScreenWidth > 768 && styles.actionButtonTablet
-              ]} 
+              ]}
               onPress={() => setAddModalVisible(true)}
             >
               <Text style={[
@@ -1223,18 +1208,13 @@ export default function AdminUsers() {
               ]}> הוסף משתמש</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.actionButton, 
+                styles.actionButton,
                 styles.assignButton,
                 currentScreenWidth > 768 && styles.actionButtonTablet
-              ]} 
+              ]}
               onPress={() => {
-                console.log('🎯 פותח מודל שיוך מורה');
-                console.log('👨‍🏫 מורים זמינים:', teachers.length);
-                console.log('🏫 כיתות זמינות:', classes.length);
-                teachers.forEach(t => console.log(`  - מורה: ${t.name} (${t.subject})`));
-                classes.forEach(c => console.log(`  - כיתה: ${c.grade}`));
                 setIsTeacherModalVisible(true);
               }}
             >
@@ -1244,12 +1224,12 @@ export default function AdminUsers() {
               ]}>שייך מורה לכיתה </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.actionButton, 
+                styles.actionButton,
                 styles.createButton,
                 currentScreenWidth > 768 && styles.actionButtonTablet
-              ]} 
+              ]}
               onPress={() => setIsClassModalVisible(true)}
             >
               <Text style={[
@@ -1258,12 +1238,12 @@ export default function AdminUsers() {
               ]}>צור כיתה חדשה </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
-                styles.actionButton, 
+                styles.actionButton,
                 styles.manageButton,
                 currentScreenWidth > 768 && styles.actionButtonTablet
-              ]} 
+              ]}
               onPress={() => router.push('/Admin-Classes')}
             >
               <Text style={[
@@ -1272,8 +1252,11 @@ export default function AdminUsers() {
               ]}>נהל כיתות קיימות </Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </ScrollView>
+        }
+
+        ListEmptyComponent={<Text style={styles.emptyText}>אין משתמשים</Text>}
+        contentContainerStyle={styles.contentContainer}
+      />
 
       {/* מודל הוספת משתמש */}
       <Modal visible={isAddModalVisible} animationType="slide" transparent>

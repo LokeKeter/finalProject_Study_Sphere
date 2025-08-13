@@ -9,9 +9,7 @@ const communicationSchema = new mongoose.Schema({
   meetingType: String, // "זום" או "פרונטלי"
   meetingDate: String,
   fileUrl: { type: String },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  createdAt: {type: Date, default: Date.now
   }
 });
 

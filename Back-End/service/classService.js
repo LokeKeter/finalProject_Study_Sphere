@@ -42,31 +42,33 @@ exports.updateClass = (id, updates) =>
 
 exports.deleteClass = (id) => Class.findByIdAndDelete(id);
 
-exports.addStudentToClass = async ({ classId, parentId, studentId, studentName }) => {
-      const classObj = await Class.findById(classId);
-      if (!classObj) throw new Error('כיתה לא נמצאה');
-  
-      // בדוק אם התלמיד כבר קיים בכיתה
-      const existingStudent = classObj.students.find(s => s.studentId === studentId);
-      if (existingStudent) {
-        throw new Error('התלמיד כבר קיים בכיתה');
-      }
-  
-      // הוסף לכיתה
-      classObj.students.push({ parentId, studentId });
-      await classObj.save();
-      console.log('✅ תלמיד נוסף לכיתה בהצלחה');
-  
-      // עדכן את אובייקט התלמיד בקולקציית Students
-      const student = await Student.findOne({ studentId });
-      if (student) {
-        student.classId = classId;
-        await student.save();
-        console.log('✅ אובייקט התלמיד עודכן בקולקציית Students');
-      } else {
-        console.log('⚠️ לא נמצא אובייקט תלמיד בקולקציית Students');
-      }
-      return classObj;
+exports.addStudentToClass = async ({ classId, studentId }) => {
+  const classObj = await Class.findById(classId);
+  if (!classObj) throw new Error('כיתה לא נמצאה');
+
+  // כבר יש תלמיד זה בכיתה?
+  if (classObj.students.some(s => String(s.studentId) === String(studentId))) {
+    throw new Error('התלמיד כבר קיים בכיתה');
+  }
+
+  // ✅ שליפה נכונה: מעבירים את ה-ObjectId עצמו, לא אובייקט
+  // ❌ BUG שהיה גורם לשגיאה: Student.findById({ studentId })
+  const studentDoc = await Student.findById(studentId).select('parentIds');
+  if (!studentDoc) throw new Error('תלמיד לא נמצא');
+  const parentUserId = studentDoc.parentIds?.[0];
+  if (!parentUserId) throw new Error('לא נמצא הורה לתלמיד');
+
+  // דחיפה נכונה: studentId = ObjectId של Student
+  classObj.students.push({ parentId: parentUserId, studentId });
+  await classObj.save();
+
+  // עדכון סטודנט לפי ה-_id (לא לפי שדה studentId=ת"ז)
+  await Student.updateOne(
+    { _id: studentId },
+    { classId: classObj._id, grade: classObj.grade }
+  );
+
+  return classObj;
 };
 
 exports.removeStudentFromClass = async ({ classId, studentId }) => {
@@ -86,35 +88,31 @@ exports.removeStudentFromClass = async ({ classId, studentId }) => {
 };
 
 exports.getUnassignedStudents = async () => {
-    console.log('🔍 מחפש תלמידים לא משויכים...');
-    
-    // קבל את כל התלמידים מקולקציית Students
-    const allStudents = await Student.find().populate('parentIds', 'name email');
-    console.log('👥 נמצאו סה"כ תלמידים:', allStudents.length);
-    
-    // קבל את כל הכיתות
-    const classes = await Class.find();
-    console.log('🏫 נמצאו סה"כ כיתות:', classes.length);
-    
-    // צור רשימה של כל התלמידים המשויכים לכיתות
-    const assignedStudentIds = new Set();
-    classes.forEach(classObj => {
-      classObj.students.forEach(student => {
-        assignedStudentIds.add(student.studentId);
-      });
+  console.log('🔍 מחפש תלמידים לא משויכים...');
+
+  const allStudents = await Student.find().populate('parentIds', 'name email');
+  console.log('👥 נמצאו סה"כ תלמידים:', allStudents.length);
+
+  const classes = await Class.find();
+  console.log('🏫 נמצאו סה"כ כיתות:', classes.length);
+
+  // מזהים משויכים לפי ObjectId של Student שנשמר בכיתה
+  const assignedStudentIds = new Set();
+  classes.forEach(classObj => {
+    classObj.students.forEach(s => {
+      if (s.studentId) assignedStudentIds.add(String(s.studentId)); // ObjectId -> string
     });
-    console.log('📋 תלמידים משויכים:', Array.from(assignedStudentIds));
+  });
 
-    // סנן תלמידים שעדיין לא משויכים לכיתות
-    const unassignedStudents = allStudents.filter(student => 
-      !assignedStudentIds.has(student.studentId)
-    );
-    
-    console.log('🆓 תלמידים לא משויכים:', unassignedStudents.length);
-    console.log('📝 רשימת תלמידים לא משויכים:', unassignedStudents.map(s => s.name));
+  // מסננים לפי _id של הסטודנט (ObjectId)
+  const unassignedStudents = allStudents.filter(stu => 
+    !assignedStudentIds.has(String(stu._id))
+  );
 
-    return unassignedStudents;
+  console.log('🆓 תלמידים לא משויכים:', unassignedStudents.length);
+  return unassignedStudents;
 };
+
 
 exports.sendHomeworkToClass = async ({ classId, teacherId, content }) => {
   // 1. שלוף את המורה

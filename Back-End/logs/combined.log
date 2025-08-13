@@ -1238,3 +1238,73 @@
 [2025-08-12T16:46:15.693Z] INFO: Login success: undefined
 [2025-08-12T17:08:21.793Z] INFO: Login attempt: Stevenite
 [2025-08-12T17:08:21.860Z] INFO: Login success: undefined
+[2025-08-13T08:07:54.738Z] INFO: Login attempt: Steven
+[2025-08-13T08:07:54.861Z] INFO: Login success: undefined
+[2025-08-13T08:07:54.969Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T08:24:23.356Z] INFO: Login attempt: Stevenite
+[2025-08-13T08:24:23.835Z] INFO: Login success: undefined
+[2025-08-13T08:25:58.485Z] INFO: Login attempt: Steven
+[2025-08-13T08:25:58.544Z] INFO: Login success: undefined
+[2025-08-13T08:25:58.584Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T09:07:01.792Z] INFO: Login attempt: Steven
+[2025-08-13T09:07:01.859Z] INFO: Login success: undefined
+[2025-08-13T09:07:01.935Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T09:09:34.379Z] INFO: Login attempt: Stevenite
+[2025-08-13T09:09:34.437Z] INFO: Login success: undefined
+[2025-08-13T09:15:30.099Z] INFO: Login attempt: Steven
+[2025-08-13T09:15:30.160Z] INFO: Login success: undefined
+[2025-08-13T09:15:30.199Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T09:30:56.941Z] INFO: Login attempt: Stevenite
+[2025-08-13T09:30:57.002Z] INFO: Login success: undefined
+[2025-08-13T09:33:29.684Z] INFO: Login attempt: a1
+[2025-08-13T09:33:29.745Z] INFO: Login success: undefined
+[2025-08-13T10:20:59.449Z] INFO: Login attempt: Steven
+[2025-08-13T10:20:59.516Z] INFO: Login success: undefined
+[2025-08-13T10:20:59.594Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T10:21:59.794Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T10:22:55.038Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T10:24:48.558Z] INFO: Login attempt: Steven
+[2025-08-13T10:24:48.626Z] INFO: Login success: undefined
+[2025-08-13T10:24:48.701Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T10:26:47.203Z] INFO: Login attempt: Steven
+[2025-08-13T10:26:47.274Z] INFO: Login success: undefined
+[2025-08-13T10:26:47.354Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T10:34:33.228Z] INFO: Login attempt: Steven
+[2025-08-13T10:34:33.302Z] INFO: Login success: undefined
+[2025-08-13T10:34:33.379Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T12:56:21.367Z] INFO: Login attempt: Steven
+[2025-08-13T12:56:21.435Z] INFO: Login success: undefined
+[2025-08-13T12:56:21.512Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T14:18:17.928Z] INFO: Register attempt: a1
+[2025-08-13T14:18:18.009Z] INFO: Register success: a1
+[2025-08-13T14:18:27.336Z] INFO: Login attempt: Stevenite
+[2025-08-13T14:18:27.397Z] INFO: Login success: undefined
+[2025-08-13T14:19:12.076Z] INFO: Login attempt: Steven
+[2025-08-13T14:19:12.135Z] INFO: Login success: undefined
+[2025-08-13T14:19:12.183Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T15:03:17.383Z] INFO: Register attempt: a1
+[2025-08-13T15:03:17.455Z] INFO: Register success: a1
+[2025-08-13T15:03:27.060Z] INFO: Login attempt: Stevenite
+[2025-08-13T15:03:27.120Z] INFO: Login success: undefined
+[2025-08-13T15:05:25.907Z] INFO: Login attempt: Stevenite
+[2025-08-13T15:05:25.974Z] INFO: Login success: undefined
+[2025-08-13T15:19:47.704Z] INFO: Login attempt: Stevenite
+[2025-08-13T15:19:47.772Z] INFO: Login success: undefined
+[2025-08-13T15:20:09.750Z] INFO: Login attempt: Steven
+[2025-08-13T15:20:09.808Z] INFO: Login success: undefined
+[2025-08-13T15:20:09.856Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T15:22:59.476Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-13T15:39:23.426Z] INFO: Login attempt: Stevenite
+[2025-08-13T15:39:23.488Z] INFO: Login success: undefined
+[2025-08-13T15:56:12.008Z] INFO: Login attempt: Stevenite
+[2025-08-13T15:56:12.077Z] INFO: Login success: undefined
+[2025-08-13T15:56:36.721Z] INFO: Login attempt: Stevenite
+[2025-08-13T15:56:36.782Z] INFO: Login success: undefined
+[2025-08-13T18:35:57.503Z] INFO: Login attempt: Stevenite
+[2025-08-13T18:35:57.694Z] INFO: Login success: undefined
+[2025-08-13T18:55:00.778Z] INFO: Login attempt: Stevenite
+[2025-08-13T18:55:00.846Z] INFO: Login success: undefined
+[2025-08-13T18:56:20.608Z] INFO: Login attempt: Stevenite
+[2025-08-13T18:56:20.677Z] INFO: Login success: undefined
+[2025-08-13T19:05:38.198Z] INFO: Login attempt: Stevenite
+[2025-08-13T19:05:38.265Z] INFO: Login success: undefined

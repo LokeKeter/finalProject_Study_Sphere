@@ -39,18 +39,24 @@ export default function Dashboard() {
     const [popupVisible, setPopupVisible] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
-  
-    const openPopup = (type) => {
+    const [disciplineEvents, setDisciplineEvents] = useState([]);
+
+    const openPopup = async (type) => {
       setSelectedCategory(type);
       setPopupVisible(true);
       setSearchQuery("");
+
+      if (type === "discipline") {
+        await fetchDiscipline(2); // יומיים אחורה
+      }
     };
+
     const filteredTasks =
-    selectedCategory && taskData[selectedCategory]
-      ? taskData[selectedCategory].filter((task) =>
-          task.title.includes(searchQuery)
-        )
-      : [];
+      selectedCategory === "discipline"
+        ? disciplineEvents.filter(task => task.title.includes(searchQuery))
+        : selectedCategory && taskData[selectedCategory]
+          ? taskData[selectedCategory].filter(task => task.title.includes(searchQuery))
+          : [];
 
       //מערך ריק של משימות
       const [tasks, setTasks] = useState([]);
@@ -79,6 +85,29 @@ export default function Dashboard() {
         );
       } catch (error) {
         console.error("❌ שגיאה בעדכון המשימה:", error.message);
+      }
+    };
+
+    const fetchDiscipline = async (days = 2) => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/communication/discipline/recent?days=${days}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        // מצפה למערך של { id, title, studentName, parentName, date }
+        setDisciplineEvents(
+          Array.isArray(data)
+            ? data.map(ev => ({
+                id: ev.id,
+                title: `${ev.title} • ${ev.studentName || ""}`.trim(),
+                date: new Date(ev.date).toLocaleString("he-IL")
+              }))
+            : []
+        );
+      } catch (err) {
+        console.error("❌ שגיאה בשליפת אירועי משמעת:", err.message);
+        setDisciplineEvents([]);
       }
     };
 
