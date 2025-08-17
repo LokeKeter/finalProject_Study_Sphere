@@ -76,21 +76,20 @@ const addHomework = async () => {
   }
   try {
     const token = await AsyncStorage.getItem("token");
-    const res = await fetch(`${API_BASE_URL}/api/class/homework/send`, {
+    const res = await fetch(`${API_BASE_URL}/api/homework/send`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        classId: selectedClass.name,
-        teacherId: userId,
+        classId: selectedClass.name, // או ה-id של הכיתה
         content: newHomework,
+        // אופציונלי: closePrevious: true
       }),
     });
 
     const data = await res.json();
-
     if (res.ok) {
       Alert.alert("✅ הצלחה", "שיעורי הבית נשלחו להורים");
       setHomeworkList([...homeworkList, { id: Date.now().toString(), text: newHomework, completed: false }]);

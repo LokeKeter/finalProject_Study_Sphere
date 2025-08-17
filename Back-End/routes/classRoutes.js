@@ -9,7 +9,6 @@ const {
   getClassById,
   updateClass,
   deleteClass,
-  sendClassHomework,
   addStudentToClass,
   removeStudentFromClass,
   getUnassignedStudents
@@ -20,7 +19,6 @@ router.get('/', authMiddleware, getAllClasses);
 router.get('/:id', authMiddleware, getClassById);
 router.put('/:id', authMiddleware, authorizeRoles(["admin"]), updateClass);
 router.delete('/:id', authMiddleware, authorizeRoles(["admin"]), deleteClass);
-router.post("/homework/send", authMiddleware, sendClassHomework);
 
 // ✅ נתיבים חדשים לניהול תלמידים בכיתות
 router.post('/students/add', authMiddleware, authorizeRoles(["admin"]), addStudentToClass);

@@ -1,12 +1,24 @@
 const YearlyEvent = require('../models/YearlyEvent');
 const mongoose = require('mongoose');
 
-// עוזר: המרה בטוחה לתאריך (מחרוזת "YYYY-MM-DD" → Date בתחילת היום ב-UTC)
+exports.upcoming = async ({ limit = 5 } = {}) => {
+  const todayUtc = new Date();
+  todayUtc.setUTCHours(0, 0, 0, 0);
+
+  const rows = await YearlyEvent
+    .find({ date: { $gte: todayUtc } })
+    .sort({ date: 1, title: 1 })
+    .limit(Math.min(Number(limit) || 5, 50))
+    .lean();
+
+  return rows.map(e => ({ ...e, id: e._id?.toString() }));
+};
+
+// עוזר: המרה בטוחה לתאריך
 function parseIsoDateOrThrow(dateStr) {
   if (!dateStr) throw new Error('date is required');
   // אם קיבלנו כבר Date – נחזיר כמו שהוא
   if (dateStr instanceof Date) return dateStr;
-  // כדי להימנע מהיסט timezone בשמירה – נוסיף T00:00Z
   const d = new Date(`${dateStr}T00:00:00.000Z`);
   if (Number.isNaN(d.getTime())) throw new Error('Invalid date format');
   return d;

@@ -10,16 +10,8 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import TopSidebar from '../components/TopSidebar';
-
-const assignmentsData = [
-  { id: "1", teacher: "יוסי כהן", subject: "מתמטיקה", dueDate: "15.03" },
-  { id: "2", teacher: "רונית לוי", subject: "אנגלית", dueDate: "20.03" },
-  { id: "3", teacher: "משה ישראלי", subject: "היסטוריה", dueDate: "25.03" },
-  { id: "4", teacher: "שרה דויד", subject: "מדעים", dueDate: "30.03" },
-];
-
-
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '../config';
 
 const PAGE_SIZE = 20;
 
@@ -30,6 +22,62 @@ const AssignmentScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+  const [assignments, setAssignments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        setError('');
+
+        const userStr = await AsyncStorage.getItem('user');
+        const token   = await AsyncStorage.getItem('token');
+        const parsed  = userStr ? JSON.parse(userStr) : {};
+        const parentId = parsed?.id || parsed?._id;
+
+        if (!parentId) {
+          setError('לא נמצא מזהה הורה באחסון');
+          setAssignments([]);
+          setLoading(false);
+          return;
+        }
+
+        const url = `${API_BASE_URL}/api/homework/parent/current`;
+        // לעזרה באבחון:
+        console.log('↗️ GET', url);
+
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) {
+          setError(`שגיאה בטעינה (${res.status})`);
+          setAssignments([]);
+          setLoading(false);
+          return;
+        }
+
+        const data = await res.json();
+
+        const normalized = (Array.isArray(data) ? data : []).map(h => ({
+          id: h.id || h._id,
+          teacher: h.teacherName || '',                 // מגיע מה־service
+          subject: h.subject || '',
+          dueDate: h.dueDate
+            ? new Date(h.dueDate).toLocaleDateString('he-IL')
+            : (h.createdAt ? new Date(h.createdAt).toLocaleDateString('he-IL') : ''),
+          _raw: h,                                      // נשמור את כל האובייקט להצגה במודאל
+        }));
+
+        setAssignments(normalized);
+      } catch (e) {
+        console.error('❌ homework fetch error:', e.message);
+        setError('אירעה שגיאה בטעינה');
+        setAssignments([]);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -38,12 +86,11 @@ const AssignmentScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const filteredAssignments = assignmentsData.filter(
-    (assignment) =>
-      assignment.teacher.includes(searchQuery) || assignment.subject.includes(searchQuery)
+  const filteredAssignments = assignments.filter(a =>
+    (a.teacher || '').includes(searchQuery) || (a.subject || '').includes(searchQuery)
   );
 
-  const totalPages = Math.ceil(filteredAssignments.length / PAGE_SIZE);
+  const totalPages = Math.ceil(filteredAssignments.length / PAGE_SIZE) || 1;
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const displayedAssignments = filteredAssignments.slice(startIndex, startIndex + PAGE_SIZE);
 
@@ -73,7 +120,21 @@ const AssignmentScreen = () => {
           setCurrentPage(1);
         }}
       />
-
+      {loading && (
+        <Text style={{ textAlign: 'center', marginTop: 10 }}>
+          טוען שיעורי בית…
+        </Text>
+      )}
+      {!!error && !loading && (
+        <Text style={{ textAlign: 'center', marginTop: 10, color: 'red' }}>
+          {error}
+        </Text>
+      )}
+      {!loading && !error && assignments.length === 0 && (
+        <Text style={{ textAlign: 'center', marginTop: 10 }}>
+          אין שיעורי בית כרגע
+        </Text>
+      )}
       {/* 🔹 טבלה */}
       <ScrollView>
         <View style={styles.tableContainer}>
@@ -105,9 +166,10 @@ const AssignmentScreen = () => {
               <Text style={styles.messageTitle}>{selectedAssignment?.subject}</Text>
               <Text style={styles.messageSender}>מורה: {selectedAssignment?.teacher}</Text>
               <Text style={styles.messageDate}>תאריך סיום: {selectedAssignment?.dueDate}</Text>
-              <Text style={styles.messageContent}>פרטי המטלה</Text>
+              <Text style={styles.messageContent}>
+                {selectedAssignment?._raw?.content || '—'}
+              </Text>
             </ScrollView>
-
             <View style={styles.modalButtonsContainer}>
               <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeMessageButton}>
                 <Text style={styles.closeMessageButtonText}>סגור</Text>

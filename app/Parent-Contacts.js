@@ -7,9 +7,12 @@ import {
   StyleSheet,
   TextInput,
   Modal,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import TopSidebar from '../components/TopSidebar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '../config';
 
 const parentsData = [
   { id: "1", parentName: "יוסי כהן", studentName: "מטמטיקה" },
@@ -26,7 +29,8 @@ const ContactsScreen = () => {
   const [isLetterModalVisible, setLetterModalVisible] = useState(false);
   const [letterSubject, setLetterSubject] = useState("");
   const [letterContent, setLetterContent] = useState("");
-
+  const [teachers, setTeachers] = useState([]);
+  const [selectedTeacher, setSelectedTeacher] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -35,6 +39,43 @@ const ContactsScreen = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const userStr = await AsyncStorage.getItem('user');
+        const token   = await AsyncStorage.getItem('token');
+        const parsed  = userStr ? JSON.parse(userStr) : {};
+        const parentId = parsed?.id || parsed?._id;
+
+        if (!parentId) {
+          console.error('❌ contacts: no parentId in storage');
+          setTeachers([]);
+          return;
+        }
+
+        const url = `${API_BASE_URL}/api/communication/contacts/teachers/${encodeURIComponent(parentId)}`;
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        if (!res.ok) {
+          console.error('❌ contacts fetch status:', res.status);
+          setTeachers([]);
+          return;
+        }
+
+        const data = await res.json(); // [{ _id, name, subject, ... }]
+        setTeachers(Array.isArray(data) ? data : []);
+      } catch (e) {
+        console.error('❌ contacts fetch error:', e.message);
+        setTeachers([]);
+      }
+    })();
+  }, []);
+
+  const q = (searchQuery || '').toLowerCase();
+  const filteredTeachers = teachers.filter(t => {
+    const name = String(t.name || '').toLowerCase();
+    const subj = String(t.subject || '').toLowerCase();
+    return name.includes(q) || subj.includes(q);
+  });
 
   // 🔹 סינון נתונים לפי כיתה ושם
   const filteredParents = parentsData.filter(
@@ -69,14 +110,18 @@ const ContactsScreen = () => {
             <Text style={styles.headerCell}>            מקצוע</Text>
           </View>
 
-          {filteredParents.map((parent) => (
-            <View key={parent.id} style={styles.tableRow}>
-              <Text style={styles.cell}>{parent.parentName}</Text>
-              <Text style={styles.cell}>{parent.studentName}</Text>
-
-              {/* 🔹 פעולות */}
+          {filteredTeachers.map((t) => (
+            <View key={t._id} style={styles.tableRow}>
+              <Text style={styles.cell}>{t.name}</Text>
+              <Text style={styles.cell}>{t.subject || '—'}</Text>
+              {/* פעולות */}
               <View style={styles.actionsContainer}>
-                <TouchableOpacity onPress={() => setLetterModalVisible(true)}>
+                <TouchableOpacity onPress={() => {
+                  setSelectedTeacher(t);
+                  setLetterSubject('');
+                  setLetterContent('');
+                  setLetterModalVisible(true);
+                }}>
                   <Text style={styles.actionText}>✉️   </Text>
                 </TouchableOpacity>
               </View>
@@ -93,7 +138,7 @@ const ContactsScreen = () => {
           <View style={styles.iconBox}>
             <Text style={styles.icon}>✉️</Text>
           </View>
-          <Text style={styles.title}>מכתב להורים</Text>
+          <Text style={styles.title}>מכתב למורה</Text>
         </View>
         <TouchableOpacity onPress={() => setLetterModalVisible(false)}>
           <Text style={styles.closeButton}>✖</Text>
@@ -125,14 +170,54 @@ const ContactsScreen = () => {
         >
           <Text style={styles.cancelButtonText}>ביטול</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sendButton} onPress={() => {
-          if (!letterSubject.trim() || !letterContent.trim()) {
-            Alert.alert("❌ שגיאה", "יש למלא את כל השדות לפני השליחה.");
-            return;
-          }
-          Alert.alert("✅ הצלחה", "המכתב נשלח בהצלחה!");
-          setLetterModalVisible(false);
-        }}>
+        <TouchableOpacity
+          style={styles.sendButton}
+          onPress={async () => {
+            try {
+              if (!selectedTeacher?._id) {
+                Alert.alert("❌ שגיאה", "בחר/י מורה.");
+                return;
+              }
+              if (!letterSubject.trim() || !letterContent.trim()) {
+                Alert.alert("❌ שגיאה", "יש למלא נושא ותוכן.");
+                return;
+              }
+
+              const userStr = await AsyncStorage.getItem('user');
+              const token   = await AsyncStorage.getItem('token');
+              const parsed  = userStr ? JSON.parse(userStr) : {};
+              const parentId = parsed?.id || parsed?._id;
+
+              const res = await fetch(`${API_BASE_URL}/api/communication/send-letter`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  // הראוט הזה אצלך לא מוגן, אבל לא מזיק לשלוח:
+                  Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                  senderId: parentId,
+                  receiverId: selectedTeacher._id,
+                  subject: letterSubject.trim(),
+                  content: letterContent.trim()
+                })
+              });
+
+              if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || 'שליחה נכשלה');
+              }
+
+              Alert.alert("✅ הצלחה", "המכתב נשלח למורה.");
+              setLetterModalVisible(false);
+              setSelectedTeacher(null);
+              setLetterSubject('');
+              setLetterContent('');
+            } catch (e) {
+              Alert.alert("❌ שגיאה", e.message);
+            }
+          }}
+        >
           <Text style={styles.sendButtonText}>📨 שלח</Text>
         </TouchableOpacity>
       </View>

@@ -93,3 +93,41 @@ exports.getRecentDiscipline = async (req, res) => {
     res.status(500).json({ error: "שגיאה בשליפת אירועי משמעת" });
   }
 };
+
+exports.getRecentMeetings = async (req, res) => {
+  try {
+    const days = Math.max(0, parseInt(req.query.days, 10) || 30);
+    const senderId = req.query.senderId || req.user?.userId || req.user?.id;
+    const limit = Math.min(200, parseInt(req.query.limit, 10) || 100);
+
+    const items = await communicationService.getRecentMeetings({ days, senderId, limit });
+    res.json(items);
+  } catch (err) {
+    console.error('❌ getRecentMeetings:', err);
+    res.status(err.status || 500).json({ message: err.message || 'Server error' });
+  }
+};
+
+exports.getTeachersForParent = async (req, res) => {
+  try {
+    const parentId = req.params.parentId || req.query.parentId || req.user?.id;
+    const items = await communicationService.getTeachersForParent({ parentId });
+    return res.json(items);
+  } catch (err) {
+    console.error('❌ getTeachersForParent:', err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.listParentMeetings = async (req, res) => {
+  try {
+    const days = Number(req.query.days) || 60;
+    const token = req.headers.authorization || req.headers.Authorization;
+
+    const items = await communicationService.getParentMeetingsByToken(token, days);
+    return res.json(items);
+  } catch (err) {
+    console.error('❌ listParentMeetings:', err);
+    res.status(err.status || 500).json({ message: err.message || 'Server error' });
+  }
+};

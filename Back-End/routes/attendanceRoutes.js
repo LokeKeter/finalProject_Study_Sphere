@@ -22,4 +22,9 @@ router.get("/teacher-subject/:teacherId", attendanceController.getTeacherSubject
 //כל התלמידים שהמורה מלמד
 router.get("/students-by-class/:grade", authMiddleware, authorizeRoles(["teacher"]), attendanceController.getStudentsByClass);
 
+router.get("/summary", authMiddleware,  authorizeRoles(["teacher", "admin"]),  attendanceController.getAttendanceSummary);
+
+router.get(  '/discipline/parent', authMiddleware, authorizeRoles(['parent']), attendanceController.disciplineForParent);
+
+router.get('/parent/pie', authMiddleware, authorizeRoles(['parent']), attendanceController.parentPie);
 module.exports = router;

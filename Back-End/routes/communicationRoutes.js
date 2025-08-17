@@ -13,5 +13,9 @@ router.post('/send-file', upload.single('file'), communicationController.sendFil
 router.get('/archive/:userId', communicationController.getUserArchive);
 router.post("/send-class-message", communicationController.sendClassMessage);
 router.get("/discipline/recent", auth, authorizeRoles(["teacher"]),  communicationController.getRecentDiscipline);
+router.get('/meetings/recent', auth, authorizeRoles(['teacher', 'parent']), communicationController.getRecentMeetings);
+router.get('/contacts/teachers/:parentId',  auth,  authorizeRoles(['parent']),  communicationController.getTeachersForParent);
+router.get('/meetings/parent',  auth, authorizeRoles(['parent']), communicationController.listParentMeetings);
+
 
 module.exports = router;

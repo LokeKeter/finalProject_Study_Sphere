@@ -51,16 +51,6 @@ const deleteClass = async (req, res) => {
   }
 };
 
-const sendClassHomework = async (req, res) => {
-  try {
-    const { classId, teacherId, subject, content } = req.body;
-    const result = await classService.sendHomeworkToClass({ classId, teacherId, subject, content });
-    res.status(201).json(result);
-  } catch (error) {
-    res.status(500).json({ message: "שליחת שיעורי בית נכשלה", error: error.message });
-  }
-};
-
 // ✅ חדש - הוספת תלמיד לכיתה
 const addStudentToClass = async (req, res) => {
   try {
@@ -101,7 +91,6 @@ module.exports = {
   getClassById,
   updateClass,
   deleteClass,
-  sendClassHomework,
   addStudentToClass,
   removeStudentFromClass,
   getUnassignedStudents

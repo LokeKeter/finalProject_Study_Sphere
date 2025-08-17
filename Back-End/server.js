@@ -41,6 +41,7 @@ const attendanceRoutes = require("./routes/attendanceRoutes");
 const communicationRoutes = require("./routes/communicationRoutes");
 const yearlyEventRoutes = require('./routes/yearlyEventRoute');
 const path = require("path");
+const homeworkRoute = require('./routes/homeworkRoute');
 
 // ראוטים ראשיים
 app.use('/api/ai', aiRoutes);
@@ -56,6 +57,7 @@ app.use("/api/attendance", attendanceRoutes);
 app.use("/api/communication", communicationRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use('/api/yearlyevents', yearlyEventRoutes);
+app.use('/api/homework', homeworkRoute);
 
 // ראוט בדיקה ראשי
 app.get("/", (req, res) => {

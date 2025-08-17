@@ -77,11 +77,52 @@ const getTeacherSubject = async (req, res) => {
   }
 };
 
+const getAttendanceSummary = async (req, res) => {
+  try {
+    const teacherId = req.user && req.user.id; // מגיע מה-auth middleware
+    const days = Number(req.query.days || 7);
+
+    const { present, absent, total } = await attendanceService.getSummary({ teacherId, days });
+    return res.json({ present, absent, total });
+  } catch (err) {
+    console.error('❌ getAttendanceSummary:', err);
+    return res.status(500).json({ message: 'Failed to fetch attendance summary' });
+  }
+};
+
+// רק להורים: “משמעת” שבוע אחורה מתוך Attendance
+const disciplineForParent = async (req, res) => {
+  try {
+    const days = Number(req.query.days) || 7;
+    const token = req.headers.authorization || req.query.token || '';
+    const items = await attendanceService.getParentDisciplineByToken(token, days);
+    res.json(items);
+  } catch (err) {
+    console.error('[controller] disciplineForParent error:', err);
+    res.status(err.status || 500).json({ message: err.message || 'Internal error' });
+  }
+};
+
+const parentPie = async (req, res) => {
+  try {
+    const token = req.headers.authorization || req.headers.Authorization;
+    const range = req.query.range || req.query.r || 'weekly';
+    const data = await attendanceService.parentPieByToken({ token, range });
+    res.json(data); // { present, absent, since }
+  } catch (err) {
+    console.error('❌ parentPie error:', err);
+    res.status(err.status || 500).json({ message: err.message || 'Server error' });
+  }
+};
+
 module.exports = {
   saveAttendance,
   getAttendanceByClassAndDate,
   getAttendanceByStudent,
+  getAttendanceSummary,
   getTeacherClasses,
   getStudentsByClass,
-  getTeacherSubject
+  getTeacherSubject,
+  parentPie,
+  disciplineForParent
 };

@@ -14,12 +14,6 @@ import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_BASE_URL } from "../config";
 
-const stats = [
-  { id: "3", title: "משמעת", value: "1", icon: "🔔", type: "discipline" },
-  { id: "4", title: "שיעורים ", value: "5", icon: "📚", type: "homework" },
-  { id: "5", title: "פגישות", value: "2", icon: "📅", type: "meetings" },
-];
-
 const taskData = {
   discipline: [
     { id: "1", title: "איחור לשיעור", date: "03/03/2024" },
@@ -40,23 +34,153 @@ export default function Dashboard() {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [disciplineEvents, setDisciplineEvents] = useState([]);
+    // 🆕 שיעורי בית
+    const [homeworkList, setHomeworkList] = useState([]);
+    const [selectedHomework, setSelectedHomework] = useState(null);
+    const [classesById, setClassesById] = useState({});
+    const [parentToClass, setParentToClass] = useState({});
+    const [meetings, setMeetings] = useState([]);
+    const [selectedMeeting, setSelectedMeeting] = useState(null);
+    // לנוכחות 
+    const [attendanceSummary, setAttendanceSummary] = useState({
+      present: 0,
+      absent: 0,
+      total: 0,
+      date: null
+    });
 
+    const [yearlyEvents, setYearlyEvents] = useState([]);
+
+    const cards = [
+      { id: "3", title: "משמעת", value: disciplineEvents.length, icon: "🔔", type: "discipline" },
+      { id: "4", title: "שיעורים", value: homeworkList.length, icon: "📚", type: "homework" },
+      { id: "5", title: "פגישות", value: meetings.length, icon: "📅", type: "meetings" },
+    ];
+    
     const openPopup = async (type) => {
       setSelectedCategory(type);
       setPopupVisible(true);
       setSearchQuery("");
+      setSelectedHomework(null);
+      setSelectedMeeting(null);
 
       if (type === "discipline") {
-        await fetchDiscipline(2); // יומיים אחורה
+        await fetchDiscipline(2);
+      } else if (type === "homework") {
+        await fetchHomeworkCurrent();
+      } else if (type === "meetings") {
+        await buildParentToClass();
+        await fetchMeetings(30);
       }
     };
 
+    useEffect(() => {
+      (async () => {
+        await fetchHomeworkCurrent();
+        await fetchDiscipline(2);
+        await buildParentToClass();
+        await fetchMeetings(30);
+        await fetchAttendanceSummary();
+        await fetchYearlyEvents();
+      })();
+    }, []);
+
+    const fetchYearlyEvents = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/yearlyevents/upcoming?limit=5`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('failed to load events');
+
+        const data = await res.json();
+        setYearlyEvents(
+          (Array.isArray(data) ? data : []).map(e => ({
+            id: e.id || e._id,
+            title: e.title,
+            date: new Date(e.date).toLocaleDateString('he-IL'),
+            details: e.details || ''
+          }))
+        );
+      } catch (err) {
+        console.error('❌ yearly events fetch:', err.message);
+        setYearlyEvents([]);
+      }
+    };
+
+    const fetchMeetings = async (days = 30) => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const userStr = await AsyncStorage.getItem('user');
+        let senderId;
+        try { senderId = JSON.parse(userStr)?.id; } catch {}
+
+        const url = `${API_BASE_URL}/api/communication/meetings/recent?days=${days}${senderId ? `&senderId=${senderId}` : ""}`;
+
+        const res = await fetch(url, { headers: { 'Authorization': `Bearer ${token}` } });
+        const data = await res.json();
+
+        console.log('📥 meetings url:', url);
+        console.log('📥 meetings raw:', data);
+
+        setMeetings(
+          Array.isArray(data)
+            ? data.map(m => {
+                // נזהה את מזהה ההורה כדי למצוא את הכיתה שלו במפה
+                const pid = String(
+                  (m?.receiverId && (m?.receiverId?._id || m?.receiverId)) ||
+                  m?.receiver ||
+                  m?.parentId ||
+                  ''
+                );
+                const classLabel = parentToClass[pid];
+
+                return {
+                  id: m.id || m._id,
+                  title: classLabel
+                    ? `כיתה ${classLabel}`
+                    : (
+                        // נפילה חזרה לשם הילד/נושא אם לא נמצאה כיתה
+                        (m?.receiverId?.studentName) ||
+                        (m?.receiverId?.name) ||
+                        m?.receiverName ||
+                        m?.subject ||
+                        "פגישה"
+                      ),
+                  date: formatMeetingDate(m),
+                  _raw: m,
+                };
+              })
+            : []
+        );
+      } catch (err) {
+        console.error("❌ שגיאה בשליפת פגישות:", err.message);
+        setMeetings([]);
+      }
+    };
+
+    const q = (searchQuery || "").trim().toLowerCase();
+
     const filteredTasks =
       selectedCategory === "discipline"
-        ? disciplineEvents.filter(task => task.title.includes(searchQuery))
-        : selectedCategory && taskData[selectedCategory]
-          ? taskData[selectedCategory].filter(task => task.title.includes(searchQuery))
-          : [];
+        ? disciplineEvents.filter(t => (t.title || "").toLowerCase().includes(q))
+        : selectedCategory === "homework"
+          ? homeworkList
+              .filter(item => {
+                const txt = `${item.grade || item.classId || ""} ${item.subject || ""}`.toLowerCase();
+                return txt.includes(q);
+              })
+              .map(item => ({
+                id: item.id,
+                title: `כיתה ${item.grade || item.classId}${item.subject ? ` • ${item.subject}` : ""}`,
+                date: item.createdAt ? new Date(item.createdAt).toLocaleString("he-IL") : "",
+                _raw: item, // לשימוש בלחיצה להצגת התוכן
+              }))
+          : selectedCategory === "meetings"
+            ? meetings.filter(m => (m.title || "").toLowerCase().includes(q))
+            : selectedCategory && taskData[selectedCategory]
+              ? taskData[selectedCategory].filter(t => (t.title || "").toLowerCase().includes(q))
+              : [];
 
       //מערך ריק של משימות
       const [tasks, setTasks] = useState([]);
@@ -108,6 +232,107 @@ export default function Dashboard() {
       } catch (err) {
         console.error("❌ שגיאה בשליפת אירועי משמעת:", err.message);
         setDisciplineEvents([]);
+      }
+    };
+
+    // שליפת שיעורי בית נוכחיים
+    const fetchHomeworkCurrent = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+
+        // שלוף שיעורי בית (נניח שיש ראוט כזה; אם אצלך שונה – עדכן את ה-URL)
+        const hwRes = await fetch(`${API_BASE_URL}/api/homework/current`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        // אופציונלי: שלוף את הכיתות כדי להמיר classId -> grade לשם יפה
+        const classesRes = await fetch(`${API_BASE_URL}/api/class`, {
+          headers: { Authorization: `Bearer ${token}` }
+        }).catch(() => null);
+
+        let classesMap = {};
+        if (classesRes && classesRes.ok) {
+          const classes = await classesRes.json();
+          classesMap = (classes || []).reduce((acc, c) => {
+            acc[c._id] = c.grade || c.name || c.className || c._id;
+            return acc;
+          }, {});
+          setClassesById(classesMap);
+        }
+
+        if (!hwRes.ok) {
+          setHomeworkList([]);
+          return;
+        }
+
+        const hw = await hwRes.json();
+        const normalized = Array.isArray(hw) ? hw
+          .filter(h => h.isCurrent) // למקרה שהראוט מחזיר הכל
+          .map(h => ({
+            id: h._id || h.id,
+            classId: h.classId,
+            grade: classesMap[h.classId], // יכול להיות undefined – נציג classId
+            subject: h.subject,
+            content: h.content,
+            createdAt: h.createdAt
+          })) : [];
+
+        setHomeworkList(normalized);
+      } catch (e) {
+        console.error('❌ שגיאה בשליפת שיעורי בית:', e);
+        setHomeworkList([]);
+      }
+    };
+
+    // שליפת סיכום נוכחות עבור המורה לשבוע האחרון
+    const fetchAttendanceSummary = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const url = `${API_BASE_URL}/api/attendance/summary`; // ה-API מחזיר {present, absent, total}
+        console.log('↗️ GET', url);
+
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        console.log('↙️ status:', res.status);
+        if (!res.ok) {
+          console.error('❌ attendance summary failed:', res.status);
+          return;
+        }
+
+        const data = await res.json(); // מצופה: { present, absent, total }
+        console.log('✅ attendance summary data:', data);
+
+        setAttendanceSummary({
+          present: Number(data.present || 0),
+          absent:  Number(data.absent  || 0),
+          total:   Number(data.total   || 0),
+        });
+      } catch (e) {
+        console.error("❌ שגיאה בשליפת סיכום נוכחות:", e.message);
+      }
+    };
+
+    // בונה מיפוי parentId -> כיתה
+    const buildParentToClass = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const res = await fetch(`${API_BASE_URL}/api/class`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (!res.ok) return;
+
+        const classes = await res.json();
+        const map = {};
+        (classes || []).forEach(cls => {
+          const label = cls.grade || cls.name || cls.className || '';
+          (cls.students || []).forEach(s => {
+            // parentId יכול להיות אובייקט { _id } או מחרוזת
+            const pid = s?.parentId?._id || s?.parentId;
+            if (pid) map[String(pid)] = label;
+          });
+        });
+        setParentToClass(map);
+      } catch (e) {
+        console.error('❌ buildParentToClass:', e.message);
       }
     };
 
@@ -177,13 +402,45 @@ const removeTask = async (taskId) => {
   }
 };
 
+// מקבל "DD/MM/YYYY" או "DD/MM/YYYY HH:mm" ומחזיר Date (או null אם לא פרסי)
+const toDateDMY = (s) => {
+  if (!s) return null;
+  const str = String(s).trim();
 
-  // ✅ Yearly Events Data
-const [yearlyEvents, setYearlyEvents] = useState([
-  { id: "1", title: "🎉 פסח", date: "22 באפריל 2024" },
-  { id: "2", title: "🚌 טיול שנתי", date: "15 במאי 2024" },
-  { id: "3", title: "📅 יום המורה", date: "30 ביוני 2024" },
-]);
+  // מפרק לחלק של תאריך וחלק של שעה (אם קיים)
+  const [datePart, timePart] = str.split(/\s+/); // "DD/MM/YYYY" ["HH:mm"]?
+  const [dd, MM, yyyy] = (datePart || "").split("/").map(n => parseInt(n, 10));
+  if (!dd || !MM || !yyyy) return null;
+
+  let hh = 0, mm = 0;
+  if (timePart && timePart.includes(":")) {
+    const [h, m] = timePart.split(":").map(n => parseInt(n, 10));
+    hh = h || 0;
+    mm = m || 0;
+  }
+
+  // יוצר תאריך מקומי
+  return new Date(yyyy, MM - 1, dd, hh, mm);
+};
+
+const formatMeetingType = (mt) => {
+  const t = String(mt || "").toLowerCase();
+  if (t.includes("zoom") || t.includes("online")) return "זום";
+  if (t.includes("פרונט") || t.includes("in-person") || t.includes("onsite")) return "פרונטלי";
+  return "פגישה";
+};
+
+const formatMeetingDate = (m) => {
+  const d =
+    toDateDMY(m?.meetingDate) ||   // נסיון לפרסר "DD/MM/YYYY HH:mm"
+    toDateDMY(m?.date) ||          // נסיון נוסף אם השדה אחר
+    (m?.createdAt ? new Date(m.createdAt) : null); // נפילה ל-createdAt
+  return d ? d.toLocaleString("he-IL") : "";
+};
+
+const getStudentName = (m) => {
+  return m?.studentName || m?.receiverId?.studentName || m?.receiverName || "";
+};
 
 const [addEventModalVisible, setAddEventModalVisible] = useState(false);
 const [newEventTitle, setNewEventTitle] = useState("");
@@ -196,7 +453,7 @@ const [showDatePicker, setShowDatePicker] = useState(false);
           <TopSidebar userRole="teacher" />
       <ScrollView contentContainerStyle={styles.content}>
       <View style={styles.statsContainer}>
-          {stats.map((item) => (
+          {cards.map((item) => (
             <TouchableOpacity key={item.id} onPress={() => openPopup(item.type)}>
               <View style={styles.statCard}>
                 <Text style={styles.statIcon}>{item.icon}</Text>
@@ -206,30 +463,39 @@ const [showDatePicker, setShowDatePicker] = useState(false);
             </TouchableOpacity>
           ))}
         </View>
-        {/* 📊 PIE CHART */}
+        {/* PIE CHART */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📊  נוכחות</Text>
-          <PieChart
-            data={[
-              { name: "נוכחים", population: 30, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
-              { name: "נעדרים", population: 5, color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
-            ]}
-            width={250}
-            height={150}
-            chartConfig={{
-              backgroundGradientFrom: "#ffffff",
-              backgroundGradientTo: "#ffffff",
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-            }}
-            accessor="population"
-            backgroundColor="transparent"
-          />
-          {/* Labels Under Pie Chart */}
-          <View style={styles.pieChartLabels}>
-            <Text style={{ color: "#0A2540", fontWeight: "bold" }}>🔵 נוכחים</Text>
-            <Text style={{ color: "#B0B0B0", fontWeight: "bold" }}>⚪ נעדרים</Text>
-          </View>
+            {attendanceSummary.total > 0 ? (
+              <>
+                <PieChart
+                  data={[
+                    { name: "נוכחים", population: attendanceSummary.present, color: "#0A2540", legendFontColor: "#000", legendFontSize: 14 },
+                    { name: "נעדרים",  population: attendanceSummary.absent,  color: "#B0B0B0", legendFontColor: "#000", legendFontSize: 14 },
+                  ]}
+                  width={250}
+                  height={150}
+                  chartConfig={{
+                    backgroundGradientFrom: "#ffffff",
+                    backgroundGradientTo: "#ffffff",
+                    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                  }}
+                  accessor="population"
+                  backgroundColor="transparent"
+                />
+
+                <View style={styles.pieChartLabels}>
+                  <Text style={{ color: "#0A2540", fontWeight: "bold" }}>🔵 נוכחים: {attendanceSummary.present}</Text>
+                  <Text style={{ color: "#B0B0B0", fontWeight: "bold" }}>⚪ נעדרים: {attendanceSummary.absent}</Text>
+                </View>
+              </>
+            ) : (
+              <Text style={{ textAlign: "center", marginVertical: 10, color: "#666" }}>
+                אין נתוני נוכחות לשבוע האחרון
+              </Text>
+            )}
         </View>
+
         {/* ✅ TEACHER TASKS UNDER PIE CHART */}
         <View style={[styles.section, styles.tasksSection]}>
           <Text style={styles.sectionTitle}>📝 משימות למורה  
@@ -305,81 +571,157 @@ const [showDatePicker, setShowDatePicker] = useState(false);
               {selectedCategory === "discipline"
                 ? "📌 אירועי משמעת"
                 : selectedCategory === "homework"
-                ? "📚 שיעורים"
-                : "📅 פגישות"}
+                  ? (selectedHomework ? "📚 תוכן שיעורי בית" : "📚 שיעורי בית נוכחיים")
+                  : selectedCategory === "meetings"
+                    ? (selectedMeeting ? "📅 פרטי פגישה" : "📅 פגישות")
+                    : ""}
             </Text>
-            <TextInput
-              style={styles.searchBar}
-              placeholder="🔍 חפש משימה..."
-              value={searchQuery}
-              onChangeText={(text) => setSearchQuery(text)}
-            />
-            <FlatList
-              data={filteredTasks}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.taskItem}>
-                  <Text style={styles.taskTitle}>{item.title}</Text>
-                  <Text style={styles.taskDate}>{item.date}</Text>
+
+            {selectedCategory === "homework" && selectedHomework ? (
+              <>
+                {/* כותרת/מטה של שיעורי בית */}
+                <View style={[styles.taskItem, { width: "100%" }]}>
+                  <Text style={styles.taskTitle}>
+                    כיתה: {selectedHomework.grade || selectedHomework.classId}
+                    {selectedHomework.subject ? ` • ${selectedHomework.subject}` : ""}
+                  </Text>
+                  <Text style={styles.taskDate}>
+                    {selectedHomework.createdAt
+                      ? new Date(selectedHomework.createdAt).toLocaleString("he-IL")
+                      : ""}
+                  </Text>
                 </View>
-              )}
+
+                {/* תוכן שיעורי הבית */}
+                <View style={{ width: "100%", paddingVertical: 10 }}>
+                  <Text style={{ textAlign: "right" }}>
+                    {selectedHomework.content || "—"}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  onPress={() => setSelectedHomework(null)}
+                  style={[styles.closeButton, { marginTop: 10 }]}
+                >
+                  <Text style={styles.closeButtonText}>⬅️ חזור</Text>
+                </TouchableOpacity>
+              </>
+            ) : selectedCategory === "meetings" && selectedMeeting ? (
+              <>
+                <View style={[styles.taskItem, { width: "100%" }]}>
+                  <Text style={styles.taskTitle}>
+                    {formatMeetingType(selectedMeeting.meetingType)}
+                  </Text>
+                  <Text style={styles.taskDate}>
+                    {formatMeetingDate(selectedMeeting)}
+                  </Text>
+                </View>
+
+                <View style={{ width: "100%", paddingVertical: 10 }}>
+                  <Text style={{ textAlign: "right" }}>
+                    {getStudentName(selectedMeeting) || "—"}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  onPress={() => setSelectedMeeting(null)}
+                  style={[styles.closeButton, { marginTop: 10 }]}
+                >
+                  <Text style={styles.closeButtonText}>⬅️ חזור</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <TextInput
+                  style={styles.searchBar}
+                  placeholder="🔍 חפש..."
+                  value={searchQuery}
+                  onChangeText={(text) => setSearchQuery(text)}
+                  textAlign="right"
+                />
+
+                <FlatList
+                  data={filteredTasks}
+                  keyExtractor={(item) => item.id}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.taskItem}
+                      onPress={() => {
+                        if (selectedCategory === "homework" && item._raw) {
+                          setSelectedHomework(item._raw);
+                        } else if (selectedCategory === "meetings" && item._raw) {
+                          setSelectedMeeting(item._raw);
+                        }
+                      }}
+                    >
+                      <Text style={styles.taskTitle}>{item.title}</Text>
+                      <Text style={styles.taskDate}>{item.date}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+
+                <TouchableOpacity
+                  onPress={() => setPopupVisible(false)}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.closeButtonText}>❌ סגור</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
+
+      <Modal visible={addEventModalVisible} transparent={true} animationType="slide">
+        <View style={styles.popupOverlay}>
+          <View style={styles.popupContainer}>
+            <Text style={styles.popupTitle}>📅 הוספת אירוע שנתי</Text>
+            <TextInput
+              placeholder="שם האירוע..."
+              value={newEventTitle}
+              onChangeText={setNewEventTitle}
+              style={styles.input}
+              textAlign="right"
+              placeholderTextColor="#777"
             />
-            <TouchableOpacity onPress={() => setPopupVisible(false)} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>❌ סגור</Text>
+            <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.addTaskButton}>
+              <Text>📆 בחר תאריך: {newEventDate.toLocaleDateString("he-IL")}</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={newEventDate}
+                mode="date"
+                display="default"
+                onChange={(event, date) => {
+                  setShowDatePicker(false);
+                  if (date) setNewEventDate(date);
+                }}
+                locale="he-IL"
+              />
+            )}
+            <TouchableOpacity
+              onPress={() => {
+                if (!newEventTitle.trim()) return;
+                const formatted = {
+                  id: Date.now().toString(),
+                  title: newEventTitle,
+                  date: newEventDate.toLocaleDateString("he-IL"),
+                };
+                setYearlyEvents([...yearlyEvents, formatted]);
+                setNewEventTitle("");
+                setNewEventDate(new Date());
+                setAddEventModalVisible(false);
+              }}
+              style={styles.addTaskButton}
+            >
+              <Text>📥 שמור</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setAddEventModalVisible(false)} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>❌ ביטול</Text>
             </TouchableOpacity>
           </View>
         </View>
       </Modal>
-      <Modal visible={addEventModalVisible} transparent={true} animationType="slide">
-  <View style={styles.popupOverlay}>
-    <View style={styles.popupContainer}>
-      <Text style={styles.popupTitle}>📅 הוספת אירוע שנתי</Text>
-      <TextInput
-        placeholder="שם האירוע..."
-        value={newEventTitle}
-        onChangeText={setNewEventTitle}
-        style={styles.input}
-        textAlign="right"
-        placeholderTextColor="#777"
-      />
-      <TouchableOpacity onPress={() => setShowDatePicker(true)} style={styles.addTaskButton}>
-        <Text>📆 בחר תאריך: {newEventDate.toLocaleDateString("he-IL")}</Text>
-      </TouchableOpacity>
-      {showDatePicker && (
-        <DateTimePicker
-          value={newEventDate}
-          mode="date"
-          display="default"
-          onChange={(event, date) => {
-            setShowDatePicker(false);
-            if (date) setNewEventDate(date);
-          }}
-          locale="he-IL"
-        />
-      )}
-      <TouchableOpacity
-        onPress={() => {
-          if (!newEventTitle.trim()) return;
-          const formatted = {
-            id: Date.now().toString(),
-            title: newEventTitle,
-            date: newEventDate.toLocaleDateString("he-IL"),
-          };
-          setYearlyEvents([...yearlyEvents, formatted]);
-          setNewEventTitle("");
-          setNewEventDate(new Date());
-          setAddEventModalVisible(false);
-        }}
-        style={styles.addTaskButton}
-      >
-        <Text>📥 שמור</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => setAddEventModalVisible(false)} style={styles.closeButton}>
-        <Text style={styles.closeButtonText}>❌ ביטול</Text>
-      </TouchableOpacity>
-    </View>
-  </View>
-</Modal>
     </View>
   );
 }

@@ -1,5 +1,22 @@
 const yearlyEventService = require('../service/yearlyEventService');
 
+// 5 הקרובים מהיום והלאה
+exports.upcoming = async (req, res) => {
+  try {
+    const limit = Math.min(Number(req.query.limit || 5), 50);
+
+    // היום בחצות UTC → "YYYY-MM-DD"
+    const todayUtc = new Date();
+    todayUtc.setUTCHours(0, 0, 0, 0);
+    const from = todayUtc.toISOString().slice(0, 10);
+    const events = await yearlyEventService.upcoming({ limit });
+    return res.json(events);
+  } catch (e) {
+    console.error('❌ yearlyEvents.upcoming:', e.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 // GET /api/yearlyevents?from=YYYY-MM-DD&to=YYYY-MM-DD&q=...
 exports.list = async (req, res) => {
   try {

@@ -83,11 +83,6 @@ async function getAllUsers() {
   return await User.find();
 }
 
-async function getUserById(id) {
-  const user = await User.findById(id);
-  if (!user) throw new Error("User not found");
-  return user;
-}
  //עדכון פרטים
 const updateUser = async (userId, updates) => {
   const existingUser = await User.findById(userId);

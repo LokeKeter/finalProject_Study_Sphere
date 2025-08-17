@@ -5,7 +5,7 @@ const yearlyEventController = require('../controllers/yearlyEventController');
 const authMiddleware = require('../middleware/authMiddleware');
 const authorizeRoles = require('../middleware/authorizeRole');
 
-// כל הפעולות מוגנות לאדמין (אפשר להרחיב בהמשך למורים לפי צורך)
+router.get('/upcoming',  authMiddleware, yearlyEventController.upcoming);
 router.get('/',        authMiddleware, authorizeRoles(['admin']), yearlyEventController.list);
 router.get('/:id',     authMiddleware, authorizeRoles(['admin']), yearlyEventController.getById);
 router.post('/',       authMiddleware, authorizeRoles(['admin']), yearlyEventController.create);

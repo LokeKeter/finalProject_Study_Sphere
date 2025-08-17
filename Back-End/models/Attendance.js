@@ -1,30 +1,19 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const studentStatusSchema = new mongoose.Schema({
-  parentId: String,
-  attendance: Boolean,
-  homework: Boolean
-});
+const AttendanceSchema = new mongoose.Schema({
+  date:     { type: Date, required: true },
+  dateStr:  { type: String },
+  className:{ type: String, required: true },
+  teacherId:{ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  subject:  { type: String, required: true },
+  students: [{
+    studentId: String,
+    parentId:  { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    attendance:Boolean,
+    homework:  Boolean
+  }]
+}, { timestamps: true });
 
-const attendanceSchema = new mongoose.Schema({
-  date: {
-    type: String,
-    required: true
-  },
-  className: {
-    type: String,
-    required: true
-  },
-  subject: {
-    type: String,
-    required: true
-  },
-  teacherId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true
-  },
-  students: [studentStatusSchema]
-});
+AttendanceSchema.index({ teacherId: 1, date: 1 });
 
-module.exports = mongoose.model("Attendance", attendanceSchema);
+module.exports = mongoose.model('Attendance', AttendanceSchema);

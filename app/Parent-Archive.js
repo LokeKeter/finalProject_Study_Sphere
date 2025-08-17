@@ -7,19 +7,17 @@ import {
   ScrollView,
   StyleSheet,
   Modal,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router"; // ✅ Router for navigation
 import TopSidebar from '../components/TopSidebar';
-import { useNavigation } from "@react-navigation/native";
 
 const classesData = ["כל המכתבים", "מכתבים שנשלחו"];
 
-const messagesData = [
-    { id: "1", title: "אסיפת הורים", sender: "יוסי כהן", date: "10.03", type: "התקבלו" },
-    { id: "2", title: "תזכורת", sender: "רונית לוי", date: "09.03", type: "נשלחו" },
-    { id: "3", title: "מערכת שעות", sender: "משה ישראלי", date: "08.03", type: "התקבלו" },
-    { id: "4", title: "טיול שנתי", sender: "שרה דויד", date: "07.03", type: "נשלחו" },
-  ];  
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '../config';
+
+const [messages, setMessages] = useState([]);
 
 const PAGE_SIZE = 20;
 
@@ -28,7 +26,7 @@ const ArchiveScreen = () => {
   const [selectedClassIndex, setSelectedClassIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  
+  const [messages, setMessages] = useState([]);
 
   // 🔹 שינוי הסינון בכותרת עם חצים
   const handleChangeClass = (direction) => {
@@ -40,11 +38,14 @@ const ArchiveScreen = () => {
   };
 
   // 🔹 סינון לפי כיתה ושם שולח/כותרת
-  const filteredMessages = messagesData.filter(
-    (msg) =>
-        (classesData[selectedClassIndex] === "כל המכתבים" || msg.type === "נשלחו") &&
-      (msg.sender.includes(searchQuery) || msg.title.includes(searchQuery))
-  );
+  const q = (searchQuery || '').toLowerCase();
+  const filteredMessages = messages.filter((msg) => {
+    const inBucket =
+      classesData[selectedClassIndex] === "כל המכתבים" || msg.type === "נשלחו";
+    const sender = String(msg.sender || '').toLowerCase();
+    const title  = String(msg.title  || '').toLowerCase();
+    return inBucket && (sender.includes(q) || title.includes(q));
+  });
 
   // 🔹 חישוב מספר הדפים
   const totalPages = Math.ceil(filteredMessages.length / PAGE_SIZE);
@@ -57,6 +58,7 @@ const ArchiveScreen = () => {
   const handleOpenMessage = (msg) => {
     setSelectedMessage(msg);
     setModalVisible(true);
+  };
 
     //שליחת הודעה
     const handleSendMessage = (msg) => {
@@ -64,10 +66,8 @@ const ArchiveScreen = () => {
         // לדוגמה: להעביר לדף של שליחת הודעות עם פרטי הנמען:
         console.log("שליחת הודעה ל: ", msg.sender);
         setModalVisible(false);
-        router.push("/SendMessage", { recipient: msg.sender });
+        router.push({ pathname: "/SendMessage", params: { recipient: msg.sender } });
       };
-      
-  };
   
   //שלח הודעה
   const [isLetterModalVisible, setLetterModalVisible] = useState(false);
@@ -75,6 +75,52 @@ const ArchiveScreen = () => {
   const [letterRecipient, setLetterRecipient] = useState(""); // מקבל ההודעה
   const [letterContent, setLetterContent] = useState(""); // תוכן ההודעה
 
+  useEffect(() => {
+    (async () => {
+      try {
+        const userStr = await AsyncStorage.getItem('user');
+        const token   = await AsyncStorage.getItem('token');
+        const parsed  = userStr ? JSON.parse(userStr) : {};
+        const userId  = parsed?.id || parsed?._id;
+
+        if (!userId) {
+          console.error('❌ archive: no user id in storage');
+          setMessages([]);
+          return;
+        }
+
+        const url = `${API_BASE_URL}/api/communication/archive/${encodeURIComponent(userId)}`;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` } // לא חובה אם הראוט לא מוגן, לא מזיק.
+        });
+
+        if (!res.ok) {
+          console.error('❌ archive fetch status:', res.status);
+          setMessages([]);
+          return;
+        }
+
+        const data = await res.json();
+
+        // נורמליזציה לשדות שה־UI משתמש בהם
+        const normalized = (Array.isArray(data) ? data : []).map(m => ({
+          id: m.id || m._id,
+          title: m.title || m.subject || '—',
+          sender: m.sender || '—',
+          date: m.date || '',          // ה־service כבר מחזיר בעברית
+          content: m.content || '',
+          // ה־backend הנוכחי מחזיר רק הודעות שההורה קיבל ⇒ כולן "התקבלו"
+          type: 'התקבלו',
+          _raw: m,
+        }));
+
+        setMessages(normalized);
+      } catch (e) {
+        console.error('❌ archive fetch error:', e.message);
+        setMessages([]);
+      }
+    })();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -91,10 +137,9 @@ const ArchiveScreen = () => {
                                 <Text style={styles.messageDate}>תאריך: {selectedMessage?.date}</Text>
 
                                 <Text style={styles.messageContent}>
-                                תוכן ההודעה
+                                  {selectedMessage?.content || "—"}
                                 </Text>
                             </ScrollView>
-
                             <View style={styles.modalButtonsContainer}>
                                 <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeMessageButton}>
                                     <Text style={styles.closeMessageButtonText}>סגור</Text>
