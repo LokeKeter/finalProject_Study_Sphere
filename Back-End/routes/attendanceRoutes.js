@@ -26,5 +26,6 @@ router.get("/summary", authMiddleware,  authorizeRoles(["teacher", "admin"]),  a
 
 router.get(  '/discipline/parent', authMiddleware, authorizeRoles(['parent']), attendanceController.disciplineForParent);
 
+router.get('/pie',         authMiddleware, authorizeRoles(['parent']), attendanceController.parentPie);
 router.get('/parent/pie', authMiddleware, authorizeRoles(['parent']), attendanceController.parentPie);
 module.exports = router;

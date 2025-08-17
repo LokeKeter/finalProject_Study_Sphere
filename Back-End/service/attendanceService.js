@@ -398,7 +398,7 @@ function sinceForRange(range = 'weekly') {
       return since;
   }
 }
-exports.parentPieByToken = async ({ token, range = 'weekly' } = {}) => {
+const parentPieByToken = async ({ token, range = 'weekly' } = {}) => {
   const parentId = getParentIdFromToken(token);
   const since = sinceForRange(range);
 
@@ -444,5 +444,6 @@ module.exports = {
   saveAttendance,
   getParentDisciplineByToken,
   getParentIdFromToken,
-  getClassesForTeacher
+  getClassesForTeacher,
+  parentPieByToken
 };

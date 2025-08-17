@@ -108,7 +108,7 @@ const parentPie = async (req, res) => {
     const token = req.headers.authorization || req.headers.Authorization;
     const range = req.query.range || req.query.r || 'weekly';
     const data = await attendanceService.parentPieByToken({ token, range });
-    res.json(data); // { present, absent, since }
+    res.json(data);
   } catch (err) {
     console.error('❌ parentPie error:', err);
     res.status(err.status || 500).json({ message: err.message || 'Server error' });
