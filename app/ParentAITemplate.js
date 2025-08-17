@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Alert, Clipboard } from 'react-native';
 
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -80,8 +80,8 @@ const ParentAITemplate = () => {
     }
   };
 
-  const copyToClipboard = async (text) => {
-    await Clipboard.setStringAsync(text);
+  const copyToClipboard = (text) => {
+    Clipboard.setString(text);
     Alert.alert("הועתק!", "הטקסט הועתק לזיכרון.");
   };
 

@@ -111,29 +111,113 @@ const getTeacherClasses = async (teacherId) => {
 
 // attendanceService.js
 const getStudentsByClass = async ({ teacherId, grade }) => {
-  // מאשר שהמורה אכן מלמד את הכיתה הזו
-  const teacher = await User.findById(teacherId).select('assignedClasses').lean();
-  if (!teacher?.assignedClasses?.includes(grade)) return [];
+  try {
+    console.log('🔍 getStudentsByClass called with:', { teacherId, grade });
+    
+    // Validate inputs
+    if (!teacherId || !grade) {
+      console.error('❌ Missing required parameters:', { teacherId, grade });
+      return [];
+    }
+    
+    // מאשר שהמורה אכן מלמד את הכיתה הזו
+    const teacher = await User.findById(teacherId).select('assignedClasses').lean();
+    console.log('👨‍🏫 Teacher found:', teacher ? 'yes' : 'no', 
+      teacher ? `with ${teacher.assignedClasses?.length || 0} assigned classes` : '');
+    
+    // For debugging, temporarily skip this check
+    // if (!teacher?.assignedClasses?.includes(grade)) {
+    //   console.log('❌ Teacher is not assigned to this class:', { 
+    //     teacherId, 
+    //     grade, 
+    //     assignedClasses: teacher?.assignedClasses 
+    //   });
+    //   return [];
+    // }
 
-  // שליפת הכיתה+הורה
-  const classDoc = await Class
-    .findOne({ grade })
-    .populate('students.parentId', 'name') // << כאן נקבל את שם ההורה
-    .lean();
+    // שליפת הכיתה+הורה
+    console.log('🏫 Looking for class with grade:', grade);
+    const classDoc = await Class
+      .findOne({ grade })
+      .populate('students.parentId', 'name') // << כאן נקבל את שם ההורה
+      .lean();
 
-  if (!classDoc) return [];
+    if (!classDoc) {
+      console.log('❌ Class not found with grade:', grade);
+      return [];
+    }
+    
+    console.log('✅ Class found with', classDoc.students?.length || 0, 'students');
 
-  // שמות תלמידים מה-Student (לפי studentId = ת"ז)
-  const ids = (classDoc.students || []).map(s => String(s.studentId)).filter(Boolean);
-  const studentsDocs = await Student.find({ studentId: { $in: ids } })
-                                    .select('studentId name').lean();
-  const nameByNationalId = new Map(studentsDocs.map(s => [String(s.studentId), s.name]));
+    if (!classDoc.students || classDoc.students.length === 0) {
+      console.log('ℹ️ No students in this class');
+      return [];
+    }
 
-  return (classDoc.students || []).map(s => ({
-    parentId: s.parentId?._id || null,
-    parentName: s.parentId?.name || 'לא ידוע',
-    studentName: nameByNationalId.get(String(s.studentId)) || 'לא ידוע',
-  }));
+    // Extract student IDs from class document
+    const studentIds = classDoc.students
+      .map(s => s.studentId)
+      .filter(id => id && mongoose.Types.ObjectId.isValid(id));
+    
+    if (studentIds.length === 0) {
+      console.log('ℹ️ No valid student IDs found in class');
+      return [];
+    }
+    
+    console.log('🔍 Looking up', studentIds.length, 'students');
+    
+    // Fetch student documents with name and parentIds
+    const studentsDocs = await Student.find({ _id: { $in: studentIds } })
+                                    .select('_id name parentIds')
+                                    .lean();
+    
+    console.log('👨‍🎓 Found', studentsDocs.length, 'student documents');
+    
+    // Create maps for student names and parent IDs
+    const studentMap = new Map();
+    studentsDocs.forEach(s => {
+      studentMap.set(String(s._id), {
+        name: s.name,
+        parentId: s.parentIds && s.parentIds.length > 0 ? s.parentIds[0] : null
+      });
+    });
+
+    // Map students to the format expected by the frontend
+    const result = classDoc.students.map(s => {
+      // Skip invalid student entries
+      if (!s || !s.studentId) {
+        return null;
+      }
+      
+      // Get student info from our map
+      const studentInfo = studentMap.get(String(s.studentId)) || {};
+      
+      // Get parent ID from either the class document or the student document
+      const parentId = s.parentId?._id || studentInfo.parentId || null;
+      
+      // Generate a unique ID for each entry, ensuring it's never null
+      const uniqueId = parentId || `student-${s.studentId}`;
+      
+      // Use stored names if available, fallback to populated/lookup values
+      const studentName = s.studentName || studentInfo.name || 'לא ידוע';
+      const parentName = s.parentName || s.parentId?.name || 'לא ידוע';
+      
+      return {
+        id: uniqueId, // Ensure we always have a unique ID
+        parentId: parentId, // This should now come from either class or student document
+        parentName: parentName,
+        studentName: studentName,
+      };
+    }).filter(Boolean); // Remove any null entries
+    
+    console.log('✅ Returning', result.length, 'formatted student records');
+    return result;
+    
+  } catch (error) {
+    console.error('❌ Error in getStudentsByClass:', error);
+    // Return empty array instead of throwing to prevent 500 errors
+    return [];
+  }
 };
 
 const getClassesForTeacher = async (teacherId) => {

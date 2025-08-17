@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, useColorScheme } from "react-native";
 import { useRouter } from "expo-router";
+import { useAuth } from "./_layout"; // ✅ Import authentication hook
+import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Import storage
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import { API_BASE_URL } from "../config";
@@ -21,6 +23,7 @@ const SignupScreen = () => {
   const colorScheme = useColorScheme();
   const isDarkMode = colorScheme === "dark";
   const router = useRouter();
+  const { setIsLoggedIn } = useAuth(); // ✅ Authentication Context
 
  const handleSignup = async () => {
   try {
@@ -56,13 +59,37 @@ const SignupScreen = () => {
     const response = await axios.post(`${API_BASE_URL}/api/users/register`, payload);
     console.log('✅ Registration response:', response.data);
 
-    Toast.show({
-      type: "success",
-      text1: "נרשמת בהצלחה 🎉",
-    });
+    // ✅ Handle token response from registration
+    const { token, user } = response.data;
+    if (token && user) {
+      await AsyncStorage.setItem('token', token);
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+      setIsLoggedIn(true);
+
+      Toast.show({
+        type: "success",
+        text1: "נרשמת בהצלחה 🎉",
+        text2: "מועבר לדשבורד..."
+      });
+
+      // Redirect based on role
+      if (user.role === 'teacher') {
+        router.push('/dashboard');
+      } else if (user.role === 'parent') {
+        router.push('/Parent-Dashboard');
+      } else if (user.role === 'admin') {
+        router.push('/Admin-Users');
+      }
+    } else {
+      Toast.show({
+        type: "success",
+        text1: "נרשמת בהצלחה 🎉",
+        text2: "עבור להתחברות"
+      });
+      router.push("/");
+    }
 
     setErrors({});
-    router.push("/");
   } catch (error) {
       console.error('❌ Registration error:', error);
       console.error('❌ Error response:', error.response?.data);

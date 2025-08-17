@@ -4,29 +4,64 @@ import AsyncStorage from "@react-native-async-storage/async-storage"; // ✅ Sto
 import { useRouter } from "expo-router";
 import TopSidebar from "../components/TopSidebar";
 import { API_BASE_URL } from "../config";
+import { getUserFromToken, verifyTokenFields } from "./utils/tokenUtils"; // ✅ JWT utilities
 
 const UserProfile = () => {
   const router = useRouter();
-  const [user, setUser] = useState({ name: "", role: "", email: "", subject: "", description: "" });
+  const [user, setUser] = useState({ fullName: "", studentName: "", parentEmail: "", role: "", subject: "", description: "" });
   const [isEditing, setIsEditing] = useState(false); // ✅ State for edit mode
+  const [tokenData, setTokenData] = useState(null); // ✅ For demonstrating token decoding
 
-  // ✅ Fetch User Data from AsyncStorage
+  // ✅ Fetch User Data from AsyncStorage and Token
   useEffect(() => {
-  const getUserData = async () => {
-    const storedUser = await AsyncStorage.getItem("user");
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser);
-      setUser({
-        name: parsed.name ?? "",
-        email: parsed.email ?? "",
-        role: parsed.role ?? "",
-        subject: parsed.subject ?? "",
-        description: parsed.description ?? ""
+    const getUserData = async () => {
+      // Get data from AsyncStorage (traditional way)
+      const storedUser = await AsyncStorage.getItem("user");
+      if (storedUser) {
+        const parsed = JSON.parse(storedUser);
+        console.log('📥 Stored user data:', parsed);
+        setUser({
+          fullName: parsed.fullName ?? "",
+          studentName: parsed.studentName ?? "",
+          parentEmail: parsed.parentEmail ?? parsed.email ?? "",
+          role: parsed.role ?? "",
+          subject: parsed.subject ?? "",
+          description: parsed.description ?? ""
+        });
+      }
+
+      // ✅ Demonstrate token decoding
+      const tokenUser = await getUserFromToken();
+      const verification = await verifyTokenFields();
+      
+      setTokenData({
+        fromToken: tokenUser,
+        verification: verification
       });
-    }
-  };
-  getUserData();
-}, []);
+
+      console.log('🔍 Token Verification Results:', verification);
+      console.log('👤 User data from token:', tokenUser);
+      
+      // 🐞 Debug: Show what's actually stored vs what token contains
+      console.log('🔍 Debugging data sources:');
+      console.log('  AsyncStorage user:', storedUser ? JSON.parse(storedUser) : 'none');
+      console.log('  Token user:', tokenUser);
+      
+      // If we have token data but not stored data, update from token
+      if (tokenUser && (!storedUser || !JSON.parse(storedUser).fullName)) {
+        console.log('🔄 Using token data as fallback');
+        setUser({
+          fullName: tokenUser.fullName ?? "",
+          studentName: "", // studentName not in basic token
+          parentEmail: tokenUser.email ?? "",
+          role: tokenUser.role ?? "",
+          subject: "", // Subject not in token, keep existing
+          description: "" // Description not in token, keep existing
+        });
+      }
+    };
+    getUserData();
+  }, []);
 
   // ✅ Save User Data
   const handleSave = async () => {
@@ -42,8 +77,9 @@ const UserProfile = () => {
           Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
-          name: user.name,
-          email: user.email,
+          name: user.fullName,
+          studentName: user.studentName,
+          email: user.parentEmail,
           subject: user.subject
         })
       });
@@ -51,9 +87,30 @@ const UserProfile = () => {
       const updatedUser = await response.json();
 
       // שמור את המשתמש המעודכן
-      await AsyncStorage.setItem("user", JSON.stringify({ ...updatedUser, token }));
-      setUser(updatedUser);
+      const userDataToStore = {
+        id: updatedUser.id || updatedUser._id,
+        fullName: updatedUser.name || user.fullName,
+        studentName: updatedUser.studentName || user.studentName,
+        parentEmail: updatedUser.email || user.parentEmail,
+        email: updatedUser.email || user.parentEmail,
+        role: updatedUser.role || user.role,
+        subject: updatedUser.subject || user.subject
+      };
+      
+      await AsyncStorage.setItem("user", JSON.stringify(userDataToStore));
+      
+      // Update local state to reflect changes immediately
+      setUser({
+        fullName: userDataToStore.fullName,
+        studentName: userDataToStore.studentName,
+        parentEmail: userDataToStore.parentEmail,
+        role: userDataToStore.role,
+        subject: userDataToStore.subject,
+        description: user.description // Keep description from current state
+      });
+      
       setIsEditing(false);
+      console.log('✅ Profile updated successfully:', userDataToStore);
     } catch (error) {
       console.error("שגיאה בעדכון פרטי המשתמש", error);
     }
@@ -78,21 +135,36 @@ const UserProfile = () => {
           {isEditing ? (
             <TextInput
               style={styles.input}
-              value={user.name}
-              onChangeText={(text) => setUser({ ...user, name: text })}
+              value={user.fullName}
+              onChangeText={(text) => setUser({ ...user, fullName: text })}
             />
           ) : (
-            <Text style={styles.value}>{user.name || "לא ידוע"}</Text>
+            <Text style={styles.value}>{user.fullName || "לא ידוע"}</Text>
           )}
+
+        {user.role === 'parent' && (
+          <>
+            <Text style={styles.label}>שם התלמיד:</Text>
+            {isEditing ? (
+              <TextInput
+                style={styles.input}
+                value={user.studentName}
+                onChangeText={(text) => setUser({ ...user, studentName: text })}
+              />
+            ) : (
+              <Text style={styles.value}>{user.studentName || "לא הוזן"}</Text>
+            )}
+          </>
+        )}
 
         <Text style={styles.label}>תפקיד:</Text>
         <Text style={styles.value}>{user.role || "לא ידוע"}</Text>
 
         <Text style={styles.label}>📧 אימייל:</Text>
         {isEditing ? (
-          <TextInput style={styles.input} value={user.email} onChangeText={(text) => setUser({ ...user, email: text })} />
+          <TextInput style={styles.input} value={user.parentEmail} onChangeText={(text) => setUser({ ...user, parentEmail: text })} />
         ) : (
-          <Text style={styles.value}>{user.email || "לא הוזן"}</Text>
+          <Text style={styles.value}>{user.parentEmail || "לא הוזן"}</Text>
         )}
 
         <Text style={styles.label}>📚 מקצוע:</Text>
@@ -114,6 +186,28 @@ const UserProfile = () => {
           <Text style={styles.value}>{user.description || "לא הוזן"}</Text>
         )}
       </View>
+
+      {/* ✅ JWT Token Verification Display (for testing) */}
+      {tokenData && (
+        <View style={styles.tokenSection}>
+          <Text style={styles.sectionTitle}>🔐 JWT Token Verification</Text>
+          <Text style={styles.tokenLabel}>Token Valid: {tokenData.verification.valid ? '✅' : '❌'}</Text>
+          
+                      {tokenData.fromToken && (
+              <View style={styles.tokenData}>
+                <Text style={styles.tokenLabel}>From Token:</Text>
+                <Text style={styles.tokenValue}>ID: {tokenData.fromToken.id}</Text>
+                <Text style={styles.tokenValue}>Full Name: {tokenData.fromToken.fullName}</Text>
+                <Text style={styles.tokenValue}>Email: {tokenData.fromToken.email}</Text>
+                <Text style={styles.tokenValue}>Role: {tokenData.fromToken.role}</Text>
+              </View>
+            )}
+          
+          {!tokenData.verification.valid && (
+            <Text style={styles.tokenError}>Missing: {tokenData.verification.missing.join(', ')}</Text>
+          )}
+        </View>
+      )}
 
       {/* 🔹 Edit & Save Buttons */}
       {!isEditing ? (
@@ -296,6 +390,46 @@ const styles = StyleSheet.create({
     closeButton: { color: "white", fontSize: 20, marginBottom: 20 },
     sidebarItem: { paddingVertical: 15 },
     sidebarText: { color: "white", fontSize: 18 },
+    
+    // ✅ JWT Token Verification Styles
+    tokenSection: {
+      backgroundColor: "#f0f8ff",
+      borderRadius: 10,
+      padding: 15,
+      marginVertical: 10,
+      borderWidth: 1,
+      borderColor: "#007AFF",
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      marginBottom: 10,
+      color: "#007AFF",
+    },
+    tokenData: {
+      backgroundColor: "#fff",
+      padding: 10,
+      borderRadius: 5,
+      marginTop: 5,
+    },
+    tokenLabel: {
+      fontSize: 14,
+      fontWeight: "bold",
+      marginBottom: 5,
+      color: "#333",
+    },
+    tokenValue: {
+      fontSize: 13,
+      color: "#666",
+      marginLeft: 10,
+      marginBottom: 3,
+    },
+    tokenError: {
+      fontSize: 12,
+      color: "#FF3B30",
+      fontStyle: "italic",
+      marginTop: 5,
+    },
   });
   
 

@@ -2,16 +2,67 @@ const communicationService = require("../service/communicationService");
 const User = require("../models/User");
 
 exports.sendLetter = async (req, res) => {
-  const { senderId, receiverId, subject, content } = req.body;
-  const result = await communicationService.createLetter(senderId, receiverId, subject, content);
-  res.status(201).json(result);
+  try {
+    const { senderId, receiverId, subject, content } = req.body;
+    
+    // ✅ Validate required fields
+    if (!senderId || !receiverId || !subject || !content) {
+      return res.status(400).json({ 
+        message: "כל השדות נדרשים: senderId, receiverId, subject, content" 
+      });
+    }
+
+    console.log('📤 Creating letter:', { senderId, receiverId, subject, content });
+    
+    const result = await communicationService.createLetter(senderId, receiverId, subject, content);
+    
+    console.log('✅ Letter created successfully:', result);
+    res.status(201).json({ message: "המכתב נשלח בהצלחה", data: result });
+    
+  } catch (error) {
+    console.error('❌ Error in sendLetter controller:', error);
+    res.status(500).json({ 
+      message: "שגיאה בשליחת המכתב", 
+      error: error.message 
+    });
+  }
 };
 
 exports.sendSignature = async (req, res) => {
-  const { senderId, receiverId, content } = req.body;
-  const fileUrl = req.file?.path || "";
-  const result = await communicationService.createSignature(senderId, receiverId, content, fileUrl);
-  res.status(201).json(result);
+  try {
+    const { senderId, receiverId, content } = req.body;
+    
+    // ✅ Validate required fields
+    if (!senderId || !receiverId || !content) {
+      return res.status(400).json({ 
+        message: "כל השדות נדרשים: senderId, receiverId, content" 
+      });
+    }
+    
+    const fileUrl = req.file?.path || "";
+    console.log('📤 Creating signature:', { 
+      senderId, 
+      receiverId, 
+      content, 
+      hasFile: !!fileUrl,
+      fileName: req.file?.originalname
+    });
+    
+    const result = await communicationService.createSignature(senderId, receiverId, content, fileUrl);
+    
+    console.log('✅ Signature created successfully:', result._id);
+    res.status(201).json({ 
+      message: "האישור נשלח בהצלחה", 
+      data: result 
+    });
+    
+  } catch (error) {
+    console.error('❌ Error in sendSignature controller:', error);
+    res.status(500).json({ 
+      message: "שגיאה בשליחת האישור", 
+      error: error.message 
+    });
+  }
 };
 
 exports.scheduleMeeting = async (req, res) => {

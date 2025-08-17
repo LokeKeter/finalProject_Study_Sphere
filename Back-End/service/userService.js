@@ -73,7 +73,34 @@ async function createUser(data) {
     }
   }
 
-  return newUser;
+  // יוצר TOKEN גם לאחר הרשמה מוצלחת
+  const token = jwt.sign(
+    { 
+      id: newUser._id, 
+      fullName: newUser.name, // השם המלא של המשתמש
+      email: newUser.email,
+      role: newUser.role 
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  return {
+    message: "הרשמה הצליחה",
+    token,
+    user: {
+      id: newUser._id,
+      fullName: newUser.name, // השם המלא של המשתמש
+      studentName: newUser.studentName || "", // שם הילד (רק להורים)
+      parentEmail: newUser.email, // אימייל המשתמש
+      email: newUser.email, // גם בשדה email לתאימות
+      role: newUser.role,
+      subject: newUser.subject || "",
+      studentId: newUser.studentId || "", // ת"ז הילד (רק להורים)
+      grade: newUser.grade || "", // כיתת הילד (רק להורים)
+      username: newUser.username
+    }
+  };
 }
 
 
@@ -143,9 +170,14 @@ async function login({ username, password, role }) {
     throw new Error("שם משתמש או סיסמא שגויים");
   }
 
-  //יוצר TOKEN
+  //יוצר TOKEN עם כל הפרטים הנדרשים
   const token = jwt.sign(
-    { id: user._id, role: user.role },
+    { 
+      id: user._id, 
+      fullName: user.name, // השם המלא של המשתמש
+      email: user.email,
+      role: user.role 
+    },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -157,10 +189,15 @@ async function login({ username, password, role }) {
     token,
     user: {
       id: user._id,
-      name: user.name,
-      email: user.email,
+      fullName: user.name, // השם המלא של המשתמש
+      studentName: user.studentName || "", // שם הילד (רק להורים)
+      parentEmail: user.email, // אימייל המשתמש
+      email: user.email, // גם בשדה email לתאימות
       role: user.role,
-      subject: user.subject || ""
+      subject: user.subject || "",
+      studentId: user.studentId || "", // ת"ז הילד (רק להורים)
+      grade: user.grade || "", // כיתת הילד (רק להורים)
+      username: user.username
     }
   };
 

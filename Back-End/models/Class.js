@@ -11,6 +11,15 @@ const studentSchema = new mongoose.Schema({
     ref: "Student",
     required: true,
   },
+  // Add fields for names to improve display and debugging
+  studentName: {
+    type: String,
+    default: 'לא ידוע'
+  },
+  parentName: {
+    type: String,
+    default: 'לא ידוע'
+  }
 });
 
 const classSchema = new mongoose.Schema({

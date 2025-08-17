@@ -40,11 +40,17 @@ const ArchiveScreen = () => {
   // 🔹 סינון לפי כיתה ושם שולח/כותרת
   const q = (searchQuery || '').toLowerCase();
   const filteredMessages = messages.filter((msg) => {
+    // Filter by message type (all or sent only)
     const inBucket =
-      classesData[selectedClassIndex] === "כל המכתבים" || msg.type === "נשלחו";
+      classesData[selectedClassIndex] === "כל המכתבים" || 
+      (classesData[selectedClassIndex] === "מכתבים שנשלחו" && msg.direction === "נשלח");
+    
+    // Filter by search query
     const sender = String(msg.sender || '').toLowerCase();
-    const title  = String(msg.title  || '').toLowerCase();
-    return inBucket && (sender.includes(q) || title.includes(q));
+    const receiver = String(msg.receiver || '').toLowerCase();
+    const title = String(msg.title || '').toLowerCase();
+    
+    return inBucket && (sender.includes(q) || receiver.includes(q) || title.includes(q));
   });
 
   // 🔹 חישוב מספר הדפים
@@ -78,45 +84,89 @@ const ArchiveScreen = () => {
   useEffect(() => {
     (async () => {
       try {
+        console.log('📩 Parent-Archive: Fetching messages...');
+        
+        // Get user data with better error handling
         const userStr = await AsyncStorage.getItem('user');
-        const token   = await AsyncStorage.getItem('token');
-        const parsed  = userStr ? JSON.parse(userStr) : {};
-        const userId  = parsed?.id || parsed?._id;
-
-        if (!userId) {
-          console.error('❌ archive: no user id in storage');
+        if (!userStr) {
+          console.error('❌ Parent-Archive: No user data found in AsyncStorage');
+          Alert.alert("❌ שגיאה", "לא נמצאו פרטי משתמש. אנא התחבר מחדש");
           setMessages([]);
           return;
         }
-
-        const url = `${API_BASE_URL}/api/communication/archive/${encodeURIComponent(userId)}`;
-        const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${token}` } // לא חובה אם הראוט לא מוגן, לא מזיק.
+        
+        // Get token for authorization
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          console.error('❌ Parent-Archive: No token found in AsyncStorage');
+          Alert.alert("❌ שגיאה", "לא נמצא טוקן התחברות. אנא התחבר מחדש");
+          setMessages([]);
+          return;
+        }
+        
+        // Parse user data
+        const parsed = JSON.parse(userStr);
+        console.log('👤 Parent-Archive: User data:', { 
+          id: parsed.id || parsed._id, 
+          role: parsed.role,
+          name: parsed.fullName || parsed.name
         });
-
-        if (!res.ok) {
-          console.error('❌ archive fetch status:', res.status);
+        
+        // Get user ID with fallback options
+        const userId = parsed.id || parsed._id;
+        if (!userId) {
+          console.error('❌ Parent-Archive: No user ID found in user data');
+          Alert.alert("❌ שגיאה", "לא נמצא מזהה משתמש. אנא התחבר מחדש");
           setMessages([]);
           return;
         }
 
+        // Fetch archive data
+        const url = `${API_BASE_URL}/api/communication/archive/${encodeURIComponent(userId)}`;
+        console.log(`🌐 Parent-Archive: Fetching from: ${url}`);
+        
+        const res = await fetch(url, {
+          headers: { 
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        // Check response status
+        console.log('📥 Parent-Archive: Response status:', res.status);
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('❌ Parent-Archive: Fetch error:', res.status, errorText);
+          Alert.alert("❌ שגיאה", `שגיאה בטעינת הארכיון (${res.status})`);
+          setMessages([]);
+          return;
+        }
+
+        // Parse response data
         const data = await res.json();
+        console.log('📦 Parent-Archive: Data received:', data ? `${data.length} items` : 'No data');
+        if (data?.length > 0) {
+          console.log('First few items:', data.slice(0, 2));
+        }
 
         // נורמליזציה לשדות שה־UI משתמש בהם
         const normalized = (Array.isArray(data) ? data : []).map(m => ({
           id: m.id || m._id,
           title: m.title || m.subject || '—',
           sender: m.sender || '—',
+          receiver: m.receiver || '—',
           date: m.date || '',          // ה־service כבר מחזיר בעברית
           content: m.content || '',
-          // ה־backend הנוכחי מחזיר רק הודעות שההורה קיבל ⇒ כולן "התקבלו"
-          type: 'התקבלו',
+          direction: m.direction || 'התקבל', // Now the backend returns direction
           _raw: m,
         }));
 
+        console.log('✅ Parent-Archive: Messages normalized, count:', normalized.length);
         setMessages(normalized);
+        
       } catch (e) {
-        console.error('❌ archive fetch error:', e.message);
+        console.error('❌ Parent-Archive: Error:', e.message, e.stack);
+        Alert.alert("❌ שגיאה", "אירעה שגיאה בטעינת הארכיון: " + e.message);
         setMessages([]);
       }
     })();
@@ -261,8 +311,9 @@ const ArchiveScreen = () => {
   <View style={styles.tableContainer}>
     <View style={styles.tableHeader}>
       <Text style={styles.headerCell}>כותרת</Text>
-      <Text style={styles.headerCell}>שם שולח</Text>
+      <Text style={styles.headerCell}>פרטים</Text>
       <Text style={styles.headerCell}>תאריך</Text>
+      <Text style={styles.headerCell}>סוג</Text>
     </View>
 
     {displayedMessages.map((msg) => (
@@ -272,8 +323,14 @@ const ArchiveScreen = () => {
             onPress={() => handleOpenMessage(msg)}
         >
             <Text style={styles.cell}>{msg.title}</Text>
-            <Text style={styles.cell}>{msg.sender}</Text>
+            <Text style={styles.cell}>
+              {msg.direction === "נשלח" ? `אל: ${msg.receiver}` : `מאת: ${msg.sender}`}
+            </Text>
             <Text style={styles.cell}>{msg.date}</Text>
+            <Text style={[styles.directionCell, 
+              msg.direction === "נשלח" ? styles.sentMessage : styles.receivedMessage]}>
+              {msg.direction === "נשלח" ? "📤 נשלח" : "📥 התקבל"}
+            </Text>
         </TouchableOpacity>
     ))}
 
@@ -313,6 +370,23 @@ const ArchiveScreen = () => {
 
 // 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
+  // New styles for message direction
+  directionCell: {
+    fontWeight: "bold",
+    fontSize: 12,
+    padding: 4,
+    borderRadius: 4,
+    textAlign: "center",
+  },
+  sentMessage: {
+    backgroundColor: "#e6f7ff",
+    color: "#0066cc",
+  },
+  receivedMessage: {
+    backgroundColor: "#f0f0f0",
+    color: "#444444",
+  },
+  // Original styles
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
   
 

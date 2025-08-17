@@ -12,8 +12,9 @@ const studentSchema = new mongoose.Schema({
   },
   grade: {
     type: String,
-    enum: ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "יא", "יב"],
-    required: false // יכול להיות ללא כיתה בהתחלה
+    enum: ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "יא", "יב", null],
+    required: false, // יכול להיות ללא כיתה בהתחלה
+    default: null
   },
   classId: {
     type: mongoose.Schema.Types.ObjectId,

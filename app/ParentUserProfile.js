@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Picker } from "@react-native-picker/picker";  // ✅ Use Picker for dropdowns
 import {
     View,
@@ -19,6 +19,28 @@ export default function ParentUserProfile() {
   const [relationship, setRelationship] = useState("");
   const [email, setEmail] = useState("");
   const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
+
+  // ✅ Load user data on component mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem("user");
+        if (storedUser) {
+          const userData = JSON.parse(storedUser);
+          console.log('📥 Loading parent profile data:', userData);
+          
+          setFullName(userData.fullName || "");
+          setEmail(userData.parentEmail || userData.email || "");
+          // phoneNumber and relationship are not stored in basic user data
+          // These might be additional profile fields that need separate API calls
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+    
+    loadUserData();
+  }, []);
 
 
     useEffect(() => {
@@ -58,18 +80,13 @@ export default function ParentUserProfile() {
       <Text style={styles.label}>שם מלא</Text>
       <TextInput value={fullName} onChangeText={setFullName} style={styles.input} />
 
-      <Text style={styles.label}>טלפון</Text>
+      <Text style={styles.label}>שם התלמיד</Text>
       <TextInput value={phoneNumber} onChangeText={setPhoneNumber} style={styles.input} keyboardType="phone-pad" />
 
       <Text style={styles.label}>מייל</Text>
       <TextInput value={email} onChangeText={setEmail} style={styles.input} keyboardType="email-address" />
 
-      <Text style={styles.label}>בן או בת זוג</Text>
-      <Picker selectedValue={relationship} onValueChange={setRelationship} style={styles.input}>
-        <Picker.Item label="Mother" value="Mother" />
-        <Picker.Item label="Father" value="Father" />
-        <Picker.Item label="Guardian" value="Guardian" />
-      </Picker>
+
 
       <TouchableOpacity onPress={handleSave} style={styles.button}>
         <Text style={styles.buttonText}>Save Changes</Text>

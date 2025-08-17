@@ -43,31 +43,68 @@ exports.updateClass = (id, updates) =>
 exports.deleteClass = (id) => Class.findByIdAndDelete(id);
 
 exports.addStudentToClass = async ({ classId, studentId }) => {
+  console.log('📝 Adding student to class:', { classId, studentId });
+  
+  // Validate class exists
   const classObj = await Class.findById(classId);
-  if (!classObj) throw new Error('כיתה לא נמצאה');
+  if (!classObj) {
+    console.error('❌ Class not found:', classId);
+    throw new Error('כיתה לא נמצאה');
+  }
 
-  // כבר יש תלמיד זה בכיתה?
+  // Check if student already exists in class
   if (classObj.students.some(s => String(s.studentId) === String(studentId))) {
+    console.error('❌ Student already in class:', studentId);
     throw new Error('התלמיד כבר קיים בכיתה');
   }
 
-  // ✅ שליפה נכונה: מעבירים את ה-ObjectId עצמו, לא אובייקט
-  // ❌ BUG שהיה גורם לשגיאה: Student.findById({ studentId })
-  const studentDoc = await Student.findById(studentId).select('parentIds');
-  if (!studentDoc) throw new Error('תלמיד לא נמצא');
+  // Get student document with parent info
+  const studentDoc = await Student.findById(studentId).select('parentIds name');
+  if (!studentDoc) {
+    console.error('❌ Student not found:', studentId);
+    throw new Error('תלמיד לא נמצא');
+  }
+  
+  // Get parent info
   const parentUserId = studentDoc.parentIds?.[0];
-  if (!parentUserId) throw new Error('לא נמצא הורה לתלמיד');
+  if (!parentUserId) {
+    console.error('❌ No parent found for student:', studentId);
+    throw new Error('לא נמצא הורה לתלמיד');
+  }
+  
+  // Get parent name for better display
+  const parentUser = await User.findById(parentUserId).select('name');
+  const parentName = parentUser?.name || 'לא ידוע';
+  
+  console.log('✅ Found student and parent:', { 
+    studentId, 
+    studentName: studentDoc.name,
+    parentId: parentUserId,
+    parentName
+  });
 
-  // דחיפה נכונה: studentId = ObjectId של Student
-  classObj.students.push({ parentId: parentUserId, studentId });
+  // Add student to class with parent info
+  classObj.students.push({ 
+    parentId: parentUserId, 
+    studentId,
+    studentName: studentDoc.name, // Store student name for reference
+    parentName: parentName // Store parent name for reference
+  });
+  
   await classObj.save();
 
-  // עדכון סטודנט לפי ה-_id (לא לפי שדה studentId=ת"ז)
+  // Update student record with class info
   await Student.updateOne(
     { _id: studentId },
-    { classId: classObj._id, grade: classObj.grade }
+    { 
+      classId: classObj._id, 
+      grade: classObj.grade,
+      // Ensure parent is linked
+      $addToSet: { parentIds: parentUserId }
+    }
   );
 
+  console.log('✅ Student added to class successfully');
   return classObj;
 };
 
@@ -105,19 +142,17 @@ exports.removeStudentFromClass = async ({ classId, studentId }) => {
   await classObj.save();
   console.log('💾 הכיתה נשמרה בהצלחה');
 
-  // חיפוש התלמיד גם כמחרוזת וגם כמספר (למקרה שטיפוס שונה במסד)
-  let student = await Student.findOne({ studentId: String(studentId) });
-  if (!student) {
-    try {
-      student = await Student.findOne({ studentId: Number(studentId) });
-    } catch {
-      /* מתעלמים */
-    }
-  }
+  // חיפוש התלמיד לפי ObjectId (המועבר מהכיתה)
+  let student = await Student.findById(studentId);
 
   console.log('🔎 תוצאת חיפוש תלמיד:', {
     found: !!student,
-    queryTried: [String(studentId), Number(studentId)],
+    studentId: studentId,
+    studentFound: student ? {
+      _id: student._id,
+      studentId: student.studentId,
+      currentGrade: student.grade
+    } : null,
   });
 
   if (student) {
@@ -125,16 +160,17 @@ exports.removeStudentFromClass = async ({ classId, studentId }) => {
     const onlyLetters = gsrc.replace(/[^A-Za-z\u0590-\u05FF]/g, '');
     const firstLetter = onlyLetters.charAt(0) || '';
 
-    console.log('🧪 חישוב שכבה:', {
+    console.log('🧪 מעדכן תלמיד שהוסר מכיתה:', {
       originalStudentGrade: student.grade,
-      classGradeFallback: classObj?.grade,
+      classGrade: classObj?.grade,
       sourceUsed: gsrc,
       onlyLetters,
       firstLetter,
+      action: 'Setting grade to base letter only (removing class number)'
     });
 
     student.classId = null;
-    student.grade = firstLetter;
+    student.grade = firstLetter; // מעדכן לאות הבסיס בלבד (ללא מספר כיתה)
 
     await student.save();
     console.log('✅ תלמיד עודכן ונשמר:', {

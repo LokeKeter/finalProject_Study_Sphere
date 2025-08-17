@@ -30,9 +30,11 @@ function authMiddleware(req, res, next) {
     });
 
     // 3) הצמדה נוחה לבקשה
-    req.user = decoded; // כולל id ו-role כפי שאתה יוצר בטוקן
+    req.user = decoded; // כולל כל השדות: id, studentName, email, role
     req.userId = decoded.id;
     req.userRole = decoded.role;
+    req.userEmail = decoded.email;
+    req.userStudentName = decoded.studentName;
 
     return next();
   } catch (err) {

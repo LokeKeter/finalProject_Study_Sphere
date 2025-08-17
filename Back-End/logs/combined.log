@@ -1657,3 +1657,78 @@
 [2025-08-17T14:30:36.319Z] INFO: Login success: undefined
 [2025-08-17T14:34:13.779Z] INFO: Login attempt: a1
 [2025-08-17T14:34:13.839Z] INFO: Login success: undefined
+[2025-08-17T14:55:14.109Z] INFO: Login attempt: admin
+[2025-08-17T14:55:14.177Z] INFO: Login success: undefined
+[2025-08-17T15:02:55.854Z] INFO: Login attempt: admin
+[2025-08-17T15:02:55.909Z] INFO: Login success: undefined
+[2025-08-17T15:06:02.290Z] INFO: Login attempt: hore
+[2025-08-17T15:06:02.346Z] INFO: Login success: undefined
+[2025-08-17T15:06:18.625Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-17T15:06:49.940Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-17T15:14:09.932Z] INFO: Login attempt: admin
+[2025-08-17T15:14:09.997Z] INFO: Login success: undefined
+[2025-08-17T15:22:30.164Z] INFO: Login attempt: hore
+[2025-08-17T15:22:30.223Z] INFO: Login success: undefined
+[2025-08-17T15:35:57.988Z] INFO: Login attempt: hore
+[2025-08-17T15:35:58.051Z] INFO: Login success: undefined
+[2025-08-17T15:37:18.351Z] INFO: Register attempt: hore2
+[2025-08-17T15:37:18.411Z] INFO: Register success: hore2
+[2025-08-17T15:37:28.039Z] INFO: Login attempt: hore2
+[2025-08-17T15:37:28.095Z] INFO: Login success: undefined
+[2025-08-17T15:43:12.527Z] INFO: Login attempt: hore2
+[2025-08-17T15:43:12.593Z] INFO: Login success: undefined
+[2025-08-17T15:44:25.048Z] INFO: Login attempt: hore2
+[2025-08-17T15:44:25.114Z] INFO: Login success: undefined
+[2025-08-17T15:54:33.116Z] INFO: Login attempt: hore2
+[2025-08-17T15:54:33.173Z] INFO: Login success: undefined
+[2025-08-17T15:56:21.131Z] INFO: Login attempt: more
+[2025-08-17T15:56:21.186Z] INFO: Login success: undefined
+[2025-08-17T15:56:21.228Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T16:09:25.279Z] INFO: Login attempt: hore
+[2025-08-17T16:09:25.347Z] INFO: Login success: hore
+[2025-08-17T16:09:46.799Z] INFO: Login attempt: more
+[2025-08-17T16:09:46.855Z] INFO: Login success: more
+[2025-08-17T16:09:46.891Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T16:19:47.859Z] INFO: Login attempt: hore
+[2025-08-17T16:19:47.916Z] INFO: Login success: hore
+[2025-08-17T16:21:08.685Z] INFO: Login attempt: more
+[2025-08-17T16:21:08.741Z] INFO: Login success: more
+[2025-08-17T16:21:08.774Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T16:34:54.936Z] INFO: Login attempt: more
+[2025-08-17T16:34:54.998Z] INFO: Login success: more
+[2025-08-17T16:34:55.047Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T16:41:47.751Z] INFO: Login attempt: more
+[2025-08-17T16:41:47.818Z] INFO: Login success: more
+[2025-08-17T16:41:47.869Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T16:42:50.022Z] INFO: Login attempt: moreT
+[2025-08-17T16:42:50.079Z] ERROR: Login failed for moreT: שם משתמש או סיסמא שגויים
+[2025-08-17T16:42:58.627Z] INFO: Login attempt: moreT
+[2025-08-17T16:42:58.685Z] ERROR: Login failed for moreT: שם משתמש או סיסמא שגויים
+[2025-08-17T16:43:24.845Z] INFO: Login attempt: moreT
+[2025-08-17T16:43:24.901Z] ERROR: Login failed for moreT: שם משתמש או סיסמא שגויים
+[2025-08-17T16:43:34.201Z] INFO: Login attempt: more
+[2025-08-17T16:43:34.257Z] INFO: Login success: more
+[2025-08-17T16:43:34.295Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T16:44:14.204Z] INFO: Login attempt: moreT
+[2025-08-17T16:44:14.258Z] INFO: Login success: moreT
+[2025-08-17T16:44:14.295Z] INFO: 📄 שליפת משימות עבור מורה: 688b91d3bc7f3e3214ce88a2
+[2025-08-17T16:52:43.646Z] INFO: Login attempt: more
+[2025-08-17T16:52:43.702Z] INFO: Login success: more
+[2025-08-17T16:52:43.746Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T16:56:34.194Z] INFO: Login attempt: more
+[2025-08-17T16:56:34.261Z] INFO: Login success: more
+[2025-08-17T16:56:34.314Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T17:01:34.153Z] INFO: Login attempt: more
+[2025-08-17T17:01:34.219Z] INFO: Login success: more
+[2025-08-17T17:01:34.274Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T17:06:18.839Z] INFO: Login attempt: more
+[2025-08-17T17:06:18.907Z] INFO: Login success: more
+[2025-08-17T17:06:18.960Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T17:07:10.912Z] INFO: Login attempt: admin
+[2025-08-17T17:07:10.973Z] INFO: Login success: admin
+[2025-08-17T17:09:14.687Z] INFO: Login attempt: more
+[2025-08-17T17:09:14.746Z] INFO: Login success: more
+[2025-08-17T17:09:14.794Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3
+[2025-08-17T17:17:01.813Z] INFO: Login attempt: more
+[2025-08-17T17:17:01.881Z] INFO: Login success: more
+[2025-08-17T17:17:01.928Z] INFO: 📄 שליפת משימות עבור מורה: 689b05a862117c3b283bc3d3

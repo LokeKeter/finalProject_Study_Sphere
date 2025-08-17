@@ -47,6 +47,7 @@ const ContactsScreen = () => {
   // ✅ Fix missing letter modal states
   const [letterSubject, setLetterSubject] = useState("");
   const [letterContent, setLetterContent] = useState("");
+  const [isSending, setIsSending] = useState(false);
 
   // ✅ Fix missing selectedFile state
   const [selectedFile, setSelectedFile] = useState(null);
@@ -114,27 +115,86 @@ const ContactsScreen = () => {
 
 useEffect(() => {
   const fetchContacts = async () => {
-    if (!teacherClasses[selectedClassIndex]) return;
-    const token = await AsyncStorage.getItem("token");
-
-    const res = await fetch(
-      `${API_BASE_URL}/api/attendance/students-by-class/${teacherClasses[selectedClassIndex]}`,
-      {
-        headers: { Authorization: `Bearer ${token}` }
+    try {
+      // Check if there's a selected class
+      if (!teacherClasses || !teacherClasses[selectedClassIndex]) {
+        console.log('⚠️ No class selected or no classes available');
+        setContacts([]);
+        return;
       }
-    );
+      
+      console.log('🔍 Fetching contacts for class:', teacherClasses[selectedClassIndex]);
+      
+      // Get authentication token
+      const token = await AsyncStorage.getItem("token");
+      if (!token) {
+        console.error('❌ No authentication token found');
+        Alert.alert("❌ שגיאה", "אין אישור גישה. נא להתחבר מחדש");
+        setContacts([]);
+        return;
+      }
 
-    const data = await res.json();
+      // Make API request
+      const url = `${API_BASE_URL}/api/attendance/students-by-class/${encodeURIComponent(teacherClasses[selectedClassIndex])}`;
+      console.log('🌐 Fetching from URL:', url);
+      
+      const res = await fetch(url, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Accept': 'application/json'
+        }
+      });
 
-    console.log("DATA FROM BACKEND:", data);
-    const mapped = data.map((student) => ({
-      id: student.parentId,
-      parentName: student.parentName,
-      studentName: student.studentName,
-      classId: teacherClasses[selectedClassIndex]
-    }));
+      // Check response status
+      console.log('📥 Response status:', res.status);
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error('❌ Failed to fetch contacts:', res.status, errorText);
+        Alert.alert("❌ שגיאה", `לא ניתן לטעון אנשי קשר (${res.status})`);
+        setContacts([]);
+        return;
+      }
 
-    setContacts(mapped);
+      // Parse response data
+      const data = await res.json();
+      console.log("📦 DATA FROM BACKEND:", data);
+      
+      // Validate data is an array
+      if (!Array.isArray(data)) {
+        console.error('❌ Expected array but got:', typeof data, data);
+        Alert.alert("❌ שגיאה", "התקבל מבנה נתונים שגוי מהשרת");
+        setContacts([]);
+        return;
+      }
+      
+      // Map data to contacts format
+      const mapped = data.map((student) => {
+        // Generate a unique ID even if parentId is null
+        const contactId = student.parentId || `student-${student.studentName}-${Date.now()}`;
+        
+        console.log('📝 Mapping contact:', {
+          originalParentId: student.parentId,
+          generatedId: contactId,
+          parentName: student.parentName,
+          studentName: student.studentName
+        });
+        
+        return {
+          id: contactId, // Use the generated ID that's never null
+          parentId: student.parentId, // Keep the original parentId separately
+          parentName: student.parentName || 'לא ידוע',
+          studentName: student.studentName || 'לא ידוע',
+          classId: teacherClasses[selectedClassIndex]
+        };
+      });
+
+      console.log('✅ Mapped', mapped.length, 'contacts');
+      setContacts(mapped);
+    } catch (error) {
+      console.error('💥 Error in fetchContacts:', error);
+      Alert.alert("❌ שגיאה", "אירעה שגיאה בטעינת אנשי קשר: " + error.message);
+      setContacts([]);
+    }
   };
 
   fetchContacts();
@@ -178,74 +238,280 @@ useEffect(() => {
   };
 
   const sendLetter = async () => {
-    const token = await AsyncStorage.getItem("token");
-    const res = await fetch(`${API_BASE_URL}/api/communication/send-letter`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        receiverId: selectedParentId,
-        senderId: userId,
-        subject: letterSubject,
-        content: letterContent
-      })
-    });
-    const data = await res.json();
+    try {
+      console.log('🚀 Starting sendLetter function...');
+      setIsSending(true); // ✅ Show loading state
+      
+      // ✅ Validate required fields with detailed logging
+      console.log('🔍 Validating fields:');
+      console.log('  - selectedParentId:', selectedParentId);
+      console.log('  - letterSubject:', letterSubject);
+      console.log('  - letterContent:', letterContent);
+      
+      // Check if parent ID exists and is valid
+      if (!selectedParentId || selectedParentId === "undefined" || selectedParentId === "null") {
+        console.log('❌ Validation failed: Invalid parent ID:', selectedParentId);
+        Alert.alert("❌ שגיאה", "יש לבחור הורה לשליחת המכתב");
+        setIsSending(false);
+        return;
+      }
+      
+      // Find the selected contact
+      const selectedContact = contacts.find(contact => contact.id === selectedParentId);
+      if (!selectedContact) {
+        console.log('❌ Validation failed: Contact not found with ID:', selectedParentId);
+        console.log('Available contacts:', contacts.map(c => ({id: c.id, parentId: c.parentId, name: c.parentName})));
+        Alert.alert("❌ שגיאה", "ההורה שנבחר אינו קיים ברשימה. נא לנסות שוב");
+        setIsSending(false);
+        return;
+      }
+      
+      // Check if the contact has a valid parentId
+      if (!selectedContact.parentId) {
+        console.log('❌ Validation failed: Selected contact has no parent ID:', selectedContact);
+        Alert.alert("❌ שגיאה", "להורה זה אין מזהה תקין במערכת. אנא פנה למנהל המערכת");
+        setIsSending(false);
+        return;
+      }
+      
+      if (!letterSubject.trim()) {
+        console.log('❌ Validation failed: No subject');
+        Alert.alert("❌ שגיאה", "יש להזין נושא למכתב");
+        setIsSending(false);
+        return;
+      }
+      
+      if (!letterContent.trim()) {
+        console.log('❌ Validation failed: No content');
+        Alert.alert("❌ שגיאה", "יש להזין תוכן למכתב");
+        setIsSending(false);
+        return;
+      }
+      
+      console.log('✅ All validations passed, proceeding with send...');
 
-    if (res.ok) {
-      Alert.alert("✅ הצלחה", "המכתב נשלח להורה");
+      // ✅ Get teacher ID from stored user data
+      const token = await AsyncStorage.getItem("token");
+      const storedUser = await AsyncStorage.getItem("user");
+      
+      if (!token) {
+        Alert.alert("❌ שגיאה", "לא נמצא טוקן התחברות. אנא התחבר מחדש");
+        return;
+      }
+      
+      if (!storedUser) {
+        Alert.alert("❌ שגיאה", "לא נמצאו פרטי משתמש. אנא התחבר מחדש");
+        return;
+      }
+
+      const userData = JSON.parse(storedUser);
+      const senderId = userData.id || userData._id;
+
+      if (!senderId) {
+        Alert.alert("❌ שגיאה", "לא נמצא מזהה משתמש. אנא התחבר מחדש");
+        return;
+      }
+
+      const requestData = {
+        senderId: senderId,
+        receiverId: selectedContact.parentId, // Use the actual parent ID, not the contact ID
+        subject: letterSubject.trim(),
+        content: letterContent.trim()
+      };
+      
+      console.log('📤 Request data:', requestData);
+
+      console.log('📤 Sending letter:', requestData);
+      console.log('🌐 API URL:', `${API_BASE_URL}/api/communication/send-letter`);
+
+      // ✅ Send letter with proper error handling
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+      const res = await fetch(`${API_BASE_URL}/api/communication/send-letter`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(requestData),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      console.log('📥 Response status:', res.status);
+
+      if (!res.ok) {
+        let errorData;
+        try {
+          errorData = await res.json();
+          console.error('❌ Send letter error:', errorData);
+          
+          // Provide specific error messages based on the error
+          if (errorData.error === "מזהה מקבל לא תקין") {
+            Alert.alert(
+              "❌ שגיאה", 
+              "מזהה ההורה אינו תקין. נא לפנות למנהל המערכת או לנסות לבחור הורה אחר.",
+              [
+                { text: "סגור", style: "cancel" },
+                { 
+                  text: "נסה שוב", 
+                  onPress: () => {
+                    // Refresh the contacts list
+                    fetchContacts();
+                  }
+                }
+              ]
+            );
+          } else if (errorData.error === "משתמש מקבל לא נמצא במערכת") {
+            Alert.alert(
+              "❌ שגיאה", 
+              "ההורה אינו רשום במערכת. המערכת מנסה ליצור משתמש הורה אוטומטית, אך התהליך נכשל. נא לפנות למנהל המערכת.",
+              [{ text: "הבנתי", style: "cancel" }]
+            );
+          } else {
+            Alert.alert("❌ שגיאה", errorData.message || errorData.error || `שליחה נכשלה (${res.status})`);
+          }
+        } catch (jsonError) {
+          console.error('❌ Failed to parse error response:', jsonError);
+          Alert.alert("❌ שגיאה", `שליחה נכשלה (${res.status}): תקלת תקשורת עם השרת`);
+        }
+        return;
+      }
+
+      const data = await res.json();
+      console.log('✅ Letter sent successfully:', data);
+
+      Alert.alert("✅ הצלחה", "המכתב נשלח להורה בהצלחה");
       setLetterModalVisible(false);
       setLetterSubject("");
       setLetterContent("");
-    } else {
-      Alert.alert("❌ שגיאה", data.message || "שליחה נכשלה");
+      setSelectedParentId(null);
+      
+    } catch (error) {
+      console.error('💥 Network error in sendLetter:', error);
+      
+      if (error.name === 'AbortError') {
+        Alert.alert("❌ תם הזמן", "הבקשה לשרת ארכה יותר מדי. נסה שוב");
+      } else if (error.message.includes('fetch')) {
+        Alert.alert("❌ שגיאת רשת", "לא ניתן להתחבר לשרת. בדוק את החיבור לאינטרנט");
+      } else {
+        Alert.alert("❌ שגיאה", error.message || "שגיאה לא צפויה");
+      }
+    } finally {
+      setIsSending(false); // ✅ Always hide loading state
     }
   };
 
   const sendFile = async () => {
-    if (!selectedFile || !fileDescription) {
-      Alert.alert("❌ שגיאה", "יש למלא תיאור ולהעלות קובץ");
-      return;
-    }
-
-    const token = await AsyncStorage.getItem("token");
-    const formData = new FormData();
-
-    formData.append("file", {
-      uri: selectedFile.uri,
-      name: selectedFile.name,
-      type: selectedFile.mimeType || "application/octet-stream"
-    });
-
-    formData.append("receiverId", selectedParentId);
-    formData.append("senderId", userId);
-    formData.append("content", fileDescription);
-    console.log("1");
-    console.log("Selected file:", selectedFile);
     try {
-      const res = await fetch(`${API_BASE_URL}/api/communication/send-file`, {
+      console.log('🚀 Starting sendFile function (signature)...');
+      
+      // Validate required fields
+      if (!selectedFile) {
+        console.log('❌ Validation failed: No file selected');
+        Alert.alert("❌ שגיאה", "יש לבחור קובץ לשליחה");
+        return;
+      }
+      
+      if (!fileDescription || !fileDescription.trim()) {
+        console.log('❌ Validation failed: No description');
+        Alert.alert("❌ שגיאה", "יש להזין תיאור לקובץ");
+        return;
+      }
+      
+      // Find the selected contact
+      const selectedContact = contacts.find(contact => contact.id === selectedParentId);
+      if (!selectedContact) {
+        console.log('❌ Validation failed: Contact not found with ID:', selectedParentId);
+        Alert.alert("❌ שגיאה", "ההורה שנבחר אינו קיים ברשימה. נא לנסות שוב");
+        return;
+      }
+      
+      // Check if the contact has a valid parentId
+      if (!selectedContact.parentId) {
+        console.log('❌ Validation failed: Selected contact has no parent ID:', selectedContact);
+        Alert.alert("❌ שגיאה", "להורה זה אין מזהה תקין במערכת. אנא פנה למנהל המערכת");
+        return;
+      }
+      
+      // Get authentication token and user data
+      const token = await AsyncStorage.getItem("token");
+      const storedUser = await AsyncStorage.getItem("user");
+      
+      if (!token) {
+        Alert.alert("❌ שגיאה", "לא נמצא טוקן התחברות. אנא התחבר מחדש");
+        return;
+      }
+      
+      if (!storedUser) {
+        Alert.alert("❌ שגיאה", "לא נמצאו פרטי משתמש. אנא התחבר מחדש");
+        return;
+      }
+      
+      const userData = JSON.parse(storedUser);
+      const senderId = userData.id || userData._id;
+      
+      if (!senderId) {
+        Alert.alert("❌ שגיאה", "לא נמצא מזהה משתמש. אנא התחבר מחדש");
+        return;
+      }
+      
+      // Create form data for the file upload
+      const formData = new FormData();
+      formData.append("file", {
+        uri: selectedFile.uri,
+        name: selectedFile.name,
+        type: selectedFile.mimeType || "application/octet-stream"
+      });
+      
+      // Add other required fields
+      formData.append("receiverId", selectedContact.parentId); // Use the actual parent ID
+      formData.append("senderId", senderId);
+      formData.append("content", fileDescription.trim());
+      
+      console.log('📤 Sending signature with file:', {
+        fileName: selectedFile.name,
+        fileType: selectedFile.mimeType,
+        receiverId: selectedContact.parentId,
+        senderId: senderId,
+        content: fileDescription.trim()
+      });
+      
+      // Send the signature request to the correct endpoint
+      console.log('🌐 API URL:', `${API_BASE_URL}/api/communication/signature`);
+      const res = await fetch(`${API_BASE_URL}/api/communication/signature`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
+          // Don't set Content-Type here, it will be set automatically with the boundary
         },
         body: formData
       });
-      console.log("2");
-      const data = await res.json();
-      console.log("3");
-      if (res.ok) {
-        console.log("4");
-        Alert.alert("✅ הצלחה", "הקובץ נשלח להורה");
-        setSignatureModalVisible(false);
-        setSelectedFile(null);
-        setFileDescription("");
-      } else {
-        Alert.alert("❌ שגיאה", data.message || "שליחה נכשלה");
+      
+      console.log('📥 Response status:', res.status);
+      
+      // Handle response
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ message: 'שגיאת שרת' }));
+        console.error('❌ Send signature error:', errorData);
+        Alert.alert("❌ שגיאה", errorData.message || `שליחת האישור נכשלה (${res.status})`);
+        return;
       }
-    } catch (err) {
-      Alert.alert("❌ שגיאה", err.message);
+      
+      const data = await res.json();
+      console.log('✅ Signature sent successfully:', data);
+      
+      Alert.alert("✅ הצלחה", "האישור נשלח להורה בהצלחה");
+      setSignatureModalVisible(false);
+      setSelectedFile(null);
+      setFileDescription("");
+      setSelectedParentId(null);
+      
+    } catch (error) {
+      console.error('💥 Network error in sendFile:', error);
+      Alert.alert("❌ שגיאה", `שליחת האישור נכשלה: ${error.message}`);
     }
   };
 
@@ -359,6 +625,7 @@ useEffect(() => {
                 </TouchableOpacity>
 
                <TouchableOpacity onPress={() => {
+                console.log('✉️ Letter icon pressed for parent:', parent.parentName, 'ID:', parent.id);
                 setSelectedParentId(parent.id);
                 setLetterModalVisible(true);
               }}>
@@ -483,7 +750,12 @@ useEffect(() => {
           </View>
           <Text style={styles.title}>מכתב להורים</Text>
         </View>
-        <TouchableOpacity onPress={() => setLetterModalVisible(false)}>
+        <TouchableOpacity onPress={() => {
+          console.log('🚪 Closing letter modal');
+          setLetterModalVisible(false);
+          setIsSending(false);
+          // Don't clear subject/content to preserve user input
+        }}>
           <Text style={styles.closeButton}>✖</Text>
         </TouchableOpacity>
       </View>
@@ -513,12 +785,33 @@ useEffect(() => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={styles.cancelButton}
-          onPress={() => setLetterModalVisible(false)}
+          onPress={() => {
+            console.log('❌ Cancel button pressed');
+            setLetterModalVisible(false);
+            setIsSending(false);
+          }}
         >
           <Text style={styles.cancelButtonText}>ביטול</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.sendButton} onPress={sendLetter}>
-          <Text style={styles.sendButtonText}>📨 שלח</Text>
+        <TouchableOpacity 
+          style={[
+            styles.sendButton, 
+            isSending && styles.sendButtonDisabled
+          ]} 
+          onPress={() => {
+            if (isSending) return; // ✅ Prevent multiple presses
+            console.log('🔘 Send button pressed!');
+            console.log('📧 Letter Subject:', letterSubject);
+            console.log('📝 Letter Content:', letterContent);
+            console.log('👤 Selected Parent ID:', selectedParentId);
+            sendLetter();
+          }}
+          activeOpacity={isSending ? 1 : 0.7}
+          disabled={isSending}
+        >
+          <Text style={styles.sendButtonText}>
+            {isSending ? "⏳ שולח..." : "📨 שלח"}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -968,6 +1261,11 @@ sendButton: {
   paddingVertical: 14,
   borderRadius: 8,
   alignItems: "center",
+},
+
+sendButtonDisabled: {
+  backgroundColor: "#666", // ✅ Grayed out when disabled
+  opacity: 0.7,
 },
 
 sendButtonText: {

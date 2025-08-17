@@ -689,7 +689,7 @@ export default function AdminUsers() {
           body: JSON.stringify({
             classId: classToUpdate._id,
             parentId: student._id,
-            studentId: student.studentId,
+            studentId: student._id,
             studentName: student.studentName
           })
         });

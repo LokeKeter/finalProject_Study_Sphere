@@ -225,6 +225,7 @@ export default function AdminClassesPage() {
           const base = baseOf(item.grade);
 
           // unassignedStudents מגיעים עם student.grade מהשרת (מודל Student)
+          // סינון לפי בסיס כיתה (ב', ג', וכו') - תלמידים שהוסרו יכולים להתווסף לכל כיתה באותה שכבה
           const filtered = unassignedStudents.filter(s => s.grade === base);
 
           setCandidateStudents(filtered);

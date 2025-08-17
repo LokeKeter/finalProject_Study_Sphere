@@ -7,7 +7,8 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Alert
+  Alert,
+  Clipboard
 } from 'react-native';
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";

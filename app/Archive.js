@@ -53,10 +53,19 @@ const ArchiveScreen = () => {
 
   const filteredMessages = Array.isArray(messages)
   ? messages.filter(
-      (msg) =>
-        (classes[selectedClassIndex] === "כל המכתבים" ||
-          msg.className === classes[selectedClassIndex]) &&
-        (msg.sender.includes(searchQuery) || msg.title.includes(searchQuery))
+      (msg) => {
+        // Filter by class
+        const classMatch = classes[selectedClassIndex] === "כל המכתבים" ||
+          msg.className === classes[selectedClassIndex];
+        
+        // Filter by search query
+        const searchMatch = 
+          (msg.sender && msg.sender.toLowerCase().includes(searchQuery.toLowerCase())) || 
+          (msg.receiver && msg.receiver.toLowerCase().includes(searchQuery.toLowerCase())) || 
+          (msg.title && msg.title.toLowerCase().includes(searchQuery.toLowerCase()));
+        
+        return classMatch && searchMatch;
+      }
     )
   : [];
 
@@ -69,22 +78,74 @@ const ArchiveScreen = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const user = await AsyncStorage.getItem("user");
-        const parsed = JSON.parse(user);
-        const parentId = parsed.id;
-
-        const res = await fetch(`${API_BASE_URL}/api/communication/archive/${parentId}`);
+        console.log('📩 Fetching archive messages...');
+        
+        // Get user data with better error handling
+        const userStr = await AsyncStorage.getItem("user");
+        if (!userStr) {
+          console.error('❌ No user data found in AsyncStorage');
+          Alert.alert("❌ שגיאה", "לא נמצאו פרטי משתמש. אנא התחבר מחדש");
+          return;
+        }
+        
+        // Parse user data
+        const parsed = JSON.parse(userStr);
+        console.log('👤 User data:', { id: parsed.id, role: parsed.role });
+        
+        // Get user ID with fallback options
+        const userId = parsed.id || parsed._id;
+        if (!userId) {
+          console.error('❌ No user ID found in user data');
+          Alert.alert("❌ שגיאה", "לא נמצא מזהה משתמש. אנא התחבר מחדש");
+          return;
+        }
+        
+        // Get token for authorization
+        const token = await AsyncStorage.getItem("token");
+        if (!token) {
+          console.error('❌ No token found in AsyncStorage');
+          Alert.alert("❌ שגיאה", "לא נמצא טוקן התחברות. אנא התחבר מחדש");
+          return;
+        }
+        
+        // Fetch archive data
+        console.log(`🌐 Fetching from: ${API_BASE_URL}/api/communication/archive/${userId}`);
+        const res = await fetch(`${API_BASE_URL}/api/communication/archive/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        
+        // Check response status
+        console.log('📥 Archive response status:', res.status);
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('❌ Archive fetch error:', res.status, errorText);
+          Alert.alert("❌ שגיאה", `שגיאה בטעינת הארכיון (${res.status})`);
+          setMessages([]);
+          return;
+        }
+        
+        // Parse response data
         const data = await res.json();
-
+        console.log('📦 Archive data received:', data ? `${data.length} items` : 'No data');
+        console.log('First few items:', data?.slice(0, 2));
+        
+        // Set messages with safety check
         const safeData = Array.isArray(data) ? data : [];
         setMessages(safeData);
-
+        console.log('✅ Messages set, count:', safeData.length);
+        
+        // Extract unique classes
         const uniqueClasses = Array.from(
           new Set(safeData.map(m => m.className))
         ).filter(c => c !== "כיתה כללית");
         setClasses(["כל המכתבים", ...uniqueClasses]);
+        console.log('📋 Unique classes:', uniqueClasses);
+        
       } catch (err) {
         console.error("❌ שגיאה בעת שליפת הודעות:", err);
+        Alert.alert("❌ שגיאה", "אירעה שגיאה בטעינת הארכיון: " + err.message);
         setMessages([]); // שים הודעות ריקות במקרה של שגיאה
       }
     };
@@ -142,12 +203,18 @@ const ArchiveScreen = () => {
                     </Text>
                   </View>
                   <View style={styles.entryMeta}>
-                    <Text>{msg.sender}</Text>
+                    <Text>{msg.direction === "נשלח" ? `אל: ${msg.receiver}` : `מאת: ${msg.sender}`}</Text>
                     <Text>{msg.date}</Text>
                   </View>
-                  <Text style={styles.entryPreview}>
-                    {msg.content ? msg.content.slice(0, 40) + "..." : "אין תוכן"}
-                  </Text>
+                  <View style={styles.entryDetails}>
+                    <Text style={[styles.entryDirection, 
+                      msg.direction === "נשלח" ? styles.sentMessage : styles.receivedMessage]}>
+                      {msg.direction === "נשלח" ? "📤 נשלח" : "📥 התקבל"}
+                    </Text>
+                    <Text style={styles.entryPreview}>
+                      {msg.content ? msg.content.slice(0, 40) + "..." : "אין תוכן"}
+                    </Text>
+                  </View>
                 </TouchableOpacity>
               ))
             )}
@@ -216,6 +283,26 @@ const ArchiveScreen = () => {
 // 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
+  entryDetails: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 5
+  },
+  entryDirection: {
+    fontWeight: "bold",
+    fontSize: 12,
+    padding: 4,
+    borderRadius: 4,
+  },
+  sentMessage: {
+    backgroundColor: "#e6f7ff",
+    color: "#0066cc",
+  },
+  receivedMessage: {
+    backgroundColor: "#f0f0f0",
+    color: "#444444",
+  },
   topBar: {
     position: "absolute",
     top: 0,

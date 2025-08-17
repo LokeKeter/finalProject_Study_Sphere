@@ -5,12 +5,227 @@ const mongoose = require('mongoose');
 const Student = require("../models/Student");
 const jwt = require('jsonwebtoken');
 
-exports.createLetter = (senderId, receiverId, subject, content) => {
-  return Communication.create({ type: "letter", senderId, receiverId, subject, content });
+exports.createLetter = async (senderId, receiverId, subject, content) => {
+  try {
+    console.log('📬 createLetter called with:', { 
+      senderId, 
+      receiverId, 
+      subject, 
+      content: content?.substring(0, 20) + '...' // Log just part of the content
+    });
+    
+    // ✅ Validate ObjectIds with better error handling
+    if (!senderId) {
+      console.error('❌ Missing senderId');
+      throw new Error("מזהה שולח חסר");
+    }
+    
+    if (!receiverId) {
+      console.error('❌ Missing receiverId');
+      throw new Error("מזהה מקבל חסר");
+    }
+    
+    // Convert to ObjectId if they're strings
+    const senderObjectId = typeof senderId === 'string' ? 
+      mongoose.Types.ObjectId.isValid(senderId) ? new mongoose.Types.ObjectId(senderId) : null : 
+      senderId;
+      
+    const receiverObjectId = typeof receiverId === 'string' ? 
+      mongoose.Types.ObjectId.isValid(receiverId) ? new mongoose.Types.ObjectId(receiverId) : null : 
+      receiverId;
+    
+    if (!senderObjectId) {
+      console.error('❌ Invalid senderId format:', senderId);
+      throw new Error("מזהה שולח לא תקין");
+    }
+    
+    if (!receiverObjectId) {
+      console.error('❌ Invalid receiverId format:', receiverId);
+      throw new Error("מזהה מקבל לא תקין");
+    }
+
+    // ✅ Verify sender and receiver exist with detailed logging
+    console.log('🔍 Looking up sender with ID:', senderObjectId);
+    const sender = await User.findById(senderObjectId);
+    console.log('👤 Sender lookup result:', sender ? `Found: ${sender.name}` : 'Not found');
+    
+    if (!sender) {
+      throw new Error("משתמש שולח לא נמצא במערכת");
+    }
+
+    console.log('🔍 Looking up receiver with ID:', receiverObjectId);
+    let receiver = await User.findById(receiverObjectId);
+    console.log('👤 Receiver lookup result:', receiver ? `Found: ${receiver.name}` : 'Not found');
+    
+    // If receiver not found, try looking up in Student.parentIds
+    if (!receiver) {
+      console.log('🔍 Receiver not found as User, checking Student.parentIds...');
+      // Check if this ID is in any student's parentIds array
+      const studentWithParent = await Student.findOne({ parentIds: receiverObjectId });
+      
+      if (studentWithParent) {
+        console.log('👨‍👩‍👧‍👦 Found student with this parent ID:', studentWithParent.name);
+        try {
+          // Create the parent user if it doesn't exist
+          const newParent = await User.create({
+            _id: receiverObjectId,
+            name: `הורה של ${studentWithParent.name}`,
+            role: 'parent',
+            email: `parent_${receiverObjectId}@placeholder.com`,
+            username: `parent_${receiverObjectId}`,
+            password: 'placeholder123' // This should be changed by the admin later
+          });
+          console.log('✅ Created new parent user:', newParent.name);
+          
+          // Use the newly created parent
+          receiver = newParent;
+        } catch (createError) {
+          console.error('❌ Error creating parent user:', createError);
+          // Try to find the user again in case it was created between our checks
+          receiver = await User.findById(receiverObjectId);
+          if (!receiver) {
+            throw new Error("לא ניתן ליצור משתמש הורה חדש");
+          }
+        }
+      } else {
+        console.error('❌ Receiver not found in Users or Student.parentIds');
+        throw new Error("משתמש מקבל לא נמצא במערכת");
+      }
+    }
+
+    console.log('📤 Creating letter between users:', {
+      sender: { id: sender._id, name: sender.name, role: sender.role },
+      receiver: { id: receiver._id, name: receiver.name, role: receiver.role }
+    });
+
+    const letter = await Communication.create({ 
+      type: "letter", 
+      senderId: senderObjectId, 
+      receiverId: receiverObjectId, 
+      subject, 
+      content 
+    });
+    
+    console.log('✅ Letter created successfully with ID:', letter._id);
+
+    return letter;
+    
+  } catch (error) {
+    console.error('❌ Error in createLetter service:', error);
+    throw error;
+  }
 };
 
-exports.createSignature = (senderId, receiverId, content, fileUrl) => {
-  return Communication.create({ type: "signature", senderId, receiverId, content, fileUrl });
+exports.createSignature = async (senderId, receiverId, content, fileUrl) => {
+  try {
+    console.log('📝 createSignature called with:', { 
+      senderId, 
+      receiverId, 
+      content: content?.substring(0, 20) + '...', 
+      fileUrl: fileUrl?.substring(0, 30) + '...' 
+    });
+    
+    // ✅ Validate ObjectIds with better error handling
+    if (!senderId) {
+      console.error('❌ Missing senderId');
+      throw new Error("מזהה שולח חסר");
+    }
+    
+    if (!receiverId) {
+      console.error('❌ Missing receiverId');
+      throw new Error("מזהה מקבל חסר");
+    }
+    
+    // Convert to ObjectId if they're strings
+    const senderObjectId = typeof senderId === 'string' ? 
+      mongoose.Types.ObjectId.isValid(senderId) ? new mongoose.Types.ObjectId(senderId) : null : 
+      senderId;
+      
+    const receiverObjectId = typeof receiverId === 'string' ? 
+      mongoose.Types.ObjectId.isValid(receiverId) ? new mongoose.Types.ObjectId(receiverId) : null : 
+      receiverId;
+    
+    if (!senderObjectId) {
+      console.error('❌ Invalid senderId format:', senderId);
+      throw new Error("מזהה שולח לא תקין");
+    }
+    
+    if (!receiverObjectId) {
+      console.error('❌ Invalid receiverId format:', receiverId);
+      throw new Error("מזהה מקבל לא תקין");
+    }
+
+    // ✅ Verify sender and receiver exist with detailed logging
+    console.log('🔍 Looking up sender with ID:', senderObjectId);
+    const sender = await User.findById(senderObjectId);
+    console.log('👤 Sender lookup result:', sender ? `Found: ${sender.name}` : 'Not found');
+    
+    if (!sender) {
+      throw new Error("משתמש שולח לא נמצא במערכת");
+    }
+
+    console.log('🔍 Looking up receiver with ID:', receiverObjectId);
+    let receiver = await User.findById(receiverObjectId);
+    console.log('👤 Receiver lookup result:', receiver ? `Found: ${receiver.name}` : 'Not found');
+    
+    // If receiver not found, try looking up in Student.parentIds
+    if (!receiver) {
+      console.log('🔍 Receiver not found as User, checking Student.parentIds...');
+      // Check if this ID is in any student's parentIds array
+      const studentWithParent = await Student.findOne({ parentIds: receiverObjectId });
+      
+      if (studentWithParent) {
+        console.log('👨‍👩‍👧‍👦 Found student with this parent ID:', studentWithParent.name);
+        try {
+          // Create the parent user if it doesn't exist
+          const newParent = await User.create({
+            _id: receiverObjectId,
+            name: `הורה של ${studentWithParent.name}`,
+            role: 'parent',
+            email: `parent_${receiverObjectId}@placeholder.com`,
+            username: `parent_${receiverObjectId}`,
+            password: 'placeholder123' // This should be changed by the admin later
+          });
+          console.log('✅ Created new parent user:', newParent.name);
+          
+          // Use the newly created parent
+          receiver = newParent;
+        } catch (createError) {
+          console.error('❌ Error creating parent user:', createError);
+          // Try to find the user again in case it was created between our checks
+          receiver = await User.findById(receiverObjectId);
+          if (!receiver) {
+            throw new Error("לא ניתן ליצור משתמש הורה חדש");
+          }
+        }
+      } else {
+        console.error('❌ Receiver not found in Users or Student.parentIds');
+        throw new Error("משתמש מקבל לא נמצא במערכת");
+      }
+    }
+
+    console.log('📤 Creating signature between users:', {
+      sender: { id: sender._id, name: sender.name, role: sender.role },
+      receiver: { id: receiver._id, name: receiver.name, role: receiver.role },
+      hasFile: !!fileUrl
+    });
+
+    const signature = await Communication.create({ 
+      type: "signature", 
+      senderId: senderObjectId, 
+      receiverId: receiverObjectId, 
+      content,
+      fileUrl
+    });
+    
+    console.log('✅ Signature created successfully with ID:', signature._id);
+
+    return signature;
+    
+  } catch (error) {
+    console.error('❌ Error in createSignature service:', error);
+    throw error;
+  }
 };
 
 exports.createMeeting = async (senderId, receiverId, subject, meetingDate, meetingType) => {
@@ -81,23 +296,63 @@ exports.createFileUpload = async (senderId, receiverId, description, fileUrl) =>
 };
 
 exports.getUserArchive = async (userId) => {
-  const messages = await Communication.find({
-    $or: [{ receiverId: userId }]
-  })
-    .sort({ createdAt: -1 })
-    .populate("senderId", "name")
-    .lean();
+  console.log('🔍 getUserArchive called with userId:', userId);
+  
+  // Validate userId
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    console.error('❌ Invalid userId provided to getUserArchive:', userId);
+    return [];
+  }
+  
+  try {
+    // Ensure userId is an ObjectId
+    const userObjectId = mongoose.Types.ObjectId(userId);
+    
+    // Fetch both sent and received messages for the user
+    console.log('📩 Finding messages for user:', userId);
+    const messages = await Communication.find({
+      $or: [
+        { receiverId: userObjectId }, 
+        { senderId: userObjectId }
+      ]
+    })
+      .sort({ createdAt: -1 })
+      .populate("senderId", "name")
+      .populate("receiverId", "name")
+      .lean();
+    
+    console.log(`✅ Found ${messages.length} messages for user ${userId}`);
+    
+    // Log the first message if available
+    if (messages.length > 0) {
+      console.log('📄 First message sample:', {
+        id: messages[0]._id,
+        type: messages[0].type,
+        senderId: messages[0].senderId?._id || messages[0].senderId,
+        receiverId: messages[0].receiverId?._id || messages[0].receiverId,
+        subject: messages[0].subject
+      });
+    }
 
     const allClasses = await Class.find().lean();
 
-  return messages.map(msg => {
+  const result = messages.map(msg => {
+    // Find associated class
     const classDoc = allClasses.find(cls =>
-      cls.students.some(s => s.parentId.toString() === msg.receiverId?.toString())
+      cls.students && cls.students.some(s => s.parentId && 
+        (s.parentId.toString() === (msg.receiverId?._id || msg.receiverId)?.toString() || 
+         s.parentId.toString() === (msg.senderId?._id || msg.senderId)?.toString()))
     );
-
+    
+    // Determine if this message was sent or received by the current user
+    const senderIdStr = (msg.senderId?._id || msg.senderId)?.toString();
+    const messageDirection = senderIdStr === userId.toString() ? "נשלח" : "התקבל";
+    
+    // Create normalized message object
     return {
       id: msg._id,
       type: msg.type,
+      direction: messageDirection,
       title: msg.subject || "ללא נושא",
       sender: msg.senderId?.name || "שולח לא ידוע",
       receiver: msg.receiverId?.name || "מקבל לא ידוע",
@@ -107,6 +362,14 @@ exports.getUserArchive = async (userId) => {
       fileUrl: msg.fileUrl || ""
     };
   });
+  
+  console.log(`✅ Returning ${result.length} formatted messages`);
+  return result;
+  
+  } catch (error) {
+    console.error('❌ Error in getUserArchive:', error);
+    return [];
+  }
 };
 
 exports.sendClassMessage = async ({ classId, senderId, content }) => {
