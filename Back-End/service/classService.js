@@ -72,20 +72,84 @@ exports.addStudentToClass = async ({ classId, studentId }) => {
 };
 
 exports.removeStudentFromClass = async ({ classId, studentId }) => {
+  console.log('🧹 removeStudentFromClass | params:', {
+    classId,
+    studentId,
+    studentId_type: typeof studentId,
+  });
+
   const classObj = await Class.findById(classId);
-  if (!classObj) throw new Error('כיתה לא נמצאה');   // ❌ בלי res כאן
-
-  classObj.students = classObj.students.filter(s => String(s.studentId) !== String(studentId));
-  await classObj.save();
-
-  const student = await Student.findOne({ studentId });
-  if (student) {
-    student.classId = null;
-    await student.save();
+  if (!classObj) {
+    console.error('❌ כיתה לא נמצאה:', classId);
+    throw new Error('כיתה לא נמצאה');
   }
 
-  return classObj; // ✅ זה מה שמחזירים מה-service
+  console.log('📦 לפני הסרה מהכיתה:', {
+    classGrade: classObj.grade,
+    studentsCount: (classObj.students || []).length,
+    studentsIds: (classObj.students || []).map(s => String(s.studentId)),
+  });
+
+  const beforeCount = (classObj.students || []).length;
+  classObj.students = (classObj.students || []).filter(
+    s => String(s.studentId) !== String(studentId)
+  );
+  const afterCount = classObj.students.length;
+
+  console.log('➖ תוצאת הסרה:', {
+    beforeCount,
+    afterCount,
+    removed: beforeCount - afterCount,
+  });
+
+  await classObj.save();
+  console.log('💾 הכיתה נשמרה בהצלחה');
+
+  // חיפוש התלמיד גם כמחרוזת וגם כמספר (למקרה שטיפוס שונה במסד)
+  let student = await Student.findOne({ studentId: String(studentId) });
+  if (!student) {
+    try {
+      student = await Student.findOne({ studentId: Number(studentId) });
+    } catch {
+      /* מתעלמים */
+    }
+  }
+
+  console.log('🔎 תוצאת חיפוש תלמיד:', {
+    found: !!student,
+    queryTried: [String(studentId), Number(studentId)],
+  });
+
+  if (student) {
+    const gsrc = String(student.grade || classObj?.grade || '');
+    const onlyLetters = gsrc.replace(/[^A-Za-z\u0590-\u05FF]/g, '');
+    const firstLetter = onlyLetters.charAt(0) || '';
+
+    console.log('🧪 חישוב שכבה:', {
+      originalStudentGrade: student.grade,
+      classGradeFallback: classObj?.grade,
+      sourceUsed: gsrc,
+      onlyLetters,
+      firstLetter,
+    });
+
+    student.classId = null;
+    student.grade = firstLetter;
+
+    await student.save();
+    console.log('✅ תלמיד עודכן ונשמר:', {
+      studentMongoId: student._id,
+      studentId: student.studentId,
+      newGrade: student.grade,
+      newClassId: student.classId,
+    });
+  } else {
+    console.warn('⚠️ תלמיד לא נמצא עבור studentId:', studentId);
+  }
+
+  return classObj;
 };
+
 
 exports.getUnassignedStudents = async () => {
   console.log('🔍 מחפש תלמידים לא משויכים...');

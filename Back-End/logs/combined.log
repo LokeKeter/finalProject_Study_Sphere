@@ -1636,3 +1636,24 @@
 [2025-08-17T12:50:25.637Z] INFO: Login success: undefined
 [2025-08-17T13:08:40.923Z] INFO: Login attempt: a1
 [2025-08-17T13:08:40.993Z] INFO: Login success: undefined
+[2025-08-17T13:34:30.160Z] INFO: Login attempt: a1
+[2025-08-17T13:34:30.226Z] INFO: Login success: undefined
+[2025-08-17T13:39:48.766Z] INFO: Login attempt: Steven
+[2025-08-17T13:39:48.827Z] INFO: Login success: undefined
+[2025-08-17T13:39:48.883Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-17T13:42:09.707Z] INFO: Login attempt: a1
+[2025-08-17T13:42:09.769Z] INFO: Login success: undefined
+[2025-08-17T14:00:11.683Z] INFO: Login attempt: Stevenite
+[2025-08-17T14:00:11.744Z] INFO: Login success: undefined
+[2025-08-17T14:16:27.418Z] INFO: Login attempt: Stevenite
+[2025-08-17T14:16:27.487Z] INFO: Login success: undefined
+[2025-08-17T14:20:14.738Z] INFO: Login attempt: a1
+[2025-08-17T14:20:14.799Z] INFO: Login success: undefined
+[2025-08-17T14:20:32.973Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-17T14:21:47.160Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-17T14:22:10.430Z] INFO: Login attempt: a1
+[2025-08-17T14:22:10.494Z] INFO: Login success: undefined
+[2025-08-17T14:30:36.251Z] INFO: Login attempt: Stevenite
+[2025-08-17T14:30:36.319Z] INFO: Login success: undefined
+[2025-08-17T14:34:13.779Z] INFO: Login attempt: a1
+[2025-08-17T14:34:13.839Z] INFO: Login success: undefined

@@ -19,7 +19,6 @@ export default function ParentUserProfile() {
   const [relationship, setRelationship] = useState("");
   const [email, setEmail] = useState("");
   const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
-  const [sidebarVisible, setSidebarVisible] = useState(false);
 
 
     useEffect(() => {
