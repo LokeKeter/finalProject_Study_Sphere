@@ -114,108 +114,246 @@ const getStudentsByClass = async ({ teacherId, grade }) => {
   try {
     console.log('🔍 getStudentsByClass called with:', { teacherId, grade });
     
-    // Validate inputs
-    if (!teacherId || !grade) {
-      console.error('❌ Missing required parameters:', { teacherId, grade });
+    // מאשר שהמורה מלמד את הכיתה
+    const teacher = await User.findById(teacherId).select('assignedClasses').lean();
+    const assigned = (teacher?.assignedClasses || []).map(String);
+    if (!assigned.includes(String(grade))) {
+      console.log('❌ Teacher is not assigned to this class');
       return [];
     }
-    
-    // מאשר שהמורה אכן מלמד את הכיתה הזו
-    const teacher = await User.findById(teacherId).select('assignedClasses').lean();
-    console.log('👨‍🏫 Teacher found:', teacher ? 'yes' : 'no', 
-      teacher ? `with ${teacher.assignedClasses?.length || 0} assigned classes` : '');
-    
-    // For debugging, temporarily skip this check
-    // if (!teacher?.assignedClasses?.includes(grade)) {
-    //   console.log('❌ Teacher is not assigned to this class:', { 
-    //     teacherId, 
-    //     grade, 
-    //     assignedClasses: teacher?.assignedClasses 
-    //   });
-    //   return [];
-    // }
 
-    // שליפת הכיתה+הורה
-    console.log('🏫 Looking for class with grade:', grade);
-    const classDoc = await Class
-      .findOne({ grade })
-      .populate('students.parentId', 'name') // << כאן נקבל את שם ההורה
+    // שליפת כיתה + הורה (וננסה להוציא כמה שדות שם)
+    const classDoc = await Class.findOne({ grade })
+      .populate('students.parentId', 'name firstName lastName')
       .lean();
 
     if (!classDoc) {
-      console.log('❌ Class not found with grade:', grade);
+      console.log('❌ Class not found for grade:', grade);
       return [];
     }
     
-    console.log('✅ Class found with', classDoc.students?.length || 0, 'students');
+    console.log('✅ Found class with grade:', grade, 'and students:', classDoc.students?.length || 0);
+  
 
-    if (!classDoc.students || classDoc.students.length === 0) {
-      console.log('ℹ️ No students in this class');
-      return [];
-    }
+  const rawIds = (classDoc.students || []).map(s => s.studentId).filter(Boolean);
 
-    // Extract student IDs from class document
-    const studentIds = classDoc.students
-      .map(s => s.studentId)
-      .filter(id => id && mongoose.Types.ObjectId.isValid(id));
+  // Helper function to check if a string looks like an ObjectId
+  const isObjectIdLike = (id) => {
+    if (!id) return false;
+    const str = String(id).trim();
+    return /^[0-9a-fA-F]{24}$/.test(str);
+  };
+
+  // מפריד לאובייקטים שנראים כמו ObjectId ולת"ז/מחרוזות
+  const objectIds = [];
+  const nationalIds = [];
+  for (const id of rawIds) {
+    if (isObjectIdLike(id)) objectIds.push(new mongoose.Types.ObjectId(id));
+    else nationalIds.push(String(id));
+  }
+
+  // מביא תלמידים לפי _id וגם לפי studentId (אם קיים כזה שדה)
+  const [byObjId, byNatId] = await Promise.all([
+    objectIds.length
+      ? Student.find({ _id: { $in: objectIds } })
+          .select('_id studentId fullName firstName lastName name')
+          .lean()
+      : [],
+    nationalIds.length
+      ? Student.find({ studentId: { $in: nationalIds } })
+          .select('_id studentId fullName firstName lastName name')
+          .lean()
+      : [],
+  ]);
+
+  // Helper function to extract full name from document
+  const fullNameFromDoc = (doc) => {
+    if (!doc) return null;
+    if (doc.fullName) return doc.fullName;
+    if (doc.name) return doc.name;
+    if (doc.firstName && doc.lastName) return `${doc.firstName} ${doc.lastName}`;
+    if (doc.firstName) return doc.firstName;
+    if (doc.lastName) return doc.lastName;
+    return null;
+  };
+
+  // בונה Map שמחזיק שם לפי גם _id וגם studentId
+  const nameMap = new Map();
+  const addToMap = (stu) => {
+    const nm = fullNameFromDoc(stu);
+    if (!nm) return;
+    nameMap.set(String(stu._id), nm);
+    if (stu.studentId != null) nameMap.set(String(stu.studentId), nm);
+  };
+  byObjId.forEach(addToMap);
+  byNatId.forEach(addToMap);
+
+  // Fetch all parent users for the students in this class
+  const studentIds = classDoc.students.map(s => s.studentId).filter(Boolean);
+  
+  // Get all students with their parentIds
+  const students = await Student.find({ _id: { $in: studentIds } })
+    .select('_id name parentIds')
+    .lean();
     
-    if (studentIds.length === 0) {
-      console.log('ℹ️ No valid student IDs found in class');
-      return [];
-    }
-    
-    console.log('🔍 Looking up', studentIds.length, 'students');
-    
-    // Fetch student documents with name and parentIds
-    const studentsDocs = await Student.find({ _id: { $in: studentIds } })
-                                    .select('_id name parentIds')
-                                    .lean();
-    
-    console.log('👨‍🎓 Found', studentsDocs.length, 'student documents');
-    
-    // Create maps for student names and parent IDs
-    const studentMap = new Map();
-    studentsDocs.forEach(s => {
-      studentMap.set(String(s._id), {
-        name: s.name,
-        parentId: s.parentIds && s.parentIds.length > 0 ? s.parentIds[0] : null
-      });
+  console.log(`✅ Found ${students.length} students from Student collection`);
+  
+  // Create a map of student ID to parentIds
+  const studentParentMap = new Map();
+  for (const student of students) {
+    studentParentMap.set(String(student._id), {
+      name: student.name,
+      parentIds: student.parentIds || []
     });
-
-    // Map students to the format expected by the frontend
-    const result = classDoc.students.map(s => {
-      // Skip invalid student entries
-      if (!s || !s.studentId) {
-        return null;
+  }
+  
+  // Get all parent users for these students
+  const allParentIds = students
+    .flatMap(s => s.parentIds || [])
+    .filter(Boolean)
+    .map(id => String(id));
+    
+  console.log(`🔍 Looking up ${allParentIds.length} parent users`);
+  
+  // Fetch parent users
+  const parentUsers = await User.find({ 
+    _id: { $in: allParentIds },
+    role: 'parent'
+  })
+  .select('_id name email')
+  .lean();
+  
+  console.log(`✅ Found ${parentUsers.length} parent users`);
+  
+  // Create a map of parent ID to parent name
+  const parentMap = new Map();
+  for (const parent of parentUsers) {
+    parentMap.set(String(parent._id), parent.name || 'הורה');
+  }
+  
+  // Array to collect student IDs that need parent ID updates
+  const studentIdsToUpdate = [];
+  
+  // מיפוי התוצאה ל־frontend
+  const result = (classDoc.students || []).map(s => {
+    if (!s || !s.studentId) {
+      console.log('⚠️ Invalid student entry in class:', s);
+      return null;
+    }
+    
+    const studentInfo = studentParentMap.get(String(s.studentId));
+    
+    // Get parent ID directly from student record in class or from the student's parentIds
+    let parentId = s.parentId || null;
+    
+    // If no parentId in class record but we have parentIds in student record
+    if (!parentId && studentInfo && studentInfo.parentIds && studentInfo.parentIds.length > 0) {
+      parentId = studentInfo.parentIds[0];
+      
+      // Schedule an update to the class record
+      studentIdsToUpdate.push({
+        classId: classDoc._id,
+        studentId: s.studentId,
+        parentId: parentId
+      });
+    }
+    
+    // Get parent name from the parent map or use stored name
+    let parentName = s.parentName || 'לא ידוע';
+    
+    // If we have a parentId and it's in our parent map, use that name
+    if (parentId && parentMap.has(String(parentId))) {
+      parentName = parentMap.get(String(parentId));
+    }
+    
+    // If parentId is missing, try to find it from Student model
+    if (!parentId) {
+      console.log(`⚠️ No parentId in class record for student: ${s.studentId}, checking Student model`);
+      
+      // We'll handle this asynchronously after mapping all students
+      studentIdsToUpdate.push({
+        classId: classDoc._id,
+        studentId: s.studentId
+      });
+    } else if (parentId && typeof parentId === 'object' && parentId._id) {
+      // If parentId is populated object, use its _id
+      console.log(`✅ Found populated parentId: ${parentId._id}`);
+      parentId = parentId._id;
+    }
+    
+    // שם התלמיד - use stored studentName, student info, or nameMap
+    let studentName = s.studentName || null;
+    
+    // If no studentName in class record but we have it in studentInfo
+    if (!studentName && studentInfo && studentInfo.name) {
+      studentName = studentInfo.name;
+    }
+    
+    // If still no name, try to get from nameMap
+    if (!studentName) {
+      const sid = s.studentId;
+      studentName = nameMap.get(String(sid));
+      if (!studentName && isObjectIdLike(sid)) {
+        studentName = nameMap.get(String(new mongoose.Types.ObjectId(sid)));
       }
-      
-      // Get student info from our map
-      const studentInfo = studentMap.get(String(s.studentId)) || {};
-      
-      // Get parent ID from either the class document or the student document
-      const parentId = s.parentId?._id || studentInfo.parentId || null;
-      
-      // Generate a unique ID for each entry, ensuring it's never null
-      const uniqueId = parentId || `student-${s.studentId}`;
-      
-      // Use stored names if available, fallback to populated/lookup values
-      const studentName = s.studentName || studentInfo.name || 'לא ידוע';
-      const parentName = s.parentName || s.parentId?.name || 'לא ידוע';
-      
-      return {
-        id: uniqueId, // Ensure we always have a unique ID
-        parentId: parentId, // This should now come from either class or student document
-        parentName: parentName,
-        studentName: studentName,
-      };
-    }).filter(Boolean); // Remove any null entries
+    }
+
+    const result = {
+      parentId: parentId && typeof parentId === 'object' ? parentId._id : parentId,
+      parentName: parentName || 'לא ידוע',
+      studentName: studentName || 'לא ידוע',
+    };
     
-    console.log('✅ Returning', result.length, 'formatted student records');
+    console.log(`📊 Mapped student: ${result.studentName}, parent: ${result.parentName}, parentId: ${result.parentId}`);
     return result;
+  }).filter(Boolean); // Remove null entries
+  
+  console.log(`✅ Returning ${result.length} students`);
+  
+  // If there are students that need parent ID updates, do it asynchronously
+  if (studentIdsToUpdate.length > 0) {
+    console.log(`🔄 Scheduling updates for ${studentIdsToUpdate.length} student parent IDs`);
     
+    // Use setTimeout to run this asynchronously after the response is sent
+    setTimeout(async () => {
+      try {
+        for (const item of studentIdsToUpdate) {
+          try {
+            // We already have the parentId from the studentParentMap
+            if (item.parentId) {
+              console.log(`✅ Updating class record with parentId: ${item.parentId} for student: ${item.studentId}`);
+              
+              // Also get the parent name
+              const parentUser = await User.findById(item.parentId).select('name').lean();
+              const parentName = parentUser?.name || 'הורה';
+              
+              // Update the class record with this parent ID and name for future use
+              await Class.updateOne(
+                { _id: item.classId, "students.studentId": item.studentId },
+                { 
+                  $set: { 
+                    "students.$.parentId": item.parentId,
+                    "students.$.parentName": parentName
+                  } 
+                }
+              );
+              console.log(`✅ Updated class record with parentId and parentName: ${parentName}`);
+            } else {
+              console.log(`⚠️ No parentId found for student: ${item.studentId}`);
+            }
+          } catch (error) {
+            console.error(`❌ Error updating parent ID for student ${item.studentId}:`, error);
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error in async parent ID updates:', error);
+      }
+    }, 0);
+  }
+  
+  return result;
   } catch (error) {
     console.error('❌ Error in getStudentsByClass:', error);
-    // Return empty array instead of throwing to prevent 500 errors
     return [];
   }
 };

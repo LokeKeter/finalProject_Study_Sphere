@@ -65,16 +65,45 @@ exports.addStudentToClass = async ({ classId, studentId }) => {
     throw new Error('תלמיד לא נמצא');
   }
   
-  // Get parent info
-  const parentUserId = studentDoc.parentIds?.[0];
-  if (!parentUserId) {
-    console.error('❌ No parent found for student:', studentId);
-    throw new Error('לא נמצא הורה לתלמיד');
-  }
+  // Get parent info or create one if missing
+  let parentUserId = studentDoc.parentIds?.[0];
+  let parentUser;
+  let parentName;
   
-  // Get parent name for better display
-  const parentUser = await User.findById(parentUserId).select('name');
-  const parentName = parentUser?.name || 'לא ידוע';
+  if (!parentUserId) {
+    console.log('⚠️ No parent found for student, creating one automatically');
+    
+    try {
+      // Create a new parent user automatically
+      parentUser = await User.create({
+        name: `הורה של ${studentDoc.name}`,
+        email: `parent_${studentDoc._id}@studysphere.com`,
+        username: `parent_${Date.now()}`,
+        password: 'password123', // Default password
+        role: 'parent',
+        studentName: studentDoc.name
+      });
+      
+      parentUserId = parentUser._id;
+      parentName = parentUser.name;
+      
+      // Update student with new parent ID
+      await Student.findByIdAndUpdate(
+        studentId,
+        { $push: { parentIds: parentUserId } }
+      );
+      
+      console.log('✅ Created new parent user:', parentName, 'with ID:', parentUserId);
+      
+    } catch (error) {
+      console.error('❌ Failed to create parent user:', error);
+      throw new Error('יצירת משתמש הורה נכשלה');
+    }
+  } else {
+    // Get parent name for better display
+    parentUser = await User.findById(parentUserId).select('name');
+    parentName = parentUser?.name || 'הורה';
+  }
   
   console.log('✅ Found student and parent:', { 
     studentId, 

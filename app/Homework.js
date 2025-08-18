@@ -52,26 +52,59 @@ const HomeworkScreen = () => {
 //שליפת תלמידים לפי הכיתה שנבחרה
 useEffect(() => {
   const fetchStudentsByClass = async () => {
-    if (!classesData[selectedClassIndex]) return;
-    const token = await AsyncStorage.getItem("token");
-
-    const res = await fetch(`${API_BASE_URL}/api/attendance/students-by-class/${classesData[selectedClassIndex]}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-
-    const data = await res.json();
-    const mapped = data.map((student) => ({
-      parentId: student.parentId,
-      parentName: student.parentName,
-      studentName: student.studentName || "לא ידוע",
-      classId: classesData[selectedClassIndex],
-      subject: subject,
-      homework: false,
-      attendance: false
-    }));
-    console.log("students:", mapped);
-
-    setStudents(mapped);
+    try {
+      if (!classesData[selectedClassIndex]) {
+        console.log("No class selected");
+        return;
+      }
+      
+      const token = await AsyncStorage.getItem("token");
+      console.log(`🔍 Fetching students for class: ${classesData[selectedClassIndex]}`);
+      
+      const url = `${API_BASE_URL}/api/attendance/students-by-class/${encodeURIComponent(classesData[selectedClassIndex])}`;
+      console.log(`🌐 API URL: ${url}`);
+      
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      console.log(`📥 Response status: ${res.status}`);
+      
+      if (!res.ok) {
+        console.error(`❌ Error fetching students: ${res.status}`);
+        const errorText = await res.text();
+        console.error(`❌ Error response: ${errorText}`);
+        setStudents([]);
+        return;
+      }
+      
+      const data = await res.json();
+      console.log(`📊 Received data:`, data);
+      
+      // Check if data is an array
+      if (!Array.isArray(data)) {
+        console.error(`❌ Expected array but got:`, data);
+        setStudents([]);
+        return;
+      }
+      
+      const mapped = data.map((student) => ({
+        parentId: student.parentId,
+        parentName: student.parentName,
+        studentName: student.studentName || "לא ידוע",
+        classId: classesData[selectedClassIndex],
+        subject: subject,
+        homework: false,
+        attendance: false
+      }));
+      
+      console.log(`✅ Processed students:`, mapped);
+      setStudents(mapped);
+      
+    } catch (error) {
+      console.error(`💥 Error in fetchStudentsByClass:`, error);
+      setStudents([]);
+    }
   };
 
   fetchStudentsByClass();

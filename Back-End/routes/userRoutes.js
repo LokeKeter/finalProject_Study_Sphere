@@ -51,5 +51,7 @@ router.post("/assign-teacher", authMiddleware, authorizeRoles(["admin"]), userCo
 router.post("/remove-teacher", authMiddleware, authorizeRoles(["admin"]), userController.removeTeacherFromClass);
 router.get("/my-classes", authMiddleware, authorizeRoles(["teacher"]), userController.getMyClasses);
 
+// Route to create a parent for a student
+router.post("/create-parent-for-student", authMiddleware, userController.createParentForStudent);
 
 module.exports = router;

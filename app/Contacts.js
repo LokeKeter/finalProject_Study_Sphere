@@ -172,17 +172,27 @@ useEffect(() => {
         // Generate a unique ID even if parentId is null
         const contactId = student.parentId || `student-${student.studentName}-${Date.now()}`;
         
+        // Ensure parent name is properly displayed
+        let parentName = student.parentName;
+        if (!parentName || parentName === 'לא ידוע') {
+          if (student.parentId) {
+            parentName = `הורה של ${student.studentName}`;
+          } else {
+            parentName = 'אין הורה רשום';
+          }
+        }
+        
         console.log('📝 Mapping contact:', {
           originalParentId: student.parentId,
           generatedId: contactId,
-          parentName: student.parentName,
+          parentName: parentName,
           studentName: student.studentName
         });
         
         return {
           id: contactId, // Use the generated ID that's never null
           parentId: student.parentId, // Keep the original parentId separately
-          parentName: student.parentName || 'לא ידוע',
+          parentName: parentName,
           studentName: student.studentName || 'לא ידוע',
           classId: teacherClasses[selectedClassIndex]
         };
@@ -269,10 +279,180 @@ useEffect(() => {
       // Check if the contact has a valid parentId
       if (!selectedContact.parentId) {
         console.log('❌ Validation failed: Selected contact has no parent ID:', selectedContact);
-        Alert.alert("❌ שגיאה", "להורה זה אין מזהה תקין במערכת. אנא פנה למנהל המערכת");
-        setIsSending(false);
+        setIsSending(true);
+        
+        try {
+          // First try to refresh the contacts to see if parent ID exists now
+          console.log('🔄 Refreshing contacts to check for updated parent IDs...');
+          await fetchContacts();
+          
+          // Check if the contact now has a parent ID after refresh
+          const refreshedContact = contacts.find(c => c.id === selectedParentId);
+          
+          if (refreshedContact && refreshedContact.parentId) {
+            console.log('✅ Found parent ID after refresh:', refreshedContact.parentId);
+            
+            // Continue with the letter sending process using the refreshed contact
+            Alert.alert(
+              "✅ נמצא הורה",
+              "נמצא חשבון הורה במערכת. ממשיך בשליחת המכתב...",
+              [
+                {
+                  text: "המשך",
+                  onPress: () => {
+                    // Continue with sending using the found parent ID
+                    sendLetterWithParentId(refreshedContact.parentId);
+                  }
+                }
+              ]
+            );
+            return;
+          }
+          
+          // If still no parent ID, create one automatically
+          console.log('⚠️ Still no parent ID after refresh, creating one...');
+          
+          // Ask if user wants to create a parent account
+          Alert.alert(
+            "❌ חסר מזהה הורה",
+            `להורה של ${selectedContact.studentName} אין חשבון במערכת. האם ליצור חשבון הורה אוטומטית?`,
+            [
+              { 
+                text: "ביטול", 
+                style: "cancel",
+                onPress: () => setIsSending(false)
+              },
+              { 
+                text: "צור חשבון הורה", 
+                onPress: async () => {
+                  try {
+                    // Create a parent account for this student
+                    const token = await AsyncStorage.getItem("token");
+                    
+                    if (!token) {
+                      Alert.alert("❌ שגיאה", "לא נמצא טוקן התחברות. אנא התחבר מחדש");
+                      setIsSending(false);
+                      return;
+                    }
+                    
+                    // Call API to create parent for this student
+                    const createParentRes = await fetch(`${API_BASE_URL}/api/users/create-parent-for-student`, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                      },
+                      body: JSON.stringify({
+                        studentName: selectedContact.studentName,
+                        studentId: selectedContact.id.replace('student-', '').split('-')[0]
+                      })
+                    });
+                    
+                    if (!createParentRes.ok) {
+                      const errorData = await createParentRes.json().catch(() => ({}));
+                      throw new Error(errorData.message || errorData.error || "יצירת הורה נכשלה");
+                    }
+                    
+                    const parentData = await createParentRes.json();
+                    console.log('✅ Created parent account:', parentData);
+                    
+                    // Refresh contacts to get the new parent ID
+                    await fetchContacts();
+                    
+                    // Try to find the contact again with the new parent ID
+                    const updatedContact = contacts.find(c => 
+                      c.studentName === selectedContact.studentName
+                    );
+                    
+                    if (updatedContact && updatedContact.parentId) {
+                      console.log('✅ Found parent ID after creation:', updatedContact.parentId);
+                      
+                      // Continue with sending using the new parent ID
+                      sendLetterWithParentId(updatedContact.parentId);
+                    } else {
+                      // Use the parent ID from the API response
+                      console.log('✅ Using parent ID from API response:', parentData.parentId);
+                      sendLetterWithParentId(parentData.parentId);
+                    }
+                    
+                  } catch (error) {
+                    console.error('❌ Error creating parent account:', error);
+                    Alert.alert("❌ שגיאה", `יצירת חשבון הורה נכשלה: ${error.message}`);
+                    setIsSending(false);
+                  }
+                }
+              }
+            ]
+          );
+        } catch (error) {
+          console.error('❌ Error in parent ID handling:', error);
+          Alert.alert("❌ שגיאה", `טיפול במזהה הורה נכשל: ${error.message}`);
+          setIsSending(false);
+        }
         return;
       }
+      
+      // Helper function to send letter with a valid parent ID
+      const sendLetterWithParentId = async (parentId) => {
+        try {
+          const token = await AsyncStorage.getItem("token");
+          const storedUser = await AsyncStorage.getItem("user");
+          
+          if (!token || !storedUser) {
+            Alert.alert("❌ שגיאה", "חסרים פרטי התחברות. אנא התחבר מחדש");
+            setIsSending(false);
+            return;
+          }
+          
+          const userData = JSON.parse(storedUser);
+          const senderId = userData.id || userData._id;
+          
+          if (!senderId) {
+            Alert.alert("❌ שגיאה", "לא נמצא מזהה משתמש. אנא התחבר מחדש");
+            setIsSending(false);
+            return;
+          }
+          
+          const requestData = {
+            senderId: senderId,
+            receiverId: parentId,
+            subject: letterSubject.trim(),
+            content: letterContent.trim()
+          };
+          
+          console.log('📤 Sending letter with parent ID:', requestData);
+          
+          const res = await fetch(`${API_BASE_URL}/api/communication/send-letter`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(requestData),
+          });
+          
+          if (!res.ok) {
+            const errorData = await res.json().catch(() => ({}));
+            Alert.alert("❌ שגיאה", errorData.message || errorData.error || `שליחה נכשלה (${res.status})`);
+            setIsSending(false);
+            return;
+          }
+          
+          const data = await res.json();
+          console.log('✅ Letter sent successfully:', data);
+          
+          Alert.alert("✅ הצלחה", "המכתב נשלח להורה בהצלחה");
+          setLetterModalVisible(false);
+          setLetterSubject("");
+          setLetterContent("");
+          setSelectedParentId(null);
+          setIsSending(false);
+        } catch (error) {
+          console.error('❌ Error sending letter with parent ID:', error);
+          Alert.alert("❌ שגיאה", `שליחת המכתב נכשלה: ${error.message}`);
+          setIsSending(false);
+        }
+      };
       
       if (!letterSubject.trim()) {
         console.log('❌ Validation failed: No subject');

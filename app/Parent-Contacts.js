@@ -40,34 +40,110 @@ const ContactsScreen = () => {
   }, []);
 
   useEffect(() => {
-    (async () => {
+    const fetchTeachers = async () => {
       try {
+        console.log('🚀 Fetching teachers for parent...');
+        
+        // Get user data and token
         const userStr = await AsyncStorage.getItem('user');
-        const token   = await AsyncStorage.getItem('token');
-        const parsed  = userStr ? JSON.parse(userStr) : {};
+        const token = await AsyncStorage.getItem('token');
+        
+        if (!userStr) {
+          console.error('❌ No user data in storage');
+          Alert.alert('שגיאה', 'לא נמצאו פרטי משתמש. אנא התחבר מחדש.');
+          setTeachers([]);
+          return;
+        }
+        
+        if (!token) {
+          console.error('❌ No token in storage');
+          Alert.alert('שגיאה', 'לא נמצא טוקן התחברות. אנא התחבר מחדש.');
+          setTeachers([]);
+          return;
+        }
+        
+        // Parse user data
+        const parsed = JSON.parse(userStr);
+        console.log('👤 User data:', parsed);
+        
+        // Get parent ID
         const parentId = parsed?.id || parsed?._id;
-
+        
         if (!parentId) {
-          console.error('❌ contacts: no parentId in storage');
+          console.error('❌ No parentId in user data');
+          Alert.alert('שגיאה', 'לא נמצא מזהה הורה. אנא התחבר מחדש.');
           setTeachers([]);
           return;
         }
-
+        
+        console.log('👤 Parent ID:', parentId);
+        
+        // Create API URL
         const url = `${API_BASE_URL}/api/communication/contacts/teachers/${encodeURIComponent(parentId)}`;
-        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        console.log('🌐 API URL:', url);
+        
+        // Set up request with timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        // Fetch data
+        const res = await fetch(url, { 
+          headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal
+        });
+        
+        clearTimeout(timeoutId);
+        
+        console.log('📥 Response status:', res.status);
+        
         if (!res.ok) {
-          console.error('❌ contacts fetch status:', res.status);
+          let errorData;
+          try {
+            errorData = await res.json();
+            console.error('❌ Server error response:', errorData);
+          } catch (jsonError) {
+            console.error('❌ Failed to parse error response');
+          }
+          
+          console.error(`❌ Failed to fetch teachers: ${res.status}`);
+          Alert.alert('שגיאה', `לא ניתן לטעון את רשימת המורים (${res.status})`);
           setTeachers([]);
           return;
         }
-
-        const data = await res.json(); // [{ _id, name, subject, ... }]
-        setTeachers(Array.isArray(data) ? data : []);
-      } catch (e) {
-        console.error('❌ contacts fetch error:', e.message);
+        
+        // Parse response
+        const data = await res.json();
+        console.log('📊 Teachers data:', data);
+        
+        if (!Array.isArray(data)) {
+          console.error('❌ Response is not an array:', data);
+          Alert.alert('שגיאה', 'התקבל מבנה נתונים לא תקין מהשרת');
+          setTeachers([]);
+          return;
+        }
+        
+        if (data.length === 0) {
+          console.log('ℹ️ No teachers found for this parent');
+        } else {
+          console.log(`✅ Found ${data.length} teachers`);
+        }
+        
+        // Update state
+        setTeachers(data);
+        
+      } catch (error) {
+        if (error.name === 'AbortError') {
+          console.error('❌ Request timed out');
+          Alert.alert('שגיאה', 'הבקשה לשרת נכשלה עקב זמן תגובה ארוך מדי');
+        } else {
+          console.error('❌ Error fetching teachers:', error.message);
+          Alert.alert('שגיאה', `אירעה שגיאה בטעינת רשימת המורים: ${error.message}`);
+        }
         setTeachers([]);
       }
-    })();
+    };
+    
+    fetchTeachers();
   }, []);
 
   const q = (searchQuery || '').toLowerCase();
@@ -82,7 +158,7 @@ const ContactsScreen = () => {
     (parent) =>
       parent.parentName.includes(searchQuery) ||
       parent.studentName.includes(searchQuery)
-  );
+  );
   
   
 
@@ -110,23 +186,30 @@ const ContactsScreen = () => {
             <Text style={styles.headerCell}>            מקצוע</Text>
           </View>
 
-          {filteredTeachers.map((t) => (
-            <View key={t._id} style={styles.tableRow}>
-              <Text style={styles.cell}>{t.name}</Text>
-              <Text style={styles.cell}>{t.subject || '—'}</Text>
-              {/* פעולות */}
-              <View style={styles.actionsContainer}>
-                <TouchableOpacity onPress={() => {
-                  setSelectedTeacher(t);
-                  setLetterSubject('');
-                  setLetterContent('');
-                  setLetterModalVisible(true);
-                }}>
-                  <Text style={styles.actionText}>✉️   </Text>
-                </TouchableOpacity>
+          {filteredTeachers.length > 0 ? (
+            filteredTeachers.map((t) => (
+              <View key={t._id} style={styles.tableRow}>
+                <Text style={styles.cell}>{t.name}</Text>
+                <Text style={styles.cell}>{t.subject || '—'}</Text>
+                {/* פעולות */}
+                <View style={styles.actionsContainer}>
+                  <TouchableOpacity onPress={() => {
+                    setSelectedTeacher(t);
+                    setLetterSubject('');
+                    setLetterContent('');
+                    setLetterModalVisible(true);
+                  }}>
+                    <Text style={styles.actionText}>✉️   </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
+            ))
+          ) : (
+            <View style={styles.noDataContainer}>
+              <Text style={styles.noDataText}>לא נמצאו מורים לתלמיד זה</Text>
+              <Text style={styles.noDataSubText}>אנא פנה למנהל המערכת לקבלת סיוע</Text>
             </View>
-          ))}
+          )}
         </View>
       </ScrollView>
       <Modal visible={isLetterModalVisible} transparent animationType="slide">
@@ -233,6 +316,25 @@ const ContactsScreen = () => {
 // 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
+  noDataContainer: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  noDataText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  noDataSubText: {
+    fontSize: 14,
+    color: '#777',
+    textAlign: 'center',
+  },
   topBar: {
     position: "absolute",
     top: 0,

@@ -309,6 +309,96 @@ async function findById(id) {
   return await User.findById(id);
 }
 
+// Create a parent user for a student
+async function createParentForStudent(studentName, studentId) {
+  try {
+    console.log('📝 createParentForStudent called with:', { studentName, studentId });
+    
+    // Find the student by name or ID
+    let student;
+    
+    if (studentId) {
+      // Try to find by ID first (if provided)
+      student = await Student.findOne({ 
+        $or: [
+          { _id: mongoose.Types.ObjectId.isValid(studentId) ? studentId : null },
+          { name: { $regex: new RegExp(`^${studentName}$`, 'i') } }
+        ]
+      });
+    } else {
+      // Find by name only
+      student = await Student.findOne({ 
+        name: { $regex: new RegExp(`^${studentName}$`, 'i') } 
+      });
+    }
+    
+    if (!student) {
+      console.log(`⚠️ No student found with name: ${studentName}`);
+      
+      // Create a new student if none exists
+      student = new Student({
+        name: studentName,
+        studentId: `temp-${Date.now()}`,
+      });
+      
+      await student.save();
+      console.log('✅ Created new student:', student);
+    }
+    
+    // Create a new parent user
+    const parentUser = new User({
+      name: `הורה של ${studentName}`,
+      email: `parent_${student._id}@studysphere.com`,
+      username: `parent_${Date.now()}`,
+      password: 'password123', // Default password
+      role: 'parent',
+      studentName: studentName
+    });
+    
+    await parentUser.save();
+    console.log('✅ Created new parent user:', parentUser);
+    
+    // Link the parent to the student
+    if (!student.parentIds) {
+      student.parentIds = [];
+    }
+    
+    student.parentIds.push(parentUser._id);
+    await student.save();
+    console.log('✅ Linked parent to student');
+    
+    // Find the class this student is in and update the parent info
+    const classWithStudent = await Class.findOne({ 'students.studentId': student._id });
+    
+    if (classWithStudent) {
+      console.log('✅ Found class with student:', classWithStudent.grade);
+      
+      // Update the parent ID in the class
+      await Class.updateOne(
+        { _id: classWithStudent._id, 'students.studentId': student._id },
+        { 
+          $set: { 
+            'students.$.parentId': parentUser._id,
+            'students.$.parentName': parentUser.name
+          } 
+        }
+      );
+      
+      console.log('✅ Updated class with parent info');
+    }
+    
+    return {
+      parentId: parentUser._id,
+      parentName: parentUser.name,
+      studentId: student._id
+    };
+    
+  } catch (error) {
+    console.error('❌ Error in createParentForStudent:', error);
+    throw error;
+  }
+}
+
 module.exports = {
   createUser,
   login,
@@ -323,7 +413,8 @@ module.exports = {
   getAllParents,
   createStudent,
   findById,
-  getAllStudents
+  getAllStudents,
+  createParentForStudent
 };
 
 

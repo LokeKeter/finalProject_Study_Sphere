@@ -6,6 +6,7 @@ const auth = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/authorizeRole");
 
 router.post("/send-letter", communicationController.sendLetter);
+router.post("/send-letter-auto", communicationController.sendLetterAuto);
 router.post("/signature", upload.single("file"), communicationController.sendSignature);
 router.post("/send-meeting", communicationController.scheduleMeeting);
 router.post("/cancel-meeting", communicationController.cancelMeeting);

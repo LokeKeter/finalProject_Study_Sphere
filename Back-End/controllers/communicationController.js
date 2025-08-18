@@ -28,6 +28,51 @@ exports.sendLetter = async (req, res) => {
   }
 };
 
+// New endpoint for sending letters with auto-parent creation
+exports.sendLetterAuto = async (req, res) => {
+  try {
+    const { senderId, receiverId, subject, content, studentName, autoCreateParent } = req.body;
+    
+    // ✅ Validate required fields
+    if (!senderId || !subject || !content || !studentName) {
+      return res.status(400).json({ 
+        message: "כל השדות נדרשים: senderId, subject, content, studentName" 
+      });
+    }
+
+    console.log('📤 Creating letter with auto-parent:', { 
+      senderId, 
+      receiverId, 
+      subject, 
+      content,
+      studentName,
+      autoCreateParent 
+    });
+    
+    // Create a parent user if needed
+    const result = await communicationService.createLetterWithParent(
+      senderId, 
+      receiverId, 
+      subject, 
+      content, 
+      studentName
+    );
+    
+    console.log('✅ Letter created successfully with auto-parent:', result);
+    res.status(201).json({ 
+      message: "המכתב נשלח בהצלחה והורה נוצר במערכת", 
+      data: result 
+    });
+    
+  } catch (error) {
+    console.error('❌ Error in sendLetterAuto controller:', error);
+    res.status(500).json({ 
+      message: "שגיאה בשליחת המכתב", 
+      error: error.message 
+    });
+  }
+};
+
 exports.sendSignature = async (req, res) => {
   try {
     const { senderId, receiverId, content } = req.body;
@@ -112,15 +157,7 @@ exports.getUserArchive = async (req, res) => {
   }
 };
 
-exports.getUserArchive = async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const result = await communicationService.getUserArchive(userId);
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ message: "שגיאת שרת", error: err.message });
-  }
-};
+
 
 exports.sendClassMessage = async (req, res) => {
   try {
@@ -161,12 +198,30 @@ exports.getRecentMeetings = async (req, res) => {
 
 exports.getTeachersForParent = async (req, res) => {
   try {
+    console.log('📥 getTeachersForParent controller called');
     const parentId = req.params.parentId || req.query.parentId || req.user?.id;
+    
+    console.log('👤 Parent ID from request:', parentId);
+    console.log('🔑 Token user:', req.user);
+    
+    if (!parentId) {
+      console.error('❌ No parentId provided in request');
+      return res.status(400).json({ 
+        message: 'חסר מזהה הורה בבקשה',
+        error: 'Missing parentId'
+      });
+    }
+    
     const items = await communicationService.getTeachersForParent({ parentId });
+    console.log(`✅ Found ${items.length} teachers for parent ${parentId}`);
+    
     return res.json(items);
   } catch (err) {
     console.error('❌ getTeachersForParent:', err);
-    return res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ 
+      message: 'שגיאה בשרת בעת איתור מורים',
+      error: err.message 
+    });
   }
 };
 

@@ -161,6 +161,31 @@ const getMyClasses = async (req, res) => {
 };
 
 
+// Create a parent for a student
+const createParentForStudent = async (req, res) => {
+  try {
+    const { studentName, studentId } = req.body;
+    
+    if (!studentName) {
+      return res.status(400).json({ message: "שם תלמיד נדרש" });
+    }
+    
+    console.log('📝 Creating parent for student:', { studentName, studentId });
+    
+    const result = await userService.createParentForStudent(studentName, studentId);
+    
+    res.status(201).json({
+      message: "חשבון הורה נוצר בהצלחה",
+      parentId: result.parentId,
+      parentName: result.parentName
+    });
+    
+  } catch (error) {
+    console.error('❌ Error creating parent for student:', error);
+    res.status(500).json({ message: "שגיאה ביצירת חשבון הורה", error: error.message });
+  }
+};
+
 module.exports = { 
   register, 
   login, 
@@ -174,4 +199,5 @@ module.exports = {
   getAllParents,
   getAllStudents,
   getMyClasses,
+  createParentForStudent
 };
