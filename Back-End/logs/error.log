@@ -144,6 +144,7 @@
 [2025-08-12T14:27:33.410Z] ERROR: Login failed for Stevenite: שם משתמש או סיסמא שגויים
 [2025-08-15T12:44:44.787Z] ERROR: Login failed for a1a: שם משתמש או סיסמא שגויים
 [2025-08-15T12:44:49.365Z] ERROR: Login failed for a1: שם משתמש או סיסמא שגויים
+<<<<<<< Updated upstream
 [2025-08-17T16:42:50.079Z] ERROR: Login failed for moreT: שם משתמש או סיסמא שגויים
 [2025-08-17T16:42:58.685Z] ERROR: Login failed for moreT: שם משתמש או סיסמא שגויים
 [2025-08-17T16:43:24.901Z] ERROR: Login failed for moreT: שם משתמש או סיסמא שגויים
@@ -158,3 +159,10 @@
 [2025-08-18T08:29:30.320Z] ERROR: Login failed for admin: שם משתמש או סיסמא שגויים
 [2025-08-18T08:29:40.928Z] ERROR: Teacher assignment failed: המורה כבר משויך לכיתה זו
 [2025-08-18T08:44:37.692Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+=======
+[2025-08-17T15:14:57.052Z] ERROR: Login failed for more: שם משתמש או סיסמא שגויים
+[2025-08-18T07:56:51.058Z] ERROR: Login failed for mor: שם משתמש או סיסמא שגויים
+[2025-08-18T07:57:05.224Z] ERROR: Login failed for mor2: שם משתמש או סיסמא שגויים
+[2025-08-18T07:57:14.686Z] ERROR: Login failed for more2: שם משתמש או סיסמא שגויים
+[2025-08-18T07:57:19.499Z] ERROR: Login failed for more2: שם משתמש או סיסמא שגויים
+>>>>>>> Stashed changes

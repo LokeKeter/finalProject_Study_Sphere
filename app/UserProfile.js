@@ -173,18 +173,6 @@ const UserProfile = () => {
         ) : (
           <Text style={styles.value}>{user.subject || "לא הוזן"}</Text>
         )}
-
-        <Text style={styles.label}>📖 תיאור קצר:</Text>
-        {isEditing ? (
-          <TextInput
-            style={[styles.input, styles.textArea]}
-            value={user.description}
-            onChangeText={(text) => setUser({ ...user, description: text })}
-            multiline
-          />
-        ) : (
-          <Text style={styles.value}>{user.description || "לא הוזן"}</Text>
-        )}
       </View>
 
       {/* ✅ JWT Token Verification Display (for testing) */}

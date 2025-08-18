@@ -45,23 +45,15 @@ const getTeacherClasses = async (req, res) => {
   }
 };
 
-// שליפת תלמידים לפי כיתה
 const getStudentsByClass = async (req, res) => {
   try {
-    const grade = req.params.grade;
-    const teacherId = req.user?.id || req.user?._id;
-    if (!teacherId) {
-      return res.status(401).json({ error: 'לא מאומת' });
-    }
-
-    // השירות מעודכן לקבל { teacherId, grade } ולוודא שהכיתה ב-assignedClasses של המורה
-    const students = await attendanceService.getStudentsByClass({ teacherId, grade });
-
-    // אם השירות בוחר להחזיר [] כשאין הרשאה, פשוט נחזיר []
-    return res.json(students);
-  } catch (error) {
-    console.error("❌ שגיאה בשליפת תלמידים:", error);
-    return res.status(500).json({ error: "שגיאה בשרת" });
+    const teacherId = req.user?.id || req.user?.userId; // מגיע מה־authMiddleware
+    const { grade } = req.params; // לפי ה־ROUTE שלך
+    const rows = await attendanceService.getStudentsByClass({ teacherId, grade });
+    res.json(rows);
+  } catch (err) {
+    console.error('❌ getStudentsByClass:', err);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

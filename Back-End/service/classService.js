@@ -215,7 +215,6 @@ exports.removeStudentFromClass = async ({ classId, studentId }) => {
   return classObj;
 };
 
-
 exports.getUnassignedStudents = async () => {
   console.log('🔍 מחפש תלמידים לא משויכים...');
 
