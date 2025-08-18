@@ -38,7 +38,8 @@ router.post(
 );
 
 router.post("/login", (req, res, next) => {next();}, userController.login);
-router.put('/:id', authMiddleware, validateSubject, userController.updateUser);
+router.put('/me', authMiddleware, userController.updateMe);
+router.put('/:id([0-9a-fA-F]{24})', authMiddleware, validateSubject, userController.updateUser);
 router.get("/users", authMiddleware, authorizeRoles(["admin"]), userController.getAllUsers);
 router.delete("/users/:id",authMiddleware,authorizeRoles(["admin"]), userController.deleteUser);
 router.post("/reset-password", userController.resetPassword);
@@ -48,7 +49,6 @@ router.get("/students", authMiddleware, authorizeRoles(["admin"]), userControlle
 router.post("/assign-teacher", authMiddleware, authorizeRoles(["admin"]), userController.assignTeacherToClass);
 router.post("/remove-teacher", authMiddleware, authorizeRoles(["admin"]), userController.removeTeacherFromClass);
 router.get("/my-classes", authMiddleware, authorizeRoles(["teacher"]), userController.getMyClasses);
-router.put('/me', authMiddleware, userController.updateMe);
 router.post("/create-parent-for-student", authMiddleware, userController.createParentForStudent);
 
 module.exports = router;

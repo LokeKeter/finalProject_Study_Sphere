@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const emailService = require("./emailService");
-const timetableService = require("./timetableService");
+const mongoose = require('mongoose');
 
 async function assignStudentToClass(grade, parentId, studentId) {
   // חפש את כיתת השכבה הקיימת הראשונה
@@ -397,6 +397,21 @@ async function createParentForStudent(studentName, studentId) {
     console.error('❌ Error in createParentForStudent:', error);
     throw error;
   }
+}
+
+function toClient(u) {
+  return {
+    id: u._id,
+    fullName: u.name || u.fullName || '',
+    studentName: u.studentName || '',
+    parentEmail: u.email || '',
+    email: u.email || '',
+    role: u.role,
+    subject: u.subject || '',
+    studentId: u.studentId || '',
+    grade: u.grade || '',
+    username: u.username || ''
+  };
 }
 
 async function updateProfile({ userId, role, fullName, email, studentName }) {
