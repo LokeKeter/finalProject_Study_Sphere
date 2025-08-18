@@ -399,6 +399,82 @@ async function createParentForStudent(studentName, studentId) {
   }
 }
 
+async function updateProfile({ userId, role, fullName, email, studentName }) {
+  const user = await User.findById(userId);
+  if (!user) {
+    const err = new Error('User not found');
+    err.status = 404;
+    throw err;
+  }
+
+  // אימייל – בדיקת ייחודיות
+  if (email && email !== user.email) {
+    const exists = await User.findOne({
+      email: String(email).toLowerCase(),
+      _id: { $ne: userId }
+    }).lean();
+    if (exists) {
+      const err = new Error('Email already in use');
+      err.status = 409;
+      throw err;
+    }
+    user.email = String(email).toLowerCase();
+  }
+
+  // שם מלא
+  if (fullName && fullName.trim()) {
+    user.name = fullName.trim();
+    user.fullName = fullName.trim();
+  }
+
+  // שם התלמיד:
+  // הערה: במודל הנתונים שלך שם התלמיד האמיתי מגיע מ-Student,
+  // אבל אתה גם שומר user.studentName עבור הפרונט. נעדכן את שניהם.
+  if (typeof studentName === 'string' && studentName.trim()) {
+    const sn = studentName.trim();
+    user.studentName = sn;
+
+    if (role === 'parent') {
+      try {
+        // עדכון תלמיד(ים) שמקושרים להורה הזה
+        // תמיכה גם ב-parentIds (מערך) וגם ב-parentId (בודד)
+        const userIdStr = String(userId);
+        const updates = await Promise.all([
+          Student.updateOne({ parentIds: { $in: [userIdStr] } }, { $set: { name: sn } }),
+          Student.updateOne({ parentId: userIdStr }, { $set: { name: sn } })
+        ]);
+        const matched = (updates[0]?.matchedCount || 0) + (updates[1]?.matchedCount || 0);
+        if (!matched) {
+          // אין סטודנט מקושר – לא קריטי, עדיין נשאר user.studentName לפרונט
+          console.warn('No Student document matched for parent:', userIdStr);
+        }
+      } catch (e) {
+        console.warn('Failed updating Student name for parent:', userId, e.message);
+      }
+    }
+  }
+
+  await user.save();
+
+  // מייצר טוקן חדש כדי לעדכן שם/מייל אם הפרונט משתמש ב-claims
+  const token = jwt.sign(
+    {
+      id: user._id,
+      fullName: user.name,
+      email: user.email,
+      role: user.role
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  return {
+    message: 'Profile updated',
+    user: toClient(user),
+    token
+  };
+}
+
 module.exports = {
   createUser,
   login,
@@ -414,7 +490,8 @@ module.exports = {
   createStudent,
   findById,
   getAllStudents,
-  createParentForStudent
+  createParentForStudent,
+  updateProfile
 };
 
 

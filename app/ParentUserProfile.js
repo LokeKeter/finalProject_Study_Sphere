@@ -11,16 +11,16 @@ import {
     ScrollView,
     Modal,
   } from "react-native";
-  import TopSidebar from '../components/TopSidebar';
+import TopSidebar from '../components/TopSidebar';
+import { API_BASE_URL } from '../config';
 
 export default function ParentUserProfile() {
   const [fullName, setFullName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [relationship, setRelationship] = useState("");
+  const [studentName, setStudentName] = useState("");
   const [email, setEmail] = useState("");
   const [currentTime, setCurrentTime] = useState(getFormattedDateTime());
 
-  // ✅ Load user data on component mount
+  //Load user data on component mount
   useEffect(() => {
     const loadUserData = async () => {
       try {
@@ -31,8 +31,7 @@ export default function ParentUserProfile() {
           
           setFullName(userData.fullName || "");
           setEmail(userData.parentEmail || userData.email || "");
-          // phoneNumber and relationship are not stored in basic user data
-          // These might be additional profile fields that need separate API calls
+          setStudentName(userData.studentName || "");
         }
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -61,12 +60,49 @@ export default function ParentUserProfile() {
       });
     }
 
-  const handleSave = () => {
-    if (!email.includes("@") || !email.includes(".")) {
-      alert("Please enter a valid email address.");
-      return;
+  const handleSave = async () => {
+    try {
+      if (!email.includes("@") || !email.includes(".")) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      const token = await AsyncStorage.getItem("token");
+
+      const res = await fetch(`${API_BASE_URL}/api/users/me`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          fullName: (fullName || "").trim(),
+          email: (email || "").trim(),
+          studentName: (studentName || "").trim(), // להורה
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Update failed");
+      }
+
+      // שמירת השינויים ל־AsyncStorage כדי שכל האפליקציה תראה את העדכון
+      if (data.user) {
+        await AsyncStorage.setItem("user", JSON.stringify(data.user));
+        setFullName(data.user.fullName || "");
+        setEmail(data.user.email || "");
+        setStudentName(data.user.studentName || "");
+      }
+      if (data.token) {
+        await AsyncStorage.setItem("token", data.token);
+      }
+
+      alert("Profile saved successfully!");
+    } catch (e) {
+      alert(`Error: ${e.message}`);
     }
-    alert("Profile saved successfully!");
   };
 
   return (
@@ -81,7 +117,7 @@ export default function ParentUserProfile() {
       <TextInput value={fullName} onChangeText={setFullName} style={styles.input} />
 
       <Text style={styles.label}>שם התלמיד</Text>
-      <TextInput value={phoneNumber} onChangeText={setPhoneNumber} style={styles.input} keyboardType="phone-pad" />
+      <TextInput value={studentName} onChangeText={setStudentName} style={styles.input} />
 
       <Text style={styles.label}>מייל</Text>
       <TextInput value={email} onChangeText={setEmail} style={styles.input} keyboardType="email-address" />

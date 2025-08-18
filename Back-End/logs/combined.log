@@ -1915,3 +1915,60 @@
 [2025-08-18T10:19:39.170Z] INFO: Login attempt: a1
 [2025-08-18T10:19:39.247Z] INFO: Login success: undefined
 >>>>>>> Stashed changes
+[2025-08-18T10:35:46.054Z] INFO: Login attempt: a1
+[2025-08-18T10:35:46.122Z] INFO: Login success: a1
+[2025-08-18T10:39:15.108Z] INFO: Login attempt: a1
+[2025-08-18T10:39:15.176Z] INFO: Login success: a1
+[2025-08-18T10:39:52.785Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-18T10:39:54.949Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-18T10:43:39.162Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-18T10:49:03.453Z] INFO: Login attempt: Stevenite
+[2025-08-18T10:49:03.513Z] INFO: Login success: Stevenite
+[2025-08-18T10:49:21.201Z] ERROR: Teacher assignment failed: המורה כבר משויך לכיתה זו
+[2025-08-18T10:49:49.943Z] INFO: Login attempt: Steven
+[2025-08-18T10:49:50.007Z] INFO: Login success: Steven
+[2025-08-18T10:49:50.049Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-18T10:50:14.838Z] INFO: 📄 שליפת משימות עבור מורה: 684416b2833b7f134585ae54
+[2025-08-18T10:50:23.941Z] INFO: Login attempt: a1
+[2025-08-18T10:50:24.002Z] INFO: Login success: a1
+[2025-08-18T11:02:50.022Z] INFO: Login attempt: a1
+[2025-08-18T11:02:50.091Z] INFO: Login success: a1
+[2025-08-18T11:05:04.707Z] INFO: Login attempt: Steven
+[2025-08-18T11:05:04.712Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-08-18T11:11:00.953Z] INFO: Register attempt: Steven
+[2025-08-18T11:11:01.031Z] INFO: Register success: undefined
+[2025-08-18T11:11:34.241Z] INFO: Register attempt: Stiv
+[2025-08-18T11:11:34.299Z] INFO: Register success: undefined
+[2025-08-18T11:13:21.084Z] INFO: Login attempt: Stiv
+[2025-08-18T11:13:21.145Z] INFO: Login success: Stiv
+[2025-08-18T11:13:21.321Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:16:01.676Z] INFO: Login attempt: Stevenite
+[2025-08-18T11:16:01.739Z] INFO: Login success: Stevenite
+[2025-08-18T11:18:34.050Z] INFO: Login attempt: Steven
+[2025-08-18T11:18:34.133Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-08-18T11:20:06.918Z] INFO: Login attempt: Steven
+[2025-08-18T11:20:06.974Z] ERROR: Login failed for Steven: שם משתמש או סיסמא שגויים
+[2025-08-18T11:20:10.670Z] INFO: Login attempt: Steve
+[2025-08-18T11:20:10.685Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
+[2025-08-18T11:20:22.816Z] INFO: Login attempt: Stiv
+[2025-08-18T11:20:22.872Z] INFO: Login success: Stiv
+[2025-08-18T11:20:22.978Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:21:35.178Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:21:51.032Z] INFO:  יצירת משימה חדשה עבור משתמש: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:21:51.034Z] INFO:  משימה נוצרה בהצלחה: Mahr
+[2025-08-18T11:21:55.159Z] INFO:  יצירת משימה חדשה עבור משתמש: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:21:55.164Z] INFO:  משימה נוצרה בהצלחה: היום
+[2025-08-18T11:21:56.949Z] INFO:  החלפת סטטוס משימה 68a30ccfa895c1600f4d9d3c
+[2025-08-18T11:24:34.884Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:26:27.438Z] INFO: Login attempt: Steven
+[2025-08-18T11:26:27.494Z] INFO: Login success: Steven
+[2025-08-18T11:36:46.934Z] INFO: Login attempt: Stiv
+[2025-08-18T11:36:47.029Z] INFO: Login success: Stiv
+[2025-08-18T11:36:47.180Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:37:08.125Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T11:37:25.032Z] INFO: Login attempt: Steve
+[2025-08-18T11:37:25.036Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
+[2025-08-18T11:37:27.512Z] INFO: Login attempt: Steven
+[2025-08-18T11:37:27.576Z] INFO: Login success: Steven
+[2025-08-18T11:49:46.937Z] INFO: Login attempt: Steven
+[2025-08-18T11:49:47.005Z] INFO: Login success: Steven

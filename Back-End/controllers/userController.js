@@ -186,6 +186,23 @@ const createParentForStudent = async (req, res) => {
   }
 };
 
+const updateMe = async (req, res) => {
+  try {
+    const { fullName, email, studentName } = req.body || {};
+    const payload = await userService.updateProfile({
+      userId: req.user.id,
+      role: req.user.role,
+      fullName,
+      email,
+      studentName
+    });
+    return res.json(payload); // { message, user, token }
+  } catch (e) {
+    console.error('updateMe error:', e);
+    return res.status(e.status || 500).json({ message: e.message || 'Server error' });
+  }
+};
+
 module.exports = { 
   register, 
   login, 
@@ -199,5 +216,6 @@ module.exports = {
   getAllParents,
   getAllStudents,
   getMyClasses,
-  createParentForStudent
+  createParentForStudent,
+  updateMe
 };

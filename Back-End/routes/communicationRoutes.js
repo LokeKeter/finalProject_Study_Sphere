@@ -5,12 +5,7 @@ const upload = require('../middleware/fileUpload');
 const auth = require("../middleware/authMiddleware");
 const authorizeRoles = require("../middleware/authorizeRole");
 
-<<<<<<< Updated upstream
-router.post("/send-letter", communicationController.sendLetter);
-router.post("/send-letter-auto", communicationController.sendLetterAuto);
-=======
 router.post("/send-letter", auth, authorizeRoles(["teacher","parent"]), communicationController.sendLetter);
->>>>>>> Stashed changes
 router.post("/signature", upload.single("file"), communicationController.sendSignature);
 router.post("/send-meeting", communicationController.scheduleMeeting);
 router.post("/cancel-meeting", communicationController.cancelMeeting);

@@ -74,7 +74,7 @@ const SignupScreen = () => {
 
       // Redirect based on role
       if (user.role === 'teacher') {
-        router.push('/dashboard');
+        router.push('/Dashboard');
       } else if (user.role === 'parent') {
         router.push('/Parent-Dashboard');
       } else if (user.role === 'admin') {
@@ -235,61 +235,6 @@ const SignupScreen = () => {
           </TouchableOpacity>
         ))}
       </View>
-
-    {/* 🔹 שדות תלמיד - רק אם נבחר הורה */}
-    {form.role === "הורה" && (
-      <View style={[
-        styles.studentFieldsContainer,
-        { 
-          backgroundColor: isDarkMode ? "#333" : "#fff",
-          borderColor: isDarkMode ? "#fff" : "#000"
-        }
-      ]}>
-        <Text style={[styles.sectionTitle, { color: isDarkMode ? "#fff" : "#000" }]}>פרטי התלמיד</Text>
-        
-        <TextInput
-          placeholder="שם התלמיד"
-          value={form.studentName}
-          onChangeText={(text) => setForm({ ...form, studentName: text })}
-          style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
-          placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
-        />
-        
-        <TextInput
-          placeholder="תעודת זהות של התלמיד"
-          value={form.studentId}
-          onChangeText={(text) => setForm({ ...form, studentId: text })}
-          style={[styles.input, { backgroundColor: isDarkMode ? "#333" : "#fff", color: isDarkMode ? "#fff" : "#000", borderColor: isDarkMode ? "#fff" : "#000" }]}
-          placeholderTextColor={isDarkMode ? "#ccc" : "#666"}
-          keyboardType="numeric"
-        />
-        
-        <Text style={[styles.label, { color: isDarkMode ? "#fff" : "#000" }]}>בחר שכבה:</Text>
-        <View style={styles.gradeContainer}>
-          {["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י", "יא", "יב"].map((gradeOption) => (
-            <TouchableOpacity
-              key={gradeOption}
-              onPress={() => setForm({ ...form, grade: gradeOption })}
-              style={[
-                styles.gradeButton,
-                { 
-                  backgroundColor: form.grade === gradeOption ? (isDarkMode ? "#fff" : "black") : "transparent",
-                  borderColor: isDarkMode ? "#fff" : "#000"
-                }
-              ]}
-            >
-              <Text style={{ 
-                color: form.grade === gradeOption ? (isDarkMode ? "#000" : "#fff") : (isDarkMode ? "#fff" : "#000"),
-                fontSize: 14,
-                fontWeight: form.grade === gradeOption ? "bold" : "normal"
-              }}>
-                {gradeOption}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-    )}
 
       {/* 🔹 כפתור הרשמה */}
       <TouchableOpacity style={styles.signupButton} onPress={handleSignup}>

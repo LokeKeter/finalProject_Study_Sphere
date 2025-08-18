@@ -109,7 +109,6 @@ const getTeacherClasses = async (teacherId) => {
   return [...new Set(teacher.assignedClasses.map(String))];
 };
 
-<<<<<<< Updated upstream
 // attendanceService.js
 const getStudentsByClass = async ({ teacherId, grade }) => {
   try {
@@ -195,28 +194,6 @@ const getStudentsByClass = async ({ teacherId, grade }) => {
   // Get all students with their parentIds
   const students = await Student.find({ _id: { $in: studentIds } })
     .select('_id name parentIds')
-=======
-const isObjectIdLike = (v) =>
-  mongoose.Types.ObjectId.isValid(v) &&
-  String(new mongoose.Types.ObjectId(v)) === String(v);
-
-const fullNameFromDoc = (doc = {}) =>
-  (doc.fullName && String(doc.fullName).trim()) ||
-  [doc.firstName, doc.lastName].filter(Boolean).join(' ').trim() ||
-  (doc.name && String(doc.name).trim()) ||
-  '';
-
-// --- החלף את כל הפונקציה הקיימת בזה:
-const getStudentsByClass = async ({ teacherId, grade }) => {
-  // מאשר שהמורה מלמד את הכיתה
-  const teacher = await User.findById(teacherId).select('assignedClasses').lean();
-  const assigned = (teacher?.assignedClasses || []).map(String);
-  if (!assigned.includes(String(grade))) return [];
-
-  // שליפת כיתה + הורה (וננסה להוציא כמה שדות שם)
-  const classDoc = await Class.findOne({ grade })
-    .populate('students.parentId', 'name firstName lastName')
->>>>>>> Stashed changes
     .lean();
     
   console.log(`✅ Found ${students.length} students from Student collection`);
@@ -321,7 +298,6 @@ const getStudentsByClass = async ({ teacherId, grade }) => {
       }
     }
 
-<<<<<<< Updated upstream
     const result = {
       parentId: parentId && typeof parentId === 'object' ? parentId._id : parentId,
       parentName: parentName || 'לא ידוע',
@@ -380,69 +356,7 @@ const getStudentsByClass = async ({ teacherId, grade }) => {
     console.error('❌ Error in getStudentsByClass:', error);
     return [];
   }
-=======
-  if (!classDoc) return [];
-
-  const rawIds = (classDoc.students || []).map(s => s.studentId).filter(Boolean);
-
-  // מפריד לאובייקטים שנראים כמו ObjectId ולת"ז/מחרוזות
-  const objectIds = [];
-  const nationalIds = [];
-  for (const id of rawIds) {
-    if (isObjectIdLike(id)) objectIds.push(new mongoose.Types.ObjectId(id));
-    else nationalIds.push(String(id));
-  }
-
-  // מביא תלמידים לפי _id וגם לפי studentId (אם קיים כזה שדה)
-  const [byObjId, byNatId] = await Promise.all([
-    objectIds.length
-      ? Student.find({ _id: { $in: objectIds } })
-          .select('_id studentId fullName firstName lastName name')
-          .lean()
-      : [],
-    nationalIds.length
-      ? Student.find({ studentId: { $in: nationalIds } })
-          .select('_id studentId fullName firstName lastName name')
-          .lean()
-      : [],
-  ]);
-
-  // בונה Map שמחזיק שם לפי גם _id וגם studentId
-  const nameMap = new Map();
-  const addToMap = (stu) => {
-    const nm = fullNameFromDoc(stu);
-    if (!nm) return;
-    nameMap.set(String(stu._id), nm);
-    if (stu.studentId != null) nameMap.set(String(stu.studentId), nm);
-  };
-  byObjId.forEach(addToMap);
-  byNatId.forEach(addToMap);
-
-  // מיפוי התוצאה ל־frontend
-  return (classDoc.students || []).map(s => {
-    // שם ההורה
-    const p = s.parentId || {};
-    const parentName =
-      fullNameFromDoc(p) || 'לא ידוע';
-
-    // שם התלמיד
-    const sid = s.studentId;
-    let studentName = nameMap.get(String(sid));
-    if (!studentName && isObjectIdLike(sid)) {
-      studentName = nameMap.get(String(new mongoose.Types.ObjectId(sid)));
-    }
-    // fallback אם שמרתם שם גם במסמך הכיתה (לא חובה)
-    if (!studentName && s.studentName) studentName = String(s.studentName).trim();
-
-    return {
-      parentId: p?._id || null,
-      parentName,
-      studentName: studentName || 'לא ידוע',
-    };
-  });
->>>>>>> Stashed changes
 };
-
 
 const getClassesForTeacher = async (teacherId) => {
   const timetables = await Timetable.find({ "lessons.teacherId": teacherId });

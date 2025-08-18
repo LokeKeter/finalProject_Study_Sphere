@@ -42,16 +42,13 @@ router.put('/:id', authMiddleware, validateSubject, userController.updateUser);
 router.get("/users", authMiddleware, authorizeRoles(["admin"]), userController.getAllUsers);
 router.delete("/users/:id",authMiddleware,authorizeRoles(["admin"]), userController.deleteUser);
 router.post("/reset-password", userController.resetPassword);
-
-// ✅ נתיבים חדשים למנהל המערכת
 router.get("/teachers", authMiddleware, authorizeRoles(["admin"]), userController.getAllTeachers);
 router.get("/parents", authMiddleware, authorizeRoles(["admin"]), userController.getAllParents);
 router.get("/students", authMiddleware, authorizeRoles(["admin"]), userController.getAllStudents);
 router.post("/assign-teacher", authMiddleware, authorizeRoles(["admin"]), userController.assignTeacherToClass);
 router.post("/remove-teacher", authMiddleware, authorizeRoles(["admin"]), userController.removeTeacherFromClass);
 router.get("/my-classes", authMiddleware, authorizeRoles(["teacher"]), userController.getMyClasses);
-
-// Route to create a parent for a student
+router.put('/me', authMiddleware, userController.updateMe);
 router.post("/create-parent-for-student", authMiddleware, userController.createParentForStudent);
 
 module.exports = router;
