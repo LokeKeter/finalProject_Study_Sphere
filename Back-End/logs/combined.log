@@ -1972,3 +1972,9 @@
 [2025-08-18T11:37:27.576Z] INFO: Login success: Steven
 [2025-08-18T11:49:46.937Z] INFO: Login attempt: Steven
 [2025-08-18T11:49:47.005Z] INFO: Login success: Steven
+[2025-08-18T12:02:32.607Z] INFO: Login attempt: Steve
+[2025-08-18T12:02:32.622Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
+[2025-08-18T12:02:35.351Z] INFO: Login attempt: Steven
+[2025-08-18T12:02:35.410Z] INFO: Login success: Steven
+[2025-08-18T12:03:27.451Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-18T12:03:34.362Z] INFO: ✔️ AI free chat (Gemini) generated
