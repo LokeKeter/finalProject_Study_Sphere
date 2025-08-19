@@ -2,7 +2,6 @@ const userService = require("../service/userService");
 const sanitize = require('../utils/sanitizeInput');
 const logger = require('../utils/logger');
 const { validationResult } = require("express-validator");
-const Timetable = require("../models/Timetable");
 
 const register = async (req, res) => {
   try {

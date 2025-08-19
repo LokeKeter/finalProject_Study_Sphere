@@ -830,9 +830,9 @@ export default function AdminUsers() {
   },
   tableHeader: {
     flexDirection: 'row',
-      backgroundColor: '#007AFF',
+      backgroundColor: '#000000ff',
       paddingVertical: screenWidth > 768 ? 15 : 12,
-      paddingHorizontal: screenWidth > 768 ? 20 : 15,
+      paddingHorizontal: screenWidth > 768 ? 20 : 5,
     },
     tableHeaderTablet: {
       paddingVertical: 15,

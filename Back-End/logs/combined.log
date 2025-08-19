@@ -1980,3 +1980,96 @@
 [2025-08-18T12:03:34.362Z] INFO: ✔️ AI free chat (Gemini) generated
 [2025-08-18T12:31:54.832Z] INFO: Login attempt: Steven
 [2025-08-18T12:31:54.900Z] INFO: Login success: Steven
+[2025-08-18T12:38:12.581Z] INFO: Login attempt: Steven
+[2025-08-18T12:38:12.647Z] INFO: Login success: Steven
+[2025-08-18T13:05:12.901Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-18T13:51:15.692Z] INFO: Login attempt: Steven
+[2025-08-18T13:51:15.764Z] INFO: Login success: Steven
+[2025-08-18T13:53:27.577Z] INFO: Login attempt: Stiv
+[2025-08-18T13:53:27.638Z] INFO: Login success: Stiv
+[2025-08-18T13:53:27.800Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T13:54:00.550Z] INFO:  החלפת סטטוס משימה 68a30ccfa895c1600f4d9d3c
+[2025-08-18T13:54:01.510Z] INFO:  בקשת מחיקת משימה 68a30ccfa895c1600f4d9d3c
+[2025-08-18T13:54:02.214Z] INFO:  בקשת מחיקת משימה 68a30cd3a895c1600f4d9d3e
+[2025-08-18T13:57:59.434Z] INFO: Login attempt: Steven
+[2025-08-18T13:57:59.492Z] INFO: Login success: Steven
+[2025-08-18T13:59:29.794Z] INFO: Login attempt: Stiv
+[2025-08-18T13:59:29.851Z] INFO: Login success: Stiv
+[2025-08-18T13:59:30.031Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:00:12.236Z] INFO: Login attempt: Stiv
+[2025-08-18T14:00:12.301Z] INFO: Login success: Stiv
+[2025-08-18T14:00:12.439Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:00:49.632Z] INFO: Login attempt: Steven
+[2025-08-18T14:00:49.780Z] INFO: Login success: Steven
+[2025-08-18T14:04:35.449Z] INFO: Login attempt: Stiv
+[2025-08-18T14:04:35.510Z] INFO: Login success: Stiv
+[2025-08-18T14:04:35.663Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:05:26.775Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-18T14:11:55.346Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:13:02.523Z] INFO:  יצירת משימה חדשה עבור משתמש: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:13:02.529Z] INFO:  משימה נוצרה בהצלחה: מטלה 1
+[2025-08-18T14:13:06.629Z] INFO:  יצירת משימה חדשה עבור משתמש: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:13:06.632Z] INFO:  משימה נוצרה בהצלחה: מטלה 2
+[2025-08-18T14:13:07.849Z] INFO:  החלפת סטטוס משימה 68a334ee69b648e668ca0c1b
+[2025-08-18T14:13:09.029Z] INFO:  החלפת סטטוס משימה 68a334f269b648e668ca0c1d
+[2025-08-18T14:13:09.855Z] INFO:  החלפת סטטוס משימה 68a334ee69b648e668ca0c1b
+[2025-08-18T14:31:28.993Z] INFO: Register attempt: Josh
+[2025-08-18T14:31:29.060Z] INFO: Register success: undefined
+[2025-08-18T14:31:44.352Z] INFO: Login attempt: Stevenite
+[2025-08-18T14:31:44.421Z] INFO: Login success: Stevenite
+[2025-08-18T14:32:13.642Z] INFO: Login attempt: Stiv
+[2025-08-18T14:32:13.715Z] INFO: Login success: Stiv
+[2025-08-18T14:32:13.890Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:32:47.886Z] INFO: Login attempt: Stevenite
+[2025-08-18T14:32:47.944Z] INFO: Login success: Stevenite
+[2025-08-18T14:33:03.500Z] INFO: Login attempt: Stiv
+[2025-08-18T14:33:03.583Z] INFO: Login success: Stiv
+[2025-08-18T14:33:03.749Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-18T14:44:39.250Z] INFO: Login attempt: Stevenite
+[2025-08-18T14:44:39.333Z] INFO: Login success: Stevenite
+[2025-08-18T14:54:55.615Z] INFO: Login attempt: Stevenite
+[2025-08-18T14:54:55.690Z] INFO: Login success: Stevenite
+[2025-08-18T14:57:09.496Z] ERROR: Teacher assignment failed: המורה כבר משויך לכיתה זו
+[2025-08-18T14:58:34.574Z] INFO: Login attempt: Stiv
+[2025-08-18T14:58:34.638Z] INFO: Login success: Stiv
+[2025-08-18T14:58:34.873Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-19T07:11:04.471Z] INFO: Login attempt: a1
+[2025-08-19T07:11:04.540Z] ERROR: Login failed for a1: שם משתמש או סיסמא שגויים
+[2025-08-19T07:11:12.176Z] INFO: Login attempt: Steven
+[2025-08-19T07:11:12.241Z] INFO: Login success: Steven
+[2025-08-19T07:13:46.877Z] INFO: Login attempt: Stiv
+[2025-08-19T07:13:46.935Z] INFO: Login success: Stiv
+[2025-08-19T07:13:46.979Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-19T07:14:14.466Z] INFO: Login attempt: Steven
+[2025-08-19T07:14:14.523Z] INFO: Login success: Steven
+[2025-08-19T07:52:36.557Z] INFO: Login attempt: Stiv
+[2025-08-19T07:52:36.626Z] INFO: Login success: Stiv
+[2025-08-19T07:52:36.902Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-19T07:56:12.331Z] INFO: Login attempt: Steven
+[2025-08-19T07:56:12.407Z] INFO: Login success: Steven
+[2025-08-19T07:58:03.613Z] INFO: Login attempt: Steven
+[2025-08-19T07:58:03.680Z] INFO: Login success: Steven
+[2025-08-19T08:00:27.812Z] ERROR: ❌ Error generating AI template: childAge is not defined
+[2025-08-19T08:18:39.759Z] INFO: Login attempt: Steven
+[2025-08-19T08:18:39.826Z] INFO: Login success: Steven
+[2025-08-19T08:27:47.317Z] INFO: Login attempt: Steven
+[2025-08-19T08:27:47.385Z] INFO: Login success: Steven
+[2025-08-19T08:28:11.233Z] ERROR: ❌ Error generating AI template: childAge is not defined
+[2025-08-19T08:33:47.064Z] ERROR: ❌ Error generating AI template: childAge is not defined
+[2025-08-19T08:35:13.265Z] INFO: Login attempt: Steven
+[2025-08-19T08:35:13.334Z] INFO: Login success: Steven
+[2025-08-19T08:35:58.597Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-19T08:57:06.702Z] INFO: Login attempt: Steven
+[2025-08-19T08:57:06.768Z] INFO: Login success: Steven
+[2025-08-19T08:57:30.574Z] INFO: ✔️ AI free chat (Gemini) generated
+[2025-08-19T08:58:46.200Z] INFO: Login attempt: Stiv
+[2025-08-19T08:58:46.257Z] ERROR: Login failed for Stiv: שם משתמש או סיסמא שגויים
+[2025-08-19T08:58:47.504Z] INFO: Login attempt: Stiv
+[2025-08-19T08:58:47.561Z] INFO: Login success: Stiv
+[2025-08-19T08:58:47.729Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-19T08:59:48.315Z] INFO: Login attempt: Steven
+[2025-08-19T08:59:48.378Z] INFO: Login success: Steven
+[2025-08-19T09:01:01.374Z] INFO: Login attempt: Stiv
+[2025-08-19T09:01:01.431Z] INFO: Login success: Stiv
+[2025-08-19T09:01:01.593Z] INFO: 📄 שליפת משימות עבור מורה: 68a30a66a895c1600f4d9cbb
+[2025-08-19T09:01:59.748Z] INFO: ✔️ AI free chat (Gemini) generated

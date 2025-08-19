@@ -432,29 +432,23 @@ exports.createFileUpload = async (senderId, receiverId, description, fileUrl) =>
 
 exports.getUserArchive = async (userId) => {
   console.log('🔍 getUserArchive called with userId:', userId);
-  
-  // Validate userId
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    console.error('❌ Invalid userId provided to getUserArchive:', userId);
-    return [];
-  }
-  
   try {
-    // Ensure userId is an ObjectId
-    const userObjectId = mongoose.Types.ObjectId(userId);
-    
+
     // Fetch both sent and received messages for the user
     console.log('📩 Finding messages for user:', userId);
+    // נתמוך גם במזהה כמחרוזת וגם כ-ObjectId
+    const idsToMatch = [String(userId)];
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      idsToMatch.push(new mongoose.Types.ObjectId(userId));
+    }
+
     const messages = await Communication.find({
-      $or: [
-        { receiverId: userObjectId }, 
-        { senderId: userObjectId }
-      ]
+      receiverId: { $in: idsToMatch },   // ← רק הודעות שנשלחו אליי
+      type: 'letter'                      // ← רק מכתבים
     })
-      .sort({ createdAt: -1 })
-      .populate("senderId", "name")
-      .populate("receiverId", "name")
-      .lean();
+    .sort({ createdAt: -1 })
+    .populate("senderId", "name fullName")
+    .lean();
     
     console.log(`✅ Found ${messages.length} messages for user ${userId}`);
     
@@ -485,17 +479,13 @@ exports.getUserArchive = async (userId) => {
     
     // Create normalized message object
     return {
-      id: msg._id,
-      type: msg.type,
-      direction: messageDirection,
-      title: msg.subject || "ללא נושא",
-      sender: msg.senderId?.name || "שולח לא ידוע",
-      receiver: msg.receiverId?.name || "מקבל לא ידוע",
-      date: new Date(msg.createdAt).toLocaleDateString("he-IL"),
-      className: classDoc?.grade || "כיתה כללית",
-      content: msg.content || "",
-      fileUrl: msg.fileUrl || ""
-    };
+    id: String(msg._id),  // <- המרה למחרוזת
+    title: msg.subject || "ללא נושא",
+    sender: (msg.senderId?.fullName || msg.senderId?.name || "שולח לא ידוע"),
+    date: msg.createdAt ? new Date(msg.createdAt).toLocaleDateString("he-IL") : "",
+    content: msg.content || "",
+    fileUrl: msg.fileUrl || ""
+  };
   });
   
   console.log(`✅ Returning ${result.length} formatted messages`);

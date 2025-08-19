@@ -173,3 +173,9 @@
 [2025-08-18T11:20:10.685Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
 [2025-08-18T11:37:25.036Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
 [2025-08-18T12:02:32.622Z] ERROR: Login failed for Steve: שם משתמש או סיסמא שגויים
+[2025-08-18T14:57:09.496Z] ERROR: Teacher assignment failed: המורה כבר משויך לכיתה זו
+[2025-08-19T07:11:04.540Z] ERROR: Login failed for a1: שם משתמש או סיסמא שגויים
+[2025-08-19T08:00:27.812Z] ERROR: ❌ Error generating AI template: childAge is not defined
+[2025-08-19T08:28:11.233Z] ERROR: ❌ Error generating AI template: childAge is not defined
+[2025-08-19T08:33:47.064Z] ERROR: ❌ Error generating AI template: childAge is not defined
+[2025-08-19T08:58:46.257Z] ERROR: Login failed for Stiv: שם משתמש או סיסמא שגויים

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, ScrollView, StyleSheet, TouchableOpacity, Alert, Clipboard } from 'react-native';
-
+import { API_BASE_URL } from '../config';
 import TopSidebar from "../components/TopSidebar";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -25,7 +25,7 @@ const ParentAITemplate = () => {
     try {
       const token = await AsyncStorage.getItem('token');
 
-      const response = await fetch("http://localhost:5000/api/ai/template", {
+      const response = await fetch(`${API_BASE_URL}/api/ai/template`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +58,7 @@ const ParentAITemplate = () => {
     try {
       const token = await AsyncStorage.getItem('token');
 
-      const response = await fetch("http://localhost:5000/api/ai/chat", {
+      const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

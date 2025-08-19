@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   addStudentButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#000000ff',
     borderRadius: 8,
     padding: 10,
     alignItems: 'center',

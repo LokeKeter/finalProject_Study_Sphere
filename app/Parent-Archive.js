@@ -12,12 +12,10 @@ import {
 import { useRouter } from "expo-router"; // ✅ Router for navigation
 import TopSidebar from '../components/TopSidebar';
 
-const classesData = ["כל המכתבים", "מכתבים שנשלחו"];
+const classesData = ["כל המכתבים"];
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_BASE_URL } from '../config';
-
-const [messages, setMessages] = useState([]);
 
 const PAGE_SIZE = 20;
 
@@ -36,22 +34,14 @@ const ArchiveScreen = () => {
       setCurrentPage(1);
     }
   };
-
-  // 🔹 סינון לפי כיתה ושם שולח/כותרת
+  //סינון לפי שם שולח/כותרת בלבד
   const q = (searchQuery || '').toLowerCase();
   const filteredMessages = messages.filter((msg) => {
-    // Filter by message type (all or sent only)
-    const inBucket =
-      classesData[selectedClassIndex] === "כל המכתבים" || 
-      (classesData[selectedClassIndex] === "מכתבים שנשלחו" && msg.direction === "נשלח");
-    
-    // Filter by search query
     const sender = String(msg.sender || '').toLowerCase();
-    const receiver = String(msg.receiver || '').toLowerCase();
-    const title = String(msg.title || '').toLowerCase();
-    
-    return inBucket && (sender.includes(q) || receiver.includes(q) || title.includes(q));
+    const title  = String(msg.title  || '').toLowerCase();
+    return sender.includes(q) || title.includes(q);
   });
+
 
   // 🔹 חישוב מספר הדפים
   const totalPages = Math.ceil(filteredMessages.length / PAGE_SIZE);
@@ -65,15 +55,6 @@ const ArchiveScreen = () => {
     setSelectedMessage(msg);
     setModalVisible(true);
   };
-
-    //שליחת הודעה
-    const handleSendMessage = (msg) => {
-        // כאן תוכל לכתוב את הלוגיקה של שליחת ההודעה.
-        // לדוגמה: להעביר לדף של שליחת הודעות עם פרטי הנמען:
-        console.log("שליחת הודעה ל: ", msg.sender);
-        setModalVisible(false);
-        router.push({ pathname: "/SendMessage", params: { recipient: msg.sender } });
-      };
   
   //שלח הודעה
   const [isLetterModalVisible, setLetterModalVisible] = useState(false);
@@ -151,17 +132,12 @@ const ArchiveScreen = () => {
 
         // נורמליזציה לשדות שה־UI משתמש בהם
         const normalized = (Array.isArray(data) ? data : []).map(m => ({
-          id: m.id || m._id,
+          id: String(m.id || m._id || ''),                       // <- תמיד מחרוזת
           title: m.title || m.subject || '—',
-          sender: m.sender || '—',
-          receiver: m.receiver || '—',
-          date: m.date || '',          // ה־service כבר מחזיר בעברית
+          sender: m.sender || m.senderName || m._raw?.senderId?.name || '—',
+          date: m.date || (m.createdAt ? new Date(m.createdAt).toLocaleDateString('he-IL') : ''),
           content: m.content || '',
-          direction: m.direction || 'התקבל', // Now the backend returns direction
-          _raw: m,
         }));
-
-        console.log('✅ Parent-Archive: Messages normalized, count:', normalized.length);
         setMessages(normalized);
         
       } catch (e) {
@@ -194,22 +170,7 @@ const ArchiveScreen = () => {
                                 <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeMessageButton}>
                                     <Text style={styles.closeMessageButtonText}>סגור</Text>
                                 </TouchableOpacity>
-
-                                {classesData[selectedClassIndex] !== "מכתבים שנשלחו" && (
-                                    <TouchableOpacity 
-                                    onPress={() => {
-                                      setLetterSubject(selectedMessage?.title); // הגדרת כותרת המכתב כשם ההודעה
-                                      setLetterRecipient(selectedMessage?.sender); // שליחת המכתב לשולח המקורי
-                                      setLetterModalVisible(true);
-                                    }} 
-                                    style={styles.sendMessageButton}
-                                  >
-                                    <Text style={styles.sendMessageButtonText}>שלח</Text>
-                                  </TouchableOpacity>
-                                  
-                                )}
                             </View>
-
                         </View>
                     </View>
                 </Modal>
@@ -311,26 +272,18 @@ const ArchiveScreen = () => {
   <View style={styles.tableContainer}>
     <View style={styles.tableHeader}>
       <Text style={styles.headerCell}>כותרת</Text>
-      <Text style={styles.headerCell}>פרטים</Text>
+      <Text style={styles.headerCell}>מאת</Text>
       <Text style={styles.headerCell}>תאריך</Text>
-      <Text style={styles.headerCell}>סוג</Text>
     </View>
 
     {displayedMessages.map((msg) => (
         <TouchableOpacity
             key={msg.id}
             style={styles.tableRow}
-            onPress={() => handleOpenMessage(msg)}
-        >
+            onPress={() => handleOpenMessage(msg)}>
             <Text style={styles.cell}>{msg.title}</Text>
-            <Text style={styles.cell}>
-              {msg.direction === "נשלח" ? `אל: ${msg.receiver}` : `מאת: ${msg.sender}`}
-            </Text>
-            <Text style={styles.cell}>{msg.date}</Text>
-            <Text style={[styles.directionCell, 
-              msg.direction === "נשלח" ? styles.sentMessage : styles.receivedMessage]}>
-              {msg.direction === "נשלח" ? "📤 נשלח" : "📥 התקבל"}
-            </Text>
+              <Text style={styles.cell}>{`${msg.sender}`}</Text>
+              <Text style={styles.cell}>{msg.date}</Text>
         </TouchableOpacity>
     ))}
 
@@ -370,26 +323,8 @@ const ArchiveScreen = () => {
 
 // 🎨 **עיצוב הדף**
 const styles = StyleSheet.create({
-  // New styles for message direction
-  directionCell: {
-    fontWeight: "bold",
-    fontSize: 12,
-    padding: 4,
-    borderRadius: 4,
-    textAlign: "center",
-  },
-  sentMessage: {
-    backgroundColor: "#e6f7ff",
-    color: "#0066cc",
-  },
-  receivedMessage: {
-    backgroundColor: "#f0f0f0",
-    color: "#444444",
-  },
   // Original styles
   container: { flex: 1, paddingTop: 85, backgroundColor: "#F4F4F4" },
-  
-
   table: { backgroundColor: "#fff", borderRadius: 10, padding: 10, marginTop: 10 ,borderRadius: 5 },
   tableHeader: { flexDirection: "row", backgroundColor: "#ddd", padding: 10, borderRadius: 5 },
   headerCell: { flex: 1, fontWeight: "bold", textAlign: "center" },
